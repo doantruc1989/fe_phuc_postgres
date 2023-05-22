@@ -1,14 +1,20 @@
 import { Breadcrumb } from "flowbite-react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
 import { HiHome } from "react-icons/hi";
 import { CartProvider } from "react-use-cart";
 import Layout from "../../components/Layout";
 
 function Index() {
+  const router = useRouter();
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
           Trang chủ
         </Breadcrumb.Item>
         <Breadcrumb.Item>Chính sách</Breadcrumb.Item>
@@ -118,5 +124,13 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

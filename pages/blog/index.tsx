@@ -4,55 +4,76 @@ import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
 import { HiHome } from "react-icons/hi";
 import Link from "next/link";
-import axios from "axios";
 import parse from "html-react-parser";
-import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import axios from "../../other/axios";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
-function Index({resData} : any) {
+function Index() {
+  const router = useRouter();
+  const [blogs, setBlogs] = useState([] as any)
+  const { t } = useTranslation('');
+
+  useEffect(() => {
+    try {
+      axios
+        .get(
+          `/blog`
+        )
+        .then((res: any) => {
+            setBlogs(res.data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
-          Trang chủ
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
+           {t("Trang chủ")}
         </Breadcrumb.Item>
         <Breadcrumb.Item
         //   href={"/" + productDetail[0]?.categoryID.path}
         //   icon={HiOutlineShoppingBag}
         //   className="capitalize"
         >
-          Tin Tức
+           {t("Tin Tức")}
         </Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-6">
-        <h1 className="font-medium">TIN TỨC</h1>
+        <h1 className="font-medium uppercase">{t("Tin Tức")}</h1>
 
         <div className="grid lg:grid-cols-4 gap-2 grid-cols-2 md:grid-cols-3 my-3 pb-6">
-          {resData.map((blog: any) => {
-                return (
-                  <div
-                    key={blog.id}
-                    className="rounded-md border border-gray-200 shadow-sm hover:shadow-xl bg-white"
-                  >
-                    <Link href={"/blog/" + blog.id}>
-                      <img
-                        src={blog.image}
-                        className="rounded-t-md cursor-pointer w-full h-60"
-                        alt="..."
-                      />
-                      <div className="cursor-pointer text-center text-xs">
-                        <p className="font-medium text-base md:text-lg  text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-[70px] md:h-16 lg:h-20">
-                          {blog.title.substring(0, 40)}
-                        </p>
-                      </div>
-                      <div className="mx-2 mb-2">
-                        {parse(`${blog?.text.substring(0, 100)}...`)}
-                      </div>
-                    </Link>
+          {blogs.map((blog: any) => {
+            return (
+              <div
+                key={blog.id}
+                className="rounded-md border border-gray-200 shadow-sm hover:shadow-xl bg-white"
+              >
+                <Link href={router.locale === "en" ? `/en/blog/${blog.id}` : `/blog/${blog.id}`}>
+                  <img
+                    src={blog.image}
+                    className="rounded-t-md cursor-pointer w-full h-60"
+                    alt="..."
+                  />
+                  <div className="cursor-pointer text-center text-xs">
+                    <p className="font-medium text-base md:text-lg  text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-[70px] md:h-16 lg:h-20">
+                      {router.locale === "en" ? blog?.blogEn?.enTitle.substring(0, 40) : blog?.title.substring(0, 40)}
+                    </p>
                   </div>
-                );
-              })
-            }
+                  <div className="mx-2 mb-2">
+                  {router.locale === "en" ? parse(`${blog?.blogEn?.enText.substring(0, 100)}...`) : parse(`${blog?.text.substring(0, 100)}...`) }
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -69,10 +90,12 @@ Index.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await axios.get(`http://localhost:3007/blog`);
-  const resData = res.data;
-  return {props: {resData}}
-};
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

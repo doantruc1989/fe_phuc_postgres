@@ -2,8 +2,10 @@ import React from "react";
 import { TabView, TabPanel } from "primereact/tabview";
 import Link from "next/link";
 import HeroProps from "../HeroProps";
+import { useTranslation } from "react-i18next";
 
 function Hero8() {
+  const { t } = useTranslation('');
   const dalat = {
     condition2: "Đà Lạt",
     search: "bybrand",
@@ -29,17 +31,17 @@ function Hero8() {
     <div className="mt-12">
       <Link href={"/vnfruit"}>
         <h1 className="text-3xl uppercase font-medium mt-3">
-          TRÁI CÂY VIỆT NAM
+          {t("TRÁI CÂY VIỆT NAM")}
         </h1>
       </Link>
       <div>
         <TabView>
-        <TabPanel header="Bình An Farm">
+        <TabPanel header={t("Bình An Farm")}>
           <div className="text-center">
               <HeroProps props={binhan} />
             </div>
           </TabPanel>
-          <TabPanel header="Đà lạt">
+          <TabPanel header={t("Đà lạt")}>
           <div className="text-center">
               <HeroProps props={dalat} />
             </div>

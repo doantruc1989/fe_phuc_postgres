@@ -6,26 +6,30 @@ import { HiChevronLeft, HiChevronRight, HiHome } from "react-icons/hi";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import Link from "next/link";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 function Index() {
-  const { totalUniqueItems, items, updateItemQuantity, cartTotal } =
-    useCart();
+  const { totalUniqueItems, items, updateItemQuantity, cartTotal } = useCart();
   const router = useRouter();
   const [delModal, setDelModal] = useState(false);
-  const [itemId, setItemId] = useState('');
-  
+  const [itemId, setItemId] = useState("");
+  const { t } = useTranslation("");
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
-          Trang chủ
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
+          {t("Trang chủ")}
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Giỏ hàng</Breadcrumb.Item>
+        <Breadcrumb.Item>{t("Giỏ hàng")}</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="w-full lg:w-11/12 mx-auto relative">
         <h1 className="text-2xl font-medium flex justify-center my-6">
-          Giỏ hàng của bạn
+          {t("Giỏ hàng của bạn")}
         </h1>
         {totalUniqueItems > 0 ? (
           <div className="grid lg:grid-cols-4 w-full gap-10 mb-10">
@@ -34,16 +38,16 @@ function Index() {
                 <Table.Head>
                   <Table.HeadCell></Table.HeadCell>
                   <Table.HeadCell className="hidden lg:block">
-                    Tên sản phẩm
+                    {t("Tên sản phẩm")}
                   </Table.HeadCell>
                   <Table.HeadCell>
-                    <p className="text-end">Đơn giá</p>
+                    <p className="text-end">{t("Đơn giá")}</p>
                   </Table.HeadCell>
                   <Table.HeadCell>
-                    <p className="text-center">Số lượng</p>
-                    </Table.HeadCell>
+                    <p className="text-center">{t("Số lượng")}</p>
+                  </Table.HeadCell>
                   <Table.HeadCell>
-                     <p className="text-end">Tổng</p>
+                    <p className="text-end">{t("Tổng")}</p>
                   </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
@@ -55,24 +59,32 @@ function Index() {
                       >
                         <Table.Cell className="py-0 pl-0">
                           <div className="pl-4 flex justify-start items-center mx-auto">
-                            <Link href={"/product/" + item.slug}>
-                            <img
-                              src={item.image}
-                              className="w-14 h-14 object-cover"
-                              alt=".."
-                            />
+                            <Link
+                              href={
+                                router.locale === "en"
+                                  ? `/en/product/${item.slug}`
+                                  : `/product/${item.slug}`
+                              }
+                            >
+                              <img
+                                src={item.image}
+                                className="w-14 h-14 object-cover"
+                                alt=".."
+                              />
                             </Link>
                           </div>
                         </Table.Cell>
                         <Table.Cell className="hidden lg:flex lg:flex-col lg:items-start">
                           <div className="text-xs font-medium text-gray-900 dark:text-white">
-                            {item.productName}
+                            {router.locale === "en"
+                              ? `${item?.productEn?.enName}`
+                              : `${item?.productName}`}
                           </div>
                           <div>{item.type ? item.type : null}</div>
                         </Table.Cell>
                         <Table.Cell>
                           <div className="font-medium text-sm text-end">
-                            {Intl.NumberFormat().format(item.price) + '₫'}
+                            {Intl.NumberFormat().format(item.price) + "₫"}
                           </div>
                           <div className="text-xs text-red-600">
                             {item.discount ? `Đã giảm ${item.discount}%` : null}
@@ -84,7 +96,7 @@ function Index() {
                               className="font-medium text-3xl"
                               onClick={() => {
                                 if (item.quantity <= 1) {
-                                  setItemId(item.id)
+                                  setItemId(item.id);
                                   setDelModal(!delModal);
                                 } else
                                   updateItemQuantity(
@@ -99,7 +111,7 @@ function Index() {
                               value={item.quantity}
                               onChange={(e: any) => {
                                 if (e.target.value <= 0) {
-                                  setItemId(item.id)
+                                  setItemId(item.id);
                                   setDelModal(!delModal);
                                 } else
                                   updateItemQuantity(
@@ -149,8 +161,9 @@ function Index() {
                                     >
                                       <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                         <h1 className="text-center w-full mb-6">
-                                          Bạn có muốn xoá sản phẩm này khỏi giỏ
-                                          hàng?
+                                          {t(
+                                            "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?"
+                                          )}
                                         </h1>
                                         <div className="flex gap-10 items-center justify-around">
                                           <Button
@@ -159,7 +172,7 @@ function Index() {
                                               setDelModal(false);
                                             }}
                                           >
-                                            Không
+                                            {t("Không")}
                                           </Button>
                                           <Button
                                             color="success"
@@ -171,7 +184,7 @@ function Index() {
                                               setDelModal(false);
                                             }}
                                           >
-                                            Đồng ý
+                                            {t("Đồng ý")}
                                           </Button>
                                         </div>
                                       </Dialog.Panel>
@@ -184,7 +197,7 @@ function Index() {
                         </Table.Cell>
                         <Table.Cell>
                           <div className="font-medium text-end text-green-700">
-                          {Intl.NumberFormat().format(item.itemTotal) + '₫'}
+                            {Intl.NumberFormat().format(item.itemTotal) + "₫"}
                             {/* <button
                               onClick={() => {
                                 setItemId(item.id)
@@ -204,18 +217,18 @@ function Index() {
 
             <div className="lg:col-start-4 lg:col-end-5 mx-2 lg:mx-0 sticky right-0 z-10">
               <div className="flex justify-between border-b border-gray-100 pb-4">
-                <p className="font-medium">Tạm tính:</p>
+                <p className="font-medium">{t("Tạm tính:")}</p>
                 <p className="font-medium">
                   {Intl.NumberFormat().format(cartTotal) + " ₫"}
                 </p>
               </div>
               <div className="flex justify-between border-b border-solid border-gray-100 py-4">
-                <p className="font-medium">Giảm giá</p>
+                <p className="font-medium">{t("Giảm giá")}</p>
                 <p className="font-medium">0 đ</p>
               </div>
 
               <div className="flex justify-between mt-4">
-                <p className="font-medium">Thành tiền:</p>
+                <p className="font-medium">{t("Thành tiền:")}</p>
                 <p className="font-bold text-green-600 text-xl">
                   {Intl.NumberFormat().format(cartTotal) + " ₫"}
                 </p>
@@ -225,7 +238,7 @@ function Index() {
                 onClick={() => router.push("/checkout")}
                 className="w-full mt-6 bg-green-600 uppercase"
               >
-                Thanh Toán Ngay
+                {t("Thanh Toán Ngay")}
               </Button>
 
               <Button
@@ -233,13 +246,13 @@ function Index() {
                 className="w-full mt-3 hover:bg-green-600 hover:text-white uppercase"
                 color={"gray"}
               >
-                Tiếp tục mua hàng
+                {t("Tiếp tục mua hàng")}
               </Button>
             </div>
           </div>
         ) : (
           <div className="flex justify-center font-medium text-lg mb-8 pt-8">
-            Bạn chưa chọn sản phẩm nào
+            {t("Bạn chưa chọn sản phẩm nào")}
           </div>
         )}
       </div>
@@ -256,5 +269,13 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

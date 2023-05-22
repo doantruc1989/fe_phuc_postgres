@@ -1,10 +1,13 @@
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation("");
 
   useEffect(() => {
     localStorage.removeItem("react-use-cart");
@@ -22,20 +25,28 @@ function Index() {
       {isSuccess && (
         <section className="text-base text-center capitalize font-medium my-20">
           <h1>
-            Bạn đã đặt hàng thành công, hệ thống sẽ chuyển bạn tới trang cá
-            nhân của bạn sau 5 giây nữa. Hoặc{" "}
+            {t("Bạn đã đặt hàng thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc ")}
           </h1>
           <p className="mt-6">
-            Bấm vào
+            {t("Bấm vào")}
             <Link className="text-green-600 underline" href="/">
-              {" đây "}
+              {t(" đây ")}
             </Link>
-            để tới trang chủ ngay lập tức
+            {t("để tới trang chủ ngay lập tức")}
           </p>
         </section>
       )}
     </>
   );
+}
+
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }
 
 export default Index;

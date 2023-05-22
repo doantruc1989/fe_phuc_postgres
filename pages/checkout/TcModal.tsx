@@ -1,4 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { Fragment } from "react";
 
 const TcModal = ({ tcModal, setTcModal }: any) => {
@@ -94,5 +95,14 @@ const TcModal = ({ tcModal, setTcModal }: any) => {
     </Transition>
   );
 };
+
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default TcModal;

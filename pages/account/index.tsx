@@ -20,6 +20,9 @@ import OrdersTab from "./OrdersTab";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
 import axios from "../../other/axios";
 import { useQRCode } from "next-qrcode";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 const PHONE_REGEX = /^[0-9\-\+]{10,15}$/;
 const AVT_REGEX = /\.(jpg|jpeg|png|webp|avif|gif|svg)$/;
 const ADDRESS_REGEX = /^\s*\S+(?:\s+\S+){2}/;
@@ -47,6 +50,8 @@ function Index() {
   const [status2Fa, setStatus2Fa] = useState(false);
   const [qrCode, setQrCode] = useState(" ");
   const { Canvas } = useQRCode();
+  const router = useRouter();
+  const { t } = useTranslation("");
 
   useEffect(() => {
     setValidPw(PWD_REGEX.test(userPw) && userPw === userPw2 && userPw !== "");
@@ -220,11 +225,14 @@ function Index() {
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
-          Trang chủ
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
+          {t("Trang chủ")}
           <ToastContainer />
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Trang cá nhân của {users.username}</Breadcrumb.Item>
+        <Breadcrumb.Item>{t("Trang cá nhân của ")}{users.username}</Breadcrumb.Item>
       </Breadcrumb>
       {users?.email === undefined ? (
         <div className="w-full text-center my-20 uppercase">
@@ -243,19 +251,19 @@ function Index() {
               className=" w-8/12 md:w-10/12 mx-auto mb-6 mt-3 rounded-lg"
             />
             <div className="flex flex-col items-center text-center mb-3">
-              <h1 className="font-medium">Email:</h1>
+              <h1 className="font-medium">{t("Email:")}</h1>
               <p>{users.email}</p>
             </div>
             <div className="flex flex-col items-center text-center mb-3">
-              <h1 className="font-medium">Họ tên:</h1>
+              <h1 className="font-medium">{t("Họ và tên:")}</h1>
               <p>{users.username}</p>
             </div>
             <div className="flex flex-col items-center text-center mb-3">
-              <h1 className="font-medium">Địa chỉ:</h1>
+              <h1 className="font-medium">{t("Địa chỉ:")}</h1>
               <p>{users.address}</p>
             </div>
             <div className="flex flex-col items-center text-center mb-3">
-              <h1 className="font-medium">Số điện thoại:</h1>
+              <h1 className="font-medium">{t("Số điện thoại:")}</h1>
               {isHidden === false ? (
                 <div className="flex items-center gap-3 justify-center">
                   <p>{userPhone}</p>
@@ -289,13 +297,13 @@ function Index() {
           </div>
           <div className="col-start-2 col-end-4 w-full bg-white text-xs rounded-xl pt-2  mb-6">
             <TabView>
-              <TabPanel header="Đơn hàng">
+              <TabPanel header={t("Đơn hàng")}>
                 <OrdersTab orders={orders} paid={paid} setPaid={setPaid} />
               </TabPanel>
-              <TabPanel header="Đổi mật khẩu">
+              <TabPanel header={t("Đổi mật khẩu")}>
                 <div className="flex flex-col justify-center w-9/12 mx-auto">
                   <h1 className="text-center my-6 font-medium uppercase">
-                    Đổi mật khẩu
+                    {t("Đổi mật khẩu")}
                   </h1>
                   <TextInput
                     color={validPw === true ? "success" : "gray"}
@@ -315,9 +323,7 @@ function Index() {
                     helperText={
                       validPw === false ? (
                         <p className="text-xs text-end w-full text-red-500">
-                          Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 8 kí
-                          tự, trong đó bao gồm ít nhất 1 kí tự hoa, 1 kí tự
-                          thường, và 1 số
+                          {t("Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 8 kí tự, trong đó bao gồm ít nhất 1 kí tự hoa, 1 kí tự thường, và 1 số")}
                         </p>
                       ) : null
                     }
@@ -333,10 +339,10 @@ function Index() {
                   </div>
                 </div>
               </TabPanel>
-              <TabPanel header="Đổi địa chỉ">
+              <TabPanel header={t("Đổi địa chỉ")}>
                 <div className="flex flex-col justify-center w-9/12 mx-auto">
                   <h1 className="text-center my-6 font-medium uppercase">
-                    Đổi địa chỉ
+                    {t("Đổi địa chỉ")}
                   </h1>
                   <TextInput
                     type="text"
@@ -348,7 +354,7 @@ function Index() {
                       validAddress === false ? (
                         <React.Fragment>
                           <p className="text-xs text-end w-full text-red-500">
-                            Địa chỉ không hợp lệ
+                            {t("Địa chỉ không hợp lệ")}
                           </p>
                         </React.Fragment>
                       ) : null
@@ -365,7 +371,7 @@ function Index() {
                       validPhone === false ? (
                         <React.Fragment>
                           <p className="text-xs text-end w-full text-red-500">
-                            Số điện thoại không hợp lệ
+                            {t("Số điện thoại không hợp lệ")}
                           </p>
                         </React.Fragment>
                       ) : null
@@ -383,10 +389,10 @@ function Index() {
                   </div>
                 </div>
               </TabPanel>
-              <TabPanel header="Đổi avatar">
+              <TabPanel header={t("Đổi avatar")}>
                 <div className="flex flex-col justify-center w-9/12 mx-auto">
                   <h1 className="text-center my-6 font-medium uppercase">
-                    Đổi avatar
+                    {t("Đổi avatar")}
                   </h1>
                   <TextInput
                     color={validUrl === true ? "success" : "gray"}
@@ -398,8 +404,7 @@ function Index() {
                       validUrl === false ? (
                         <React.Fragment>
                           <p className="text-xs text-end w-full text-red-500">
-                            URL avatar không hợp lệ. URL phải có đuôi là jpg
-                            jpeg png webp avif gif svg
+                           {t("URL avatar không hợp lệ. URL phải có đuôi là jpg jpeg png webp avif gif svg")}
                           </p>
                         </React.Fragment>
                       ) : null
@@ -420,7 +425,7 @@ function Index() {
               <TabPanel header="2FA">
                 <div className="flex flex-col items-center justify-center w-9/12 mx-auto">
                   <h1 className="text-center my-6 font-medium uppercase">
-                    Xác thực 2 yếu tố
+                    {t("Xác thực 2 yếu tố")}
                   </h1>
                   {!is2faEnabled ? (
                     <>
@@ -442,11 +447,10 @@ function Index() {
                   ) : (
                     <div className="mt-6">
                       <p className="text-center">
-                        Xác thực 2 yếu tố đã được bật
+                        {t("Xác thực 2 yếu tố đã được bật")}
                       </p>
                       <p className="text-center my-3">
-                        Vui lòng kiểm tra email trong trương hợp bạn quên mã bí
-                        mật này
+                        {t("Vui lòng kiểm tra email trong trương hợp bạn quên mã bí mật này")}
                       </p>
                       {qrCode === " " ? (
                         ""
@@ -466,7 +470,7 @@ function Index() {
                             }}
                           />
                           <p className="text-center">
-                            Vui lòng ghi nhớ mã bí mật này
+                            {t("Vui lòng ghi nhớ mã bí mật này")}
                           </p>
                         </div>
                       )}
@@ -491,5 +495,11 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
-
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 export default Index;

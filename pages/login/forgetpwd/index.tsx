@@ -8,12 +8,14 @@ import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 function Index() {
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
-
+  const { t } = useTranslation("");
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -44,8 +46,8 @@ function Index() {
   return (
     <div className="h-auto mb-10">
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
-          Trang chủ
+        <Breadcrumb.Item href={router.locale === "en" ? "/en" : "/"} icon={HiHome}>
+        {t("Trang chủ")}
           <ToastContainer />
         </Breadcrumb.Item>
         <Breadcrumb.Item
@@ -53,14 +55,14 @@ function Index() {
         //   icon={HiOutlineShoppingBag}
         //   className="capitalize"
         >
-          Đặt lại mật khẩu
+          {t("Đặt lại mật khẩu")}
         </Breadcrumb.Item>
       </Breadcrumb>
       {success === false ? (
         <div className="flex flex-col items-center mt-10 gap-2 w-full md:w-11/12 lg:w-9/12 mx-auto">
-          <h1 className="text-2xl font-medium uppercase">ĐẶT LẠI MẬT KHẨU</h1>
+          <h1 className="text-2xl font-medium uppercase">{t("ĐẶT LẠI MẬT KHẨU")}</h1>
           <p className="text-center">
-            Bạn quên mật khẩu? Nhập địa chỉ email để lấy lại mật khẩu qua email.
+            {t("Bạn quên mật khẩu? Nhập địa chỉ email để lấy lại mật khẩu qua email.")}
           </p>
 
           <div className="w-9/12">
@@ -83,16 +85,16 @@ function Index() {
               className="bg-green-600 uppercase hover:bg-green-800 w-1/2"
               onClick={handleSubmit}
             >
-              Lấy lại mật khẩu
+              {t("Lấy lại mật khẩu")}
             </Button>
 
             <div className="flex gap-1 items-center text-sm">
-              <p className="uppercase">quay lại</p>
+              <p className="uppercase">{t("quay lại")}</p>
               <Link
                 className="text-green-600 uppercase font-medium"
                 href={"/login"}
               >
-                Tại đây
+                {t("Tại đây")}
               </Link>
             </div>
           </div>
@@ -100,19 +102,17 @@ function Index() {
       ) : (
         <section className="text-base text-center capitalize font-medium my-20">
           <h1>
-            Chúng tôi đã gửi email xác nhận cho bạn, vui lòng kiểm tra email và
-            làm theo hướng dẫn
+            {t("Chúng tôi đã gửi email xác nhận cho bạn, vui lòng kiểm tra email và làm theo hướng dẫn")}
           </h1>
           <p>
-            {" "}
-            hệ thống sẽ chuyển bạn tới trang chủ trong vòng 5 giây nữa hoặc
+            {t("hệ thống sẽ chuyển bạn tới trang chủ trong vòng 5 giây nữa hoặc ")}
           </p>
           <p className="mt-6">
-            Bấm vào
+            {t("Bấm vào")}
             <Link className="text-green-600 underline" href="/login">
-              {" đây "}
+              {t(" đây ")}
             </Link>
-            để tới trang chủ ngay lập tức
+            {t("để tới trang chủ ngay lập tức")}
           </p>
         </section>
       )}
@@ -129,5 +129,11 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
-
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 export default Index;

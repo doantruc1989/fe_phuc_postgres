@@ -1,13 +1,16 @@
 import axios from "axios";
 import { Rating } from "flowbite-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { HiStar } from "react-icons/hi";
 import Carousel from "react-multi-carousel";
 
 function HeroProps({ props }: any) {
   const [fruits, setFruits] = useState([] as any);
-
+  const { t } = useTranslation("");
+  const router = useRouter();
   useEffect(() => {
     try {
       axios
@@ -64,10 +67,16 @@ function HeroProps({ props }: any) {
             key={product?.id}
             className="rounded-lg mx-1 border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
           >
-            <Link href={"/product/" + product.slug}>
+            <Link
+              href={
+                router.locale === "en"
+                  ? `/en/product/${product.slug}`
+                  : `/product/${product.slug}`
+              }
+            >
               <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                 <HiStar className="font-medium text-sm" />
-                <p>{product?.brand}</p>
+                <p>{router.locale === "en" ? product?.productEn?.enBrand :product?.brand}</p>
               </div>
               <div className="overflow-hidden">
                 <img
@@ -79,7 +88,7 @@ function HeroProps({ props }: any) {
 
               <div className="cursor-pointer text-center text-xs">
                 <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-8">
-                  {product?.productName.substring(0, 30) + "..."}
+                {router.locale === "en" ? `${product?.productEn?.enName.substring(0, 30)}...` : `${product?.productName.substring(0, 30)}...`}
                 </p>
                 <div className="flex gap-3 items-center justify-center mt-1">
                   <div className="flex gap-1 pr-1 items-center border-r border-gray-200">
@@ -89,7 +98,7 @@ function HeroProps({ props }: any) {
                     </Rating>
                   </div>
                   <div className="flex gap-1 items-center">
-                    <p>Đã bán</p>
+                    <p>{t("Đã bán")}</p>
                     <p className="font-medium">{product?.sold}</p>
                   </div>
                 </div>

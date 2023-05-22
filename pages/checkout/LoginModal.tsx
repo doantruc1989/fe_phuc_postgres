@@ -1,16 +1,18 @@
 import { Dialog, Transition } from "@headlessui/react";
 import axios from "axios";
 import { Button, TextInput } from "flowbite-react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
 function LoginModal({ isLogin, setIsLogin }: any) {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [success, setSuccess] = useState(false);
-
+  const { t } = useTranslation("");
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -68,11 +70,10 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                   {success === false ? (
                     <div className="flex flex-col items-center mt-10 gap-2 w-full md:w-11/12 lg:w-9/12 mx-auto">
                       <h1 className="text-2xl font-medium uppercase">
-                        Đăng nhập tài khoản
+                        {t("Đăng nhập tài khoản")}
                       </h1>
                       <p className="text-center">
-                        Đăng nhập để mua hàng và sử dụng những tiện ích mới nhất
-                        từ <span className="font-medium">phucfresh.vn</span>
+                        {t("Đăng nhập để mua hàng và sử dụng những tiện ích mới nhất từ ")}<span className="font-medium">phucfresh.vn</span>
                       </p>
                       <div className="flex gap-4 mt-6">
                         <Link href={"http://localhost:3007/auth/facebook"}>
@@ -110,7 +111,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                         </div>
                         <div className="mt-5">
                           <p className="text-sm font-medium uppercase mb-2">
-                            Mật khẩu:
+                            {t("Mật khẩu:")}
                           </p>
                           <TextInput
                             className="w-full"
@@ -129,25 +130,25 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                           className="bg-green-600 uppercase hover:bg-green-800 w-1/2"
                           onClick={handleSubmit}
                         >
-                          Đăng nhập
+                          {t("Đăng nhập")}
                         </Button>
 
                         <Link
                           className="text-sm uppercase text-green-600 font-medium mt-1"
                           href={"/login/forgetpwd"}
                         >
-                          Quên mật khẩu?
+                          {t("Quên mật khẩu?")}
                         </Link>
 
                         <div className="flex gap-1 items-center text-sm">
                           <p className="uppercase">
-                            BẠN CHƯA CÓ TÀI KHOẢN. ĐĂNG KÝ
+                            {t("BẠN CHƯA CÓ TÀI KHOẢN. ĐĂNG KÝ")}
                           </p>
                           <Link
                             className="text-green-600 uppercase font-medium"
                             href={"/register"}
                           >
-                            Tại đây
+                            {t("Tại đây")}
                           </Link>
                         </div>
                       </div>
@@ -155,7 +156,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                   ) : (
                     <section className="text-base text-center capitalize font-medium my-20">
                       <h1>
-                        Bạn đã đăng nhập thành công
+                        {t("Bạn đã đăng nhập thành công")}
                       </h1>
                     </section>
                   )}
@@ -167,6 +168,15 @@ function LoginModal({ isLogin, setIsLogin }: any) {
       </Dialog>
     </Transition>
   );
+}
+
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }
 
 export default LoginModal;

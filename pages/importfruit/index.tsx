@@ -5,6 +5,9 @@ import Layout from "../components/Layout";
 import { HiHome } from "react-icons/hi";
 import axios from "axios";
 import Link from "next/link";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 function Index() {
   const [vnFruits, setVnFruits] = useState([] as any);
@@ -16,7 +19,9 @@ function Index() {
   const [sortField, setSortField] = useState("");
   const [fromPrice, setFromPrice] = useState("");
   const [toPrice, setToPrice] = useState("");
-
+  const router = useRouter();
+  const { t } = useTranslation("");
+  
   useEffect(() => {
     try {
       axios
@@ -35,19 +40,22 @@ function Index() {
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
-          Trang chủ
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
+          {t("Trang chủ")}
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Trái cây nhập khẩu</Breadcrumb.Item>
+        <Breadcrumb.Item>{t("Trái cây nhập khẩu")}</Breadcrumb.Item>
       </Breadcrumb>
       <div className="md:grid md:grid-cols-4 md:gap-6 w-full md:w-11/12 lg:w-9/12 mx-auto mb-6">
         <div className="col-start-1 col-end-2 hidden md:block">
           <div className="mt-6 border border-gray-200">
             <h1 className="bg-gray-200 mx-1 mt-1 pl-2 uppercase font-medium py-2">
-              tìm theo
+              {t("tìm theo")}
             </h1>
             <div className="pl-1 mt-2">
-              <p className="font-medium text-sm">Loại</p>
+              <p className="font-medium text-sm">{t("Loại")}</p>
               <div className="mt-3">
                 <button
                   className={`${
@@ -66,7 +74,7 @@ function Index() {
                     setSortField("cam");
                   }}
                 >
-                  Cam
+                  {t("Cam")}
                 </button>
 
                 <button
@@ -106,7 +114,7 @@ function Index() {
                     setSortField("dâu");
                   }}
                 >
-                  Dâu
+                  {t("Dâu")}
                 </button>
 
                 <button
@@ -126,7 +134,7 @@ function Index() {
                     setSortField("dưa");
                   }}
                 >
-                  Dưa lưới
+                  {t("Dưa lưới")}
                 </button>
 
                 <button
@@ -146,7 +154,7 @@ function Index() {
                     setSortField("lê");
                   }}
                 >
-                  Lê
+                  {t("Lê")}
                 </button>
 
                 <button
@@ -166,7 +174,7 @@ function Index() {
                     setSortField("nho");
                   }}
                 >
-                  Nho
+                  {t("Nho")}
                 </button>
 
                 <button
@@ -186,7 +194,7 @@ function Index() {
                     setSortField("quýt");
                   }}
                 >
-                  Quýt
+                  {t("Quýt")}
                 </button>
 
                 <button
@@ -206,7 +214,7 @@ function Index() {
                     setSortField("táo");
                   }}
                 >
-                  Táo
+                  {t("Táo")}
                 </button>
 
                 <button
@@ -226,7 +234,7 @@ function Index() {
                     setSortField("thanh trà");
                   }}
                 >
-                  Thanh trà
+                  {t("Thanh trà")}
                 </button>
 
                 <button
@@ -246,7 +254,7 @@ function Index() {
                     setSortField("tắc");
                   }}
                 >
-                  Tắc
+                  {t("Tắc")}
                 </button>
 
                 <button
@@ -266,11 +274,11 @@ function Index() {
                     setSortField("việt quất");
                   }}
                 >
-                  Việt quất
+                  {t("Việt quất")}
                 </button>
               </div>
 
-              <p className="font-medium text-sm mt-3">Thương hiệu</p>
+              <p className="font-medium text-sm mt-3">{t("Thương hiệu")}</p>
               <div className="mt-3">
                 <button
                   className={`${
@@ -289,7 +297,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Hàn Quốc
+                  {t("Hàn Quốc")}
                 </button>
 
                 <button
@@ -309,7 +317,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Mỹ
+                  {t("Mỹ")}
                 </button>
 
                 <button
@@ -329,7 +337,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Nam Phi
+                  {t("Nam Phi")}
                 </button>
 
                 <button
@@ -349,7 +357,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Úc
+                  {t("Úc")}
                 </button>
                 <button
                   className={`${
@@ -388,7 +396,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Pháp
+                  {t("Pháp")}
                 </button>
 
                 <button
@@ -408,7 +416,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Thái Lan
+                  {t("Thái Lan")}
                 </button>
 
                 <button
@@ -428,11 +436,11 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Đài Loan
+                  {t("Đài Loan")}
                 </button>
               </div>
 
-              <p className="font-medium text-sm mt-3">Giá sản phẩm</p>
+              <p className="font-medium text-sm mt-3">{t("Giá sản phẩm")}</p>
               <div className="mt-3">
                 <button
                   className={`${
@@ -451,7 +459,7 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Giá dưới 100.000đ
+                  {t("Giá dưới ")}100.000đ
                 </button>
                 <button
                   className={`${
@@ -548,11 +556,11 @@ function Index() {
                     setSortField("");
                   }}
                 >
-                  Giá trên 1.000.000đ
+                  {t("Giá trên ")}1.000.000đ
                 </button>
               </div>
 
-              <p className="font-medium text-sm mt-4">Loại</p>
+              <p className="font-medium text-sm mt-4">{t("Loại")}</p>
               <div className="mt-3 mb-6">
                 <button
                   className="ml-1 mb-2 px-2 rounded-xl border border-gray-200 hover:bg-green-600 hover:text-white bg-white w-fit"
@@ -560,7 +568,7 @@ function Index() {
                     e.preventDefault();
                   }}
                 >
-                  Hộp quà
+                  {t("Hộp quà")}
                 </button>
 
                 <button
@@ -569,7 +577,7 @@ function Index() {
                     e.preventDefault();
                   }}
                 >
-                  Thực phẩm nhập khẩu
+                  {t("Thực phẩm nhập khẩu")}
                 </button>
 
                 <button
@@ -578,7 +586,7 @@ function Index() {
                     e.preventDefault();
                   }}
                 >
-                  Trái cây Việt Nam
+                  {t("Trái cây Việt Nam")}
                 </button>
               </div>
             </div>
@@ -586,10 +594,10 @@ function Index() {
         </div>
 
         <div className="md:col-start-2 md:col-end-5 mt-6">
-          <h1 className="font-medium uppercase">Trái cây nhập khẩu</h1>
+          <h1 className="font-medium uppercase">{t("Trái cây nhập khẩu")}</h1>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:flex gap-4 items-center mt-3 border-b pb-3">
-            <p className="font-medium">Xếp theo:</p>
+            <p className="font-medium">{t("Xếp theo:")}</p>
 
             <div className="flex items-center">
               <input
@@ -608,7 +616,7 @@ function Index() {
                 htmlFor="default-radio-1"
                 className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
               >
-                Tên A-Z
+                {t("Tên ")}A-Z
               </label>
             </div>
 
@@ -628,7 +636,7 @@ function Index() {
                 htmlFor="default-radio-2"
                 className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
               >
-                Tên Z-A
+                {t("Tên ")}Z-A
               </label>
             </div>
 
@@ -648,7 +656,7 @@ function Index() {
                 htmlFor="default-radio-3"
                 className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
               >
-                Hàng mới
+                {t("Hàng mới")}
               </label>
             </div>
 
@@ -668,7 +676,7 @@ function Index() {
                 htmlFor="default-radio-4"
                 className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
               >
-                Giá thấp đến cao
+                {t("Giá thấp đến cao")}
               </label>
             </div>
 
@@ -688,7 +696,7 @@ function Index() {
                 htmlFor="default-radio-5"
                 className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
               >
-                Giá cao xuống thấp
+                {t("Giá cao xuống thấp")}
               </label>
             </div>
           </div>
@@ -701,18 +709,26 @@ function Index() {
                       key={fruit.id}
                       className="rounded-md border hover:shadow-xl border-gray-200 shadow-sm bg-white"
                     >
-                      <Link href={"/product/" + fruit.slug}>
+                      <Link  href={
+                          router.locale === "en"
+                            ? `/en/product/${fruit.slug}`
+                            : `/product/${fruit.slug}`
+                        }>
                         <div className="overflow-hidden">
-
-                        <img
-                          src={fruit.image}
-                          className="rounded-t-md cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
-                          alt="..."
-                        />
+                          <img
+                            src={fruit.image}
+                            className="rounded-t-md cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
+                            alt="..."
+                          />
                         </div>
                         <div className="cursor-pointer text-center text-xs">
                           <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-8">
-                            {fruit.productName.substring(0, 37) + "..."}
+                          {router.locale === "en"
+                              ? `${fruit?.productEn?.enName.substring(
+                                  0,
+                                  30
+                                )}...`
+                              : `${fruit?.productName.substring(0, 30)}...`}
                           </p>
                           <div className="flex gap-3 items-center justify-center mt-1">
                             <div className="flex gap-1 pr-1 items-center border-r border-gray-200">
@@ -722,7 +738,7 @@ function Index() {
                               </Rating>
                             </div>
                             <div className="flex gap-1 items-center">
-                              <p>Đã bán</p>
+                              <p>{t("Đã bán")}</p>
                               <p className="font-medium">{fruit.sold}</p>
                             </div>
                           </div>
@@ -769,5 +785,13 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

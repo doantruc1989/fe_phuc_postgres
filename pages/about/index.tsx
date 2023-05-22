@@ -1,3 +1,4 @@
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React, { ReactElement } from 'react'
 import { CartProvider } from 'react-use-cart';
 import Layout from '../components/Layout';
@@ -19,5 +20,12 @@ Index.getLayout = function getLayout(page: ReactElement) {
       </CartProvider>
     );
   };
+  export async function getStaticProps({ locale }: any) {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
+    };
+  }
   
 export default Index

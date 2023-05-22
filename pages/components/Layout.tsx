@@ -4,17 +4,18 @@ import Footera from "./Footer";
 import TopBar from "./TopBar";
 import { Sidebar } from "primereact/sidebar";
 import Link from "next/link";
-import { HiChevronDown } from "react-icons/hi";
-import axios from "axios";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 // import "~slick-carousel/slick/slick.css"; 
 // import "~slick-carousel/slick/slick-theme.css";
 import SidebarComp from "./SidebarComp";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
+  const { t } = useTranslation('');
 
   const prop = {
     title: "tiki trang chủ home page tìm kiếm sản phẩm sales off giá rẻ",
@@ -40,13 +41,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   className="hover:bg-green-100 px-3 py-2 rounded-lg"
                   href={"/login"}
                 >
-                  Đăng nhập
+                  {t("Đăng nhập")}
                 </Link>
                 <Link
                   className="hover:bg-green-100 px-3 py-2 rounded-lg"
                   href={"/register"}
                 >
-                  Đăng ký
+                  {t("Đăng ký")}
                 </Link>
               </div>
             </div>
@@ -80,5 +81,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </React.Fragment>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Layout;

@@ -16,7 +16,7 @@ import Hero13 from "./hero/Hero13";
 import Hero14 from "./hero/Hero14";
 import Hero15 from "./hero/Hero15";
 import Hero16 from "./hero/Hero16";
-import useAuth from "../../other/AuthContext";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Homepage = () => {
   return (
@@ -44,5 +44,13 @@ const Homepage = () => {
     </>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Homepage;

@@ -1,14 +1,20 @@
 import { Breadcrumb } from "flowbite-react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
 import { HiHome } from "react-icons/hi";
 import { CartProvider } from "react-use-cart";
 import Layout from "../../components/Layout";
 
 function Index() {
+  const router = useRouter();
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
           Trang chủ
         </Breadcrumb.Item>
         <Breadcrumb.Item>Thanh toán</Breadcrumb.Item>
@@ -56,16 +62,28 @@ function Index() {
           toán bằng cách chuyển khoản qua ngân hàng trước cho chúng tôi để chúng
           tôi giao hàng đúng hẹn tại đúng địa chỉ như đã cam kết, Về thủ tục
           chuyển khoản, quí khách thực hiện thao tác như sau: Nhắn tin cho số
-          hotline <span className="font-medium">0949119338</span> với nội dung: Thanh toán cho đơn hàng #... - Tên
-          sản phẩm...- Thông qua ngân hàng... - Số tiền...
+          hotline <span className="font-medium">0949119338</span> với nội dung:
+          Thanh toán cho đơn hàng #... - Tên sản phẩm...- Thông qua ngân hàng...
+          - Số tiền...
         </p>
         <p className="indent-8">Thông tin tài khoản:</p>
         <p className="indent-8">Ngân hàng Vietcombank</p>
-        <p className="indent-8">STK: <span className="font-medium">0201000225200</span></p>
+        <p className="indent-8">
+          STK: <span className="font-medium">0201000225200</span>
+        </p>
         <p className="indent-8">CN Ha Tinh</p>
         <p className="indent-8">Chủ tài khoản: LE THI PHUC</p>
-        <p className="indent-8">Nhân viên Phuc Fresh nhận được tiền sẽ liên hệ lại cho khách hàng và bắt đầu đặt đơn hàng.</p>
-        <p className="indent-8">Nếu trong vòng 12h quí khách không nhận được liên hệ lại thì vui lòng gửi mail đến địa chỉ: <span className="font-medium">hotro@phucfresh.vn</span> hoặc gọi điện số hotline <span className="font-medium">0949119338</span> để chúng tôi xác nhận lại với ngân hàng.</p>
+        <p className="indent-8">
+          Nhân viên Phuc Fresh nhận được tiền sẽ liên hệ lại cho khách hàng và
+          bắt đầu đặt đơn hàng.
+        </p>
+        <p className="indent-8">
+          Nếu trong vòng 12h quí khách không nhận được liên hệ lại thì vui lòng
+          gửi mail đến địa chỉ:{" "}
+          <span className="font-medium">hotro@phucfresh.vn</span> hoặc gọi điện
+          số hotline <span className="font-medium">0949119338</span> để chúng
+          tôi xác nhận lại với ngân hàng.
+        </p>
       </div>
     </div>
   );
@@ -80,5 +98,13 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

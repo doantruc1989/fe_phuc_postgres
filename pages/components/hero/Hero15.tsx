@@ -1,8 +1,10 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
 function Hero15() {
+  const { t } = useTranslation("");
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 968 },
@@ -23,7 +25,7 @@ function Hero15() {
   return (
     <div className="my-12">
       <h1 className="text-3xl uppercase font-medium mt-3">
-        ĐỐI TÁC - KHÁCH HÀNG
+          {t("ĐỐI TÁC")} - {t("KHÁCH HÀNG")}
       </h1>
 
       <div className="mt-6">

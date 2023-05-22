@@ -12,6 +12,8 @@ import { toast, ToastContainer } from "react-toastify";
 
 import { useRouter } from "next/router";
 import axios from "../../other/axios";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 function Index() {
   const [email, setEmail] = useState("");
@@ -23,6 +25,7 @@ function Index() {
   const [user, setUser] = useState([] as any);
   const [is2faSuccess, setIs2faSuccess] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation("");
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -80,20 +83,20 @@ function Index() {
   return (
     <div className="h-auto mb-10">
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href="/" icon={HiHome}>
-          Trang chủ
+        <Breadcrumb.Item href={router.locale === "en" ? "/en" : "/"} icon={HiHome}>
+        {t("Trang chủ")}
           <ToastContainer />
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Đăng nhập tài khoản</Breadcrumb.Item>
+        <Breadcrumb.Item>{t("Đăng nhập tài khoản")}</Breadcrumb.Item>
       </Breadcrumb>
 
       {success === false ? (
         <div className="flex flex-col items-center mt-10 gap-2 w-full md:w-11/12 lg:w-9/12 mx-auto">
           <h1 className="text-2xl font-medium uppercase">
-            Đăng nhập tài khoản
+            {t("Đăng nhập tài khoản")}
           </h1>
           <p className="text-center">
-            Đăng nhập để mua hàng và sử dụng những tiện ích mới nhất từ{" "}
+            {t("Đăng nhập để mua hàng và sử dụng những tiện ích mới nhất từ ")}
             <span className="font-medium">phucfresh.vn</span>
           </p>
           <div className="flex gap-4 mt-6">
@@ -129,7 +132,7 @@ function Index() {
               />
             </div>
             <div className="mt-5">
-              <p className="text-sm font-medium uppercase mb-2">Mật khẩu:</p>
+              <p className="text-sm font-medium uppercase mb-2">{t("Mật khẩu:")}</p>
               <TextInput
                 className="w-full"
                 placeholder="Nhập Mật khẩu"
@@ -147,23 +150,23 @@ function Index() {
               className="bg-green-600 uppercase hover:bg-green-800 w-1/2"
               onClick={handleSubmit}
             >
-              Đăng nhập
+              {t("Đăng nhập")}
             </Button>
 
             <Link
               className="text-sm uppercase text-green-600 font-medium mt-1"
               href={"/login/forgetpwd"}
             >
-              Quên mật khẩu?
+              {t("Quên mật khẩu?")}
             </Link>
 
             <div className="flex gap-1 items-center text-sm">
-              <p className="uppercase">BẠN CHƯA CÓ TÀI KHOẢN. ĐĂNG KÝ</p>
+              <p className="uppercase">{t("BẠN CHƯA CÓ TÀI KHOẢN. ĐĂNG KÝ")}</p>
               <Link
                 className="text-green-600 uppercase font-medium"
                 href={"/register"}
               >
-                Tại đây
+                {t("Tại đây")}
               </Link>
             </div>
           </div>
@@ -171,15 +174,14 @@ function Index() {
       ) : is2faEnabled === false ? (
         <section className="text-base text-center capitalize font-medium my-20">
           <h1>
-            Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá
-            nhân của bạn sau 5 giây nữa. Hoặc{" "}
+            {t("Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc ")}
           </h1>
           <p className="mt-6">
-            Bấm vào
+            {t("Bấm vào")}
             <Link className="text-green-600 underline" href="/">
-              {" đây "}
+             {t(" đây ")}
             </Link>
-            để tới trang chủ ngay lập tức
+            {t("để tới trang chủ ngay lập tức")}
           </p>
         </section>
       ) : (
@@ -206,15 +208,14 @@ function Index() {
           ) : (
             <section className="text-base text-center capitalize font-medium my-20">
               <h1>
-                Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá
-                nhân của bạn sau 5 giây nữa. Hoặc{" "}
+                {t("Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc ")}
               </h1>
               <p className="mt-6">
-                Bấm vào
+                {t("Bấm vào")}
                 <Link className="text-green-600 underline" href="/">
-                  {" đây "}
+                  {t(" đây ")}
                 </Link>
-                để tới trang chủ ngay lập tức
+                {t("để tới trang chủ ngay lập tức")}
               </p>
             </section>
           )}
@@ -233,5 +234,13 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

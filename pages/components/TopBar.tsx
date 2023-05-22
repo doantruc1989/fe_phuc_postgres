@@ -13,6 +13,9 @@ import Link from "next/link";
 import { TextInput } from "flowbite-react";
 import axios from "axios";
 import { useCart } from "react-use-cart";
+import { useTranslation } from "react-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 
 export default function TopBar({ visible, setVisible }: any) {
   const { totalItems, isEmpty } = useCart();
@@ -25,6 +28,9 @@ export default function TopBar({ visible, setVisible }: any) {
   const [user, setUser] = useState([] as any);
   const timeout: any = useRef();
   const inputRef: any = useRef();
+  const { t } = useTranslation("");
+  const router = useRouter();
+
   useEffect(() => {
     const stored = localStorage.getItem("user");
     const user = stored ? JSON.parse(stored) : "";
@@ -114,14 +120,15 @@ export default function TopBar({ visible, setVisible }: any) {
                   alt="avatar"
                 />
                 <p className="text-xs uppercase">
-                  {"xin chào, " + user.username}
+                  {t("xin chào, ")}
+                  {user.username}
                 </p>
               </div>
             </Link>
             <Link href={"/logout"}>
               <div className="flex gap-1 items-center">
                 <HiLogout />
-                <p className="text-xs">ĐĂNG XUẤT</p>
+                <p className="text-xs">{t("Đăng xuất")}</p>
               </div>
             </Link>
           </div>
@@ -133,13 +140,13 @@ export default function TopBar({ visible, setVisible }: any) {
             <Link href={"/login"}>
               <div className="flex gap-1 items-center border-r border-white pr-2">
                 <HiOutlineLogin />
-                <p className="text-xs">ĐĂNG NHẬP</p>
+                <p className="text-xs">{t("Đăng nhập")}</p>
               </div>
             </Link>
             <Link href={"/register"}>
               <div className="flex gap-1 items-center">
                 <HiOutlineUserAdd />
-                <p className="text-xs">ĐĂNG KÝ</p>
+                <p className="text-xs">{t("Đăng ký")}</p>
               </div>
             </Link>
           </div>
@@ -250,7 +257,7 @@ export default function TopBar({ visible, setVisible }: any) {
                   key={category.id}
                   href={category.path}
                 >
-                  {category.category}
+                  {router.locale === "en" ? category.enName : category.category}
                 </Link>
               );
             })
@@ -258,4 +265,12 @@ export default function TopBar({ visible, setVisible }: any) {
       </div>
     </div>
   );
+}
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }

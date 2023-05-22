@@ -1,8 +1,10 @@
 import axios from "axios";
 import { Button, Label, Select, TextInput } from "flowbite-react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { HiUserCircle, HiOutlineChevronLeft } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,6 +46,7 @@ function Index() {
   const [isUpdate, setIsUpdate] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation("");
 
   useEffect(() => {
     setValidEmail(EMAIL_REGEX.test(email));
@@ -188,7 +191,7 @@ function Index() {
             <div className="grid lg:grid-cols-2 gap-6 mt-6">
               <div>
                 <div className="flex justify-between items-center">
-                  <h1 className="font-bold">Thông tin mua hàng</h1>
+                  <h1 className="font-bold">{t("Thông tin mua hàng")}</h1>
                   <ToastContainer />
                   {users?.email !== undefined ? null : (
                     <Link
@@ -200,14 +203,14 @@ function Index() {
                       }}
                     >
                       <HiUserCircle className="text-2xl" />
-                      <p>Đăng nhập</p>
+                      <p>{t("Đăng nhập")}</p>
                     </Link>
                   )}
                 </div>
                 {users?.email !== undefined ? (
                   <div className="p-2 bg-white rounded-lg flex flex-col gap-2">
                     <div className="flex justify-between gap-2 font-medium">
-                      <h1 className="underline">Giao tới:</h1>
+                      <h1 className="underline">{t("Giao tới:")}</h1>
                       <Link
                         href="#"
                         className="text-green-600 cursor-pointer text-xs"
@@ -216,7 +219,7 @@ function Index() {
                           setIsChange(!isChange);
                         }}
                       >
-                        thay đổi
+                        {t("thay đổi")}
                       </Link>
                     </div>
                     <div className="border rounded-md py-2 border-green-600">
@@ -229,7 +232,7 @@ function Index() {
                     {isChange ? (
                       <div className="mt-3">
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">Số điện thoại:</Label>
+                          <Label className="w-1/3">{t("Số điện thoại:")}</Label>
                           <div className="w-full">
                             <TextInput
                               className="w-full"
@@ -244,7 +247,7 @@ function Index() {
                           </div>
                         </div>
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">Địa chỉ cụ thể:</Label>
+                          <Label className="w-1/3">{t("Địa chỉ cụ thể:")}</Label>
                           <div className="w-full">
                             <TextInput
                               className="w-full"
@@ -259,7 +262,7 @@ function Index() {
                           </div>
                         </div>
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">Tỉnh/Thành:</Label>
+                          <Label className="w-1/3">{t("Tỉnh/Thành:")}</Label>
                           <Select
                             className="w-full"
                             id="state"
@@ -282,7 +285,7 @@ function Index() {
                             }}
                           >
                             <option defaultChecked value={""}>
-                              --- Vui lòng chọn ---
+                              {t("--- Vui lòng chọn ---")}
                             </option>
                             {provinces
                               ? provinces.map((item: any, index: any) => {
@@ -297,7 +300,7 @@ function Index() {
                         </div>
 
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">Quận/Huyện:</Label>
+                          <Label className="w-1/3">{t("Quận/Huyện:")}</Label>
                           <Select
                             disabled={city === "" ? true : false}
                             className="w-full"
@@ -323,7 +326,7 @@ function Index() {
                             }}
                           >
                             <option defaultChecked value={""}>
-                              --- Vui lòng chọn ---
+                              {t("--- Vui lòng chọn ---")}
                             </option>
                             {proDictricts
                               ? proDictricts?.district?.map(
@@ -343,7 +346,7 @@ function Index() {
                         </div>
 
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">Phường/Xã:</Label>
+                          <Label className="w-1/3">{t("Phường/Xã:")}</Label>
                           <Select
                             disabled={district === "" ? true : false}
                             className="w-full"
@@ -356,7 +359,7 @@ function Index() {
                             }}
                           >
                             <option defaultChecked value={""}>
-                              --- Vui lòng chọn ---
+                              {t("--- Vui lòng chọn ---")}
                             </option>
                             {proWards
                               ? proWards.map((item: any, index: any) => {
@@ -376,7 +379,7 @@ function Index() {
                             disabled={!isUpdate}
                             onClick={handleUpdateAdd}
                           >
-                            Cập nhật
+                            {t("Cập nhật")}
                           </Button>
                         </div>
                       </div>
@@ -396,7 +399,7 @@ function Index() {
                             validEmail === false ? (
                               <React.Fragment>
                                 <p className="text-xs text-end w-full text-red-500">
-                                  Email không hợp lệ
+                                  {t("Email không hợp lệ")}
                                 </p>
                               </React.Fragment>
                             ) : null
@@ -408,7 +411,7 @@ function Index() {
                       </div>
                     </div>
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">Họ và tên:</Label>
+                      <Label className="w-1/3">{t("Họ và tên:")}</Label>
                       <div className="w-full">
                         <TextInput
                           className="w-full"
@@ -420,7 +423,7 @@ function Index() {
                             validName === false ? (
                               <React.Fragment>
                                 <p className="text-xs text-end w-full text-red-500">
-                                  Họ và tên không hợp lệ
+                                  {t("Họ và tên không hợp lệ")}
                                 </p>
                               </React.Fragment>
                             ) : null
@@ -432,7 +435,7 @@ function Index() {
                       </div>
                     </div>
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">Số điện thoại:</Label>
+                      <Label className="w-1/3">{t("Số điện thoại:")}</Label>
                       <div className="w-full">
                         <TextInput
                           className="w-full"
@@ -444,7 +447,7 @@ function Index() {
                             validPhone === false ? (
                               <React.Fragment>
                                 <p className="text-xs text-end w-full text-red-500">
-                                  Số điện thoại không hợp lệ
+                                  {t("Số điện thoại không hợp lệ")}
                                 </p>
                               </React.Fragment>
                             ) : null
@@ -456,7 +459,7 @@ function Index() {
                       </div>
                     </div>
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">Địa chỉ cụ thể:</Label>
+                      <Label className="w-1/3">{t("Địa chỉ cụ thể:")}</Label>
                       <div className="w-full">
                         <TextInput
                           className="w-full"
@@ -468,7 +471,7 @@ function Index() {
                             validAddress === false ? (
                               <React.Fragment>
                                 <p className="text-xs text-end w-full text-red-500">
-                                  Địa chỉ không hợp lệ
+                                  {t("Địa chỉ không hợp lệ")}
                                 </p>
                               </React.Fragment>
                             ) : null
@@ -480,7 +483,7 @@ function Index() {
                       </div>
                     </div>
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">Tỉnh/Thành:</Label>
+                      <Label className="w-1/3">{t("Tỉnh/Thành:")}</Label>
                       <Select
                         className="w-full mt-2"
                         id="state"
@@ -503,7 +506,7 @@ function Index() {
                         }}
                       >
                         <option defaultChecked value={""}>
-                          --- Vui lòng chọn ---
+                          {t("--- Vui lòng chọn ---")}
                         </option>
                         {provinces
                           ? provinces.map((item: any, index: any) => {
@@ -518,7 +521,7 @@ function Index() {
                     </div>
 
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">Quận/Huyện:</Label>
+                      <Label className="w-1/3">{t("Quận/Huyện:")}</Label>
                       <Select
                         disabled={city === "" ? true : false}
                         className="w-full mt-2"
@@ -544,7 +547,7 @@ function Index() {
                         }}
                       >
                         <option defaultChecked value={""}>
-                          --- Vui lòng chọn ---
+                          --- Vui lòng chọn ---{t("--- Vui lòng chọn ---")}
                         </option>
                         {proDictricts
                           ? proDictricts?.district?.map(
@@ -561,7 +564,7 @@ function Index() {
                     </div>
 
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">Phường/Xã:</Label>
+                      <Label className="w-1/3">{t("Phường/Xã:")}</Label>
                       <Select
                         disabled={district === "" ? true : false}
                         className="w-full mt-2"
@@ -574,7 +577,7 @@ function Index() {
                         }}
                       >
                         <option defaultChecked value={""}>
-                          --- Vui lòng chọn ---
+                          {t("--- Vui lòng chọn ---")}
                         </option>
                         {proWards
                           ? proWards.map((item: any, index: any) => {
@@ -592,7 +595,7 @@ function Index() {
               </div>
 
               <div>
-                <h1 className="font-bold">Vận chuyển</h1>
+                <h1 className="font-bold">{t("Vận chuyển")}</h1>
 
                 <div className="border border-gray-200 rounded-md mt-3">
                   <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
@@ -637,7 +640,7 @@ function Index() {
                         htmlFor="default-radio-2"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Vận chuyển hoả tốc 50.000đ
+                         {t("Vận chuyển hoả tốc ")}50.000đ
                       </label>
                     </div>
 
@@ -649,7 +652,7 @@ function Index() {
                   </div>
                 </div>
 
-                <h1 className="font-bold mt-6">Thanh Toán</h1>
+                <h1 className="font-bold mt-6">{t("Thanh Toán")}</h1>
 
                 <div className="border border-gray-200 rounded-md mt-3">
                   <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
@@ -668,7 +671,7 @@ function Index() {
                         htmlFor="default-radio-1"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Thanh toán khi giao hàng (COD)
+                         {t("Thanh toán khi giao hàng ")}(COD)
                       </label>
                     </div>
 
@@ -694,7 +697,7 @@ function Index() {
                         htmlFor="default-radio-2"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Thanh Toán Trực Tuyến
+                        {t("Thanh Toán Trực Tuyến")}
                       </label>
                     </div>
 
@@ -720,7 +723,7 @@ function Index() {
                         htmlFor="default-radio-3"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Thanh toán qua Ví điện tử MoMo
+                        {t("Thanh toán qua Ví điện tử MoMo")}
                       </label>
                     </div>
 
@@ -743,7 +746,7 @@ function Index() {
                   setSecurityModal(!secutityModal);
                 }}
               >
-                Chính sách bảo mật
+                {t("Chính sách bảo mật")}
               </Link>
               <SecurityModal
                 secutityModal={secutityModal}
@@ -758,7 +761,7 @@ function Index() {
                   setTcModal(!tcModal);
                 }}
               >
-                Điều khoản sử dụng
+                {t("Điều khoản sử dụng")}
               </Link>
               <TcModal tcModal={tcModal} setTcModal={setTcModal} />
             </div>
@@ -767,8 +770,8 @@ function Index() {
 
         <div className="lg:col-start-3 lg:col-end-4 bg-gray-50 border border-gray-300 md:h-screen pb-10">
           <div className="flex justify-end gap-2 font-medium text-xl py-3 border-b border-gray-300 px-3">
-            <h1>Đơn hàng</h1>
-            <p>{"(" + totalItems + " sản phẩm)"}</p>
+            <h1>{t("Đơn hàng")}</h1>
+            <p>({totalItems}  {t("sản phẩm")})</p>
           </div>
 
           <div className="mt-6 text-xs px-6 border-b border-gray-300 pb-3">
@@ -780,7 +783,7 @@ function Index() {
                 >
                   <div className="flex gap-2 items-center w-9/12">
                     <div className="relative">
-                      <Link href={"/product/" + item.id}>
+                      <Link href={"/product/" + item.slug}>
                         <img
                           className="h-10 w-12 rounded-md object-cover"
                           src={item.image}
@@ -794,7 +797,9 @@ function Index() {
 
                     <div className="flex flex-col items-start w-full">
                       <div className="flex gap-1">
-                        <p>{item.productName}</p>
+                        <p>{router.locale === "en"
+                              ? `${item?.productEn?.enName}`
+                              : `${item?.productName}`}</p>
                       </div>
                       <p className="text-sm text-gray-400">descript</p>
                     </div>
@@ -813,24 +818,24 @@ function Index() {
               disabled={true}
               className="w-2/5 bg-green-600 hover:bg-green-800"
             >
-              <p className="md:text-xs lg:text-sm">Áp dụng</p>
+              <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
             </Button>
           </div>
 
           <div className="mt-6 mx-6 border-b border-gray-300 pb-3">
             <div className="flex items-center justify-between">
-              <p>Tạm Tính</p>
+              <p>{t("Tạm tính:")}</p>
               <p>{Intl.NumberFormat().format(cartTotal) + " ₫"}</p>
             </div>
             <div className="flex items-center justify-between mt-3">
-              <p>Phí vận chuyển</p>
+              <p>{t("Phí vận chuyển")}</p>
               <p>{Intl.NumberFormat().format(fee) + " ₫"}</p>
             </div>
           </div>
 
           <div className="mt-3 mx-6">
             <div className="flex items-center justify-between">
-              <p className="text-xl">Tổng cộng</p>
+              <p className="text-xl">{t("Tổng cộng")}</p>
               <p className="text-green-500 text-xl font-medium">
                 {Intl.NumberFormat().format(total) + " ₫"}
               </p>
@@ -839,7 +844,7 @@ function Index() {
               <Link href={"/cart"} className="text-green-500">
                 <div className="flex gap-1 items-center">
                   <HiOutlineChevronLeft />
-                  <p>Quay về giỏ hàng</p>
+                  <p>{t("Quay về giỏ hàng")}</p>
                 </div>
               </Link>
               <Button
@@ -849,7 +854,7 @@ function Index() {
                 className="bg-green-600 w-2/5 hover:bg-green-800"
                 onClick={handlePay}
               >
-                <p className="md:text-xs lg:text-sm">Đặt hàng</p>
+                {t("Đặt hàng")}
               </Button>
             </div>
           </div>
@@ -866,7 +871,7 @@ function Index() {
               setSecurityModal(!secutityModal);
             }}
           >
-            Chính sách bảo mật
+            {t("Chính sách bảo mật")}
           </Link>
           <SecurityModal
             secutityModal={secutityModal}
@@ -881,7 +886,7 @@ function Index() {
               setTcModal(!tcModal);
             }}
           >
-            Điều khoản sử dụng
+            {t("Điều khoản sử dụng")}
           </Link>
           <TcModal tcModal={tcModal} setTcModal={setTcModal} />
         </div>
@@ -897,5 +902,13 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default Index;

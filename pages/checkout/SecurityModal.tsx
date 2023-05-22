@@ -1,4 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { Fragment } from "react";
 
 const SecurityModal = ({ secutityModal, setSecurityModal }: any) => {
@@ -156,5 +157,14 @@ const SecurityModal = ({ secutityModal, setSecurityModal }: any) => {
     </Transition>
   );
 };
+
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default SecurityModal;
