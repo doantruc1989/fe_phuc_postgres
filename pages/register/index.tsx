@@ -33,6 +33,7 @@ function Index() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("");
+  const [redirect, setRedirect] = useState(false)
 
   useEffect(() => {
     setValidEmail(EMAIL_REGEX.test(email));
@@ -84,7 +85,7 @@ function Index() {
           setAdress("");
           setPhone("");
           const timer = setTimeout(() => {
-            router.push("/login");
+            setRedirect(true)
           }, 5000);
           return () => {
             clearTimeout(timer);
@@ -100,6 +101,9 @@ function Index() {
       }
     }
   };
+
+  redirect === true &&
+  router.push("/login", undefined, { locale: router.locale })
 
   return (
     <div className="h-auto mb-16">
@@ -143,7 +147,7 @@ function Index() {
               </Label>
               <TextInput
                 className="w-full"
-                placeholder="Nhập họ và tên"
+                placeholder={router.locale == 'default' ? "Nhập họ và tên" : router.locale == 'en' ? "Fullname" : "フルネーム"}
                 type="text"
                 value={name}
                 onChange={(e: any) => {
@@ -158,7 +162,7 @@ function Index() {
               </Label>
               <TextInput
                 className="w-full"
-                placeholder="Nhập Địa chỉ giao hàng"
+                placeholder={router.locale == 'default' ? "địa chỉ giao hàng" : router.locale == 'en' ? "address" : "アドレス"}
                 type="text"
                 value={address}
                 onChange={(e: any) => {
@@ -179,7 +183,7 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
-                placeholder="Nhập số điện thoại"
+                placeholder={router.locale == 'default' ? "Số điện thoại" : router.locale == 'en' ? "Phone number" : "電話番号"}
                 type="text"
                 value={phone}
                 onChange={(e: any) => {
@@ -194,7 +198,7 @@ function Index() {
               </Label>
               <TextInput
                 className="w-full"
-                placeholder="Nhập địa chỉ Email"
+                placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
                 type="email"
                 value={email}
                 onChange={(e: any) => {
@@ -215,7 +219,7 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
-                placeholder="Nhập Mật khẩu"
+                placeholder={router.locale == 'default' ? "Mật khẩu" : router.locale == 'en' ? "password" : "パスワード"}
                 type="password"
                 value={pwd}
                 onChange={(e: any) => {
@@ -235,7 +239,7 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
-                placeholder="Nhập lại Mật khẩu"
+                placeholder={router.locale == 'default' ? "Nhập lại mật khẩu" : router.locale == 'en' ? "Retype password" : "パスワードを再入力してください"}
                 type="password"
                 value={retypePwd}
                 onChange={(e: any) => {

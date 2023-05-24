@@ -12,10 +12,13 @@ function HeroProps({ props }: any) {
   const { t } = useTranslation("");
   const router = useRouter();
   useEffect(() => {
+    let language = router.locale;
+    if(language === "default") {
+      language = "en"
     try {
       axios
         .get(
-          `http://localhost:3007/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}`
+          `http://localhost:3007/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
         )
         .then((res: any) => {
           setFruits(res.data[0]);
@@ -23,7 +26,19 @@ function HeroProps({ props }: any) {
     } catch (error) {
       console.log(error);
     }
-  }, [props]);
+  }
+  try {
+    axios
+      .get(
+        `http://localhost:3007/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
+      )
+      .then((res: any) => {
+        setFruits(res.data[0]);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+  }, [props, router]);
 
   const responsive = {
     desktop: {
@@ -61,26 +76,28 @@ function HeroProps({ props }: any) {
       deviceType={"desktop"}
       dotListClass="custom-dot-list-style"
     >
-      {fruits?.map((product: any) => {
+      {fruits?.map((item: any) => {
         return (
           <div
-            key={product?.id}
+            key={item?.id}
             className="rounded-lg mx-1 border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
           >
             <Link
               href={
                 router.locale === "en"
-                  ? `/en/product/${product.slug}`
-                  : `/product/${product.slug}`
+                  ? `/en/product/${item.product?.slug}`
+                  : router.locale === "ja"
+                  ? `/ja/product/${item.product?.slug}`
+                  : `/product/${item.product?.slug}`
               }
             >
               <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                 <HiStar className="font-medium text-sm" />
-                <p>{router.locale === "en" ? product?.productEn?.enBrand :product?.brand}</p>
+                <p>{router.locale === "default" ? item?.product?.brand : item?.enBrand}</p>
               </div>
               <div className="overflow-hidden">
                 <img
-                  src={product?.image}
+                  src={item?.product?.image}
                   className="rounded-t-lg cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                   alt="..."
                 />
@@ -88,35 +105,35 @@ function HeroProps({ props }: any) {
 
               <div className="cursor-pointer text-center text-xs">
                 <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-8">
-                {router.locale === "en" ? `${product?.productEn?.enName.substring(0, 30)}...` : `${product?.productName.substring(0, 30)}...`}
+                {router.locale === "default" ? `${item?.product?.productName.substring(0, 30)}...` : `${item?.enName.substring(0, 30)}...`}
                 </p>
                 <div className="flex gap-3 items-center justify-center mt-1">
                   <div className="flex gap-1 pr-1 items-center border-r border-gray-200">
-                    <p>{product?.stars}</p>
+                    <p>{item?.product?.stars}</p>
                     <Rating size="sm">
                       <Rating.Star />
                     </Rating>
                   </div>
                   <div className="flex gap-1 items-center">
                     <p>{t("Đã bán")}</p>
-                    <p className="font-medium">{product?.sold}</p>
+                    <p className="font-medium">{item?.product?.sold}</p>
                   </div>
                 </div>
               </div>
 
-              {product?.discount?.disPercent ? (
+              {item?.product?.discount?.disPercent ? (
                 <div className="flex gap-2 pl-2 items-center justify-center">
                   <p className="text-base md:text-sm font-medium text-red-600 dark:text-white my-1">
-                    {Intl.NumberFormat().format(product?.price)} đ
+                    {Intl.NumberFormat().format(item?.product?.price)} đ
                   </p>
                   <p className="text-red-500 font-bold text-xs">
-                    {"-" + product?.discount?.disPercent + "%"}
+                    {"-" + item?.product?.discount?.disPercent + "%"}
                   </p>
                 </div>
               ) : (
                 <div className="flex gap-2 pl-2 items-center justify-center mt-2">
                   <p className="text-lg font-medium text-red-600 dark:text-white my-1">
-                    {Intl.NumberFormat().format(product?.price)} đ
+                    {Intl.NumberFormat().format(item?.product?.price)} đ
                   </p>
                 </div>
               )}

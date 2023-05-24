@@ -13,6 +13,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
   const [pwd, setPwd] = useState("");
   const [success, setSuccess] = useState(false);
   const { t } = useTranslation("");
+  const router = useRouter()
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -101,7 +102,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                           </p>
                           <TextInput
                             className="w-full"
-                            placeholder="Nhập địa chỉ Email"
+                            placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
                             type="email"
                             value={email}
                             onChange={(e: any) => {
@@ -115,7 +116,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                           </p>
                           <TextInput
                             className="w-full"
-                            placeholder="Nhập Mật khẩu"
+                            placeholder={router.locale == 'default' ? "Mật khẩu" : router.locale == 'en' ? "password" : "パスワード"}
                             type="password"
                             value={pwd}
                             onChange={(e: any) => {

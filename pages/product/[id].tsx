@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Breadcrumb, Button, Rating, Tabs, TextInput } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,6 +13,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
+import axios from "../../other/axios";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
@@ -24,12 +24,12 @@ function Index() {
   const { t } = useTranslation("");
 
   const pagination = [
-    fruit?.image,
-    fruit?.productimage?.image1,
-    fruit?.productimage?.image2,
-    fruit?.productimage?.image3,
-    fruit?.productimage?.image4,
-    fruit?.productimage?.image5,
+    fruit?.product?.image,
+    fruit?.product?.productimage?.image1,
+    fruit?.product?.productimage?.image2,
+    fruit?.product?.productimage?.image3,
+    fruit?.product?.productimage?.image4,
+    fruit?.product?.productimage?.image5,
   ];
 
   const settings = {
@@ -54,31 +54,58 @@ function Index() {
   };
 
   useEffect(() => {
+    let language = router.locale;
+    if (language === "default") {
+      language = "en";
+      try {
+        axios.get(`/product/${fruitId}?lang=${language}`).then((res: any) => {
+          setFruit(res.data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
     try {
-      axios.get(`http://localhost:3007/product/${fruitId}`).then((res: any) => {
+      axios.get(`/product/${fruitId}?lang=${language}`).then((res: any) => {
         setFruit(res.data);
       });
     } catch (error) {
       console.log(error);
     }
-  }, [fruitId]);
+  }, [router]);
 
   useEffect(() => {
+    let language = router.locale;
+    if (language === "default") {
+      language = "en";
+      try {
+        axios.get(`/blog?lang=${language}`).then((res: any) => {
+          setBlogs(res.data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
     try {
-      axios.get("http://localhost:3007/blog").then((res: any) => {
+      axios.get(`/blog?lang=${language}`).then((res: any) => {
         setBlogs(res.data);
       });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [router]);
 
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
-
-          href={router.locale === "en" ? "/en" : "/"}
+          href={
+            router.locale === "en"
+              ? "/en"
+              : router.locale === "ja"
+              ? "/ja"
+              : "/"
+          }
           icon={HiHome}
         >
           {t("Trang chủ")}
@@ -87,20 +114,23 @@ function Index() {
         <Breadcrumb.Item
           href={
             router.locale === "en"
-              ? `/en/${fruit?.category?.enName}`
-              : `/${fruit?.category?.path}`
+              ? `/en${fruit?.product?.category?.path}`
+              : router.locale === "ja"
+              ? `/ja${fruit?.product?.category?.path}`
+              : `${fruit?.product?.category?.path}`
           }
           icon={HiOutlineShoppingBag}
-
         >
           {router.locale === "en"
-            ? fruit?.category?.enName
-            : fruit?.category?.category}
+            ? fruit?.product?.category?.enName
+            : router.locale === "ja"
+            ? fruit?.product?.category?.jaName
+            : fruit?.product?.category?.category}
         </Breadcrumb.Item>
         <Breadcrumb.Item className="hidden md:flex">
-          {router.locale === "en"
-            ? fruit?.productEn?.enName
-            : fruit?.productName }
+          {router.locale === "default"
+            ? fruit?.product?.productName
+            : fruit?.enName}
           <ScrollTop />
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -109,36 +139,36 @@ function Index() {
           <Slider {...settings} className="w-full mx-auto h-fit">
             <img
               className="h-[380px] object-cover rounded-lg"
-              src={fruit?.image}
+              src={fruit?.product?.image}
             />
-            {fruit?.productimage?.image1 ? (
+            {fruit?.product?.productimage?.image1 ? (
               <img
                 className="h-[380px] object-cover rounded-lg"
-                src={fruit?.productimage?.image1}
+                src={fruit?.product?.productimage?.image1}
               />
             ) : null}
-            {fruit?.productimage?.image2 ? (
+            {fruit?.product?.productimage?.image2 ? (
               <img
                 className="h-[380px] object-cover rounded-lg"
-                src={fruit?.productimage?.image2}
+                src={fruit?.product?.productimage?.image2}
               />
             ) : null}
-            {fruit?.productimage?.image3 ? (
+            {fruit?.product?.productimage?.image3 ? (
               <img
                 className="h-[380px] object-cover rounded-lg"
-                src={fruit?.productimage?.image3}
+                src={fruit?.product?.productimage?.image3}
               />
             ) : null}
-            {fruit?.productimage?.image4 ? (
+            {fruit?.product?.productimage?.image4 ? (
               <img
                 className="h-[380px] object-cover rounded-lg"
-                src={fruit?.productimage?.image4}
+                src={fruit?.product?.productimage?.image4}
               />
             ) : null}
-            {fruit?.productimage?.image5 ? (
+            {fruit?.product?.productimage?.image5 ? (
               <img
                 className="h-[380px] object-cover rounded-lg"
-                src={fruit?.productimage?.image5}
+                src={fruit?.product?.productimage?.image5}
               />
             ) : null}
           </Slider>
@@ -146,9 +176,9 @@ function Index() {
 
         <div className="mt-14 md:mt-0 md:col-start-2 md:col-end-3 lg:col-start-4 lg:col-end-7">
           <h1 className="text-xl uppercase font-medium">
-            {router.locale === "en"
-              ? fruit?.productEn?.enName
-              : fruit?.productName}
+            {router.locale === "default"
+              ? fruit?.product?.productName
+              : fruit?.enName}
           </h1>
 
           <div className="flex gap-2 items-center justify-between my-2">
@@ -156,31 +186,42 @@ function Index() {
               <Rating>
                 <Rating.Star />
                 <p className="ml-2 text-sm font-bold text-gray-900 dark:text-white mr-4">
-                  {fruit?.stars}
+                  {fruit?.product?.stars}
                 </p>
 
                 <a
                   href="#review"
                   className="text-sm font-medium text-gray-900 underline hover:no-underline dark:text-white"
                 >
-                 {router.locale ==="en" ? `${fruit?.sold} reviews` : `${fruit?.sold} đánh giá`}
+                  {fruit?.product?.sold} {t("đánh giá")}
                 </a>
               </Rating>
             </div>
-            <h5 className="text-sm">{router.locale ==="en" ? `Sold: ${fruit?.sold}` : `Đã bán: ${fruit?.sold}`}</h5>
+            <h5 className="text-sm">
+              {t("Đã bán:")} {fruit?.product?.sold}
+              {/* {router.locale === "en"
+                ? `Sold: ${fruit?.sold}`
+                : `Đã bán: ${fruit?.sold}`} */}
+            </h5>
           </div>
 
           <div className="flex gap-3 text-xs mt-2 justify-between items-center">
             <div className="flex gap-3">
               <p className="font-medium">{t("Tình trạng:")}</p>
-              <p>{fruit?.quantity > 50 ? (router.locale ==="en" ? "Available" : "Còn hàng") : (router.locale ==="en" ? "Out of order" : "Hết hàng")}</p>
+              {/* <p>
+                {fruit?.product?.quantity > 50 ? router.locale === "en" ? "Available"
+                    : "Còn hàng"
+                  : router.locale === "ja"
+                  ? "Out of order"
+                  : "Hết hàng"}
+              </p> */}
             </div>
             <div className="flex gap-3">
               <p className="font-medium">{t("Thương hiệu:")}</p>
               <p>
-                {router.locale === "en"
-                  ? fruit?.productEn?.enBrand
-                  : fruit?.brand}
+                {router.locale === "default"
+                  ? fruit?.product?.enBrand
+                  : fruit?.enBrand}
               </p>
             </div>
           </div>
@@ -188,14 +229,15 @@ function Index() {
           <div className="mt-3">
             <p className="text-3xl text-red-500 font-medium">
               {" "}
-              {Intl.NumberFormat().format(fruit?.price) + " ₫"}
+              {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
             </p>
           </div>
 
           <Button
             className="my-4 mx-auto bg-[#236815] hover:bg-red-400"
             onClick={() => {
-              addItem(fruit);
+              console.log(fruit);
+              addItem({ ...fruit, price: fruit?.product?.price });
               toast("Đã thêm vào giỏ hàng", {
                 position: toast.POSITION.BOTTOM_RIGHT,
                 type: toast.TYPE.SUCCESS,
@@ -206,7 +248,9 @@ function Index() {
             <div className="flex flex-col items-center gap-1">
               <p className="text-sm font-medium uppercase">
                 {t("Mua ngay với giá")}{" "}
-                <span>{Intl.NumberFormat().format(fruit?.price) + " ₫"}</span>
+                <span>
+                  {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                </span>
               </p>
               <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
             </div>
@@ -249,9 +293,9 @@ function Index() {
           >
             <Tabs.Item active={true} title={t("MÔ TẢ")}>
               <div className="text-justify leading-loose">
-                {router.locale === "en"
-                  ? parse(`${fruit?.productEn?.enContent}`)
-                  : parse(`${fruit?.content}`)}
+                {router.locale === "default"
+                  ? parse(`${fruit?.product?.content}`)
+                  : parse(`${fruit?.enContent}`)}
               </div>
             </Tabs.Item>
             <Tabs.Item title={t("GIỚI THIỆU")}>
@@ -268,19 +312,29 @@ function Index() {
           >
             <Tabs.Item className="w-full" title={t("TIN TỨC")}>
               {blogs
-                ? blogs?.map((blog: any) => {
+                ? blogs?.map((item: any) => {
                     return (
                       <Link
-                        key={blog?.id}
+                        key={item?.id}
                         className="flex gap-2 items-center text-xs mb-4"
-                        href={router.locale === "en" ? `/en/blog/${blog.id}` : `/blog/${blog.id}`}
+                        href={
+                          router.locale === "en"
+                            ? `/en/blog/${item?.blog?.id}`
+                            : router.locale === "ja"
+                            ? `/ja/blog/${item?.blog?.id}`
+                            : `/blog/${item?.blog?.id}`
+                        }
                       >
                         <img
                           className="w-12 h-10"
-                          src={blog?.image}
+                          src={item?.blog?.image}
                           alt="hero7_1"
                         />
-                        <p>{router.locale === "en" ? blog?.blogEn?.enTitle : blog?.title}</p>
+                        <p>
+                          {router.locale === "default"
+                            ? item?.blog?.title
+                            : item?.transTitle}
+                        </p>
                       </Link>
                     );
                   })

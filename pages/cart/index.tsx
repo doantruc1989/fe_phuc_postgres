@@ -19,7 +19,13 @@ function Index() {
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
-          href={router.locale === "en" ? "/en" : "/"}
+          href={
+            router.locale === "en"
+              ? "/en"
+              : router.locale === "ja"
+              ? "/ja"
+              : "/"
+          }
           icon={HiHome}
         >
           {t("Trang chủ")}
@@ -62,12 +68,14 @@ function Index() {
                             <Link
                               href={
                                 router.locale === "en"
-                                  ? `/en/product/${item.slug}`
-                                  : `/product/${item.slug}`
+                                  ? `/en/product/${item?.product?.slug}`
+                                  : router.locale === "ja"
+                                  ? `/ja/product/${item?.product?.slug}`
+                                  : `/product/${item?.product?.slug}`
                               }
                             >
                               <img
-                                src={item.image}
+                                src={item?.product?.image}
                                 className="w-14 h-14 object-cover"
                                 alt=".."
                               />
@@ -76,9 +84,9 @@ function Index() {
                         </Table.Cell>
                         <Table.Cell className="hidden lg:flex lg:flex-col lg:items-start">
                           <div className="text-xs font-medium text-gray-900 dark:text-white">
-                            {router.locale === "en"
-                              ? `${item?.productEn?.enName}`
-                              : `${item?.productName}`}
+                            {router.locale === "default"
+                              ? `${item?.product?.productName}`
+                              : `${item?.enName}`}
                           </div>
                           <div>{item.type ? item.type : null}</div>
                         </Table.Cell>
@@ -87,7 +95,7 @@ function Index() {
                             {Intl.NumberFormat().format(item.price) + "₫"}
                           </div>
                           <div className="text-xs text-red-600">
-                            {item.discount ? `Đã giảm ${item.discount}%` : null}
+                            {item.discount ? `Đã giảm ${item?.product?.discount}%` : null}
                           </div>
                         </Table.Cell>
                         <Table.Cell>

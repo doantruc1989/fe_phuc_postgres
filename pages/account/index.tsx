@@ -52,7 +52,7 @@ function Index() {
   const { Canvas } = useQRCode();
   const router = useRouter();
   const { t } = useTranslation("");
-
+console.log(orders)
   useEffect(() => {
     setValidPw(PWD_REGEX.test(userPw) && userPw === userPw2 && userPw !== "");
   }, [userPw, userPw2]);
@@ -75,6 +75,9 @@ function Index() {
       : JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
+    router.events.on("routeChangeComplete", () => {
+      router.reload();
+    });
     if (!user.isEmailConfirmed) {
       try {
         axios.defaults.headers.common[
@@ -198,13 +201,13 @@ function Index() {
         }
       );
     }
+    
   };
 
   const handleChange2Fa = () => {
     const getUsers = async () => {
       try {
         axiosPrivate.get(`/2fa/generate/${user.email}`).then((res: any) => {
-          console.log(res?.data);
           setQrCode(res?.data);
           setIsSuccess(!isSuccess);
           if (res.data) {
@@ -232,7 +235,10 @@ function Index() {
           {t("Trang chủ")}
           <ToastContainer />
         </Breadcrumb.Item>
-        <Breadcrumb.Item>{t("Trang cá nhân của ")}{users.username}</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {t("Trang cá nhân của ")}
+          {users.username}
+        </Breadcrumb.Item>
       </Breadcrumb>
       {users?.email === undefined ? (
         <div className="w-full text-center my-20 uppercase">
@@ -308,7 +314,7 @@ function Index() {
                   <TextInput
                     color={validPw === true ? "success" : "gray"}
                     value={userPw}
-                    placeholder="Mật khẩu mới"
+                    placeholder={router.locale == 'default' ? "Mật khẩu mới" : router.locale == 'en' ? "New password" : "新しいパスワード"}
                     onChange={(e) => setUserPw(e.target.value)}
                     type="password"
                     className="mb-3"
@@ -317,13 +323,15 @@ function Index() {
                   <TextInput
                     color={validPw === true ? "success" : "gray"}
                     value={userPw2}
-                    placeholder="Nhập lại mật khẩu"
+                    placeholder={router.locale == 'default' ? "Nhập lại mật khẩu" : router.locale == 'en' ? "Retype password" : "パスワードを再入力してください"}
                     onChange={(e) => setUserPw2(e.target.value)}
                     type="password"
                     helperText={
                       validPw === false ? (
                         <p className="text-xs text-end w-full text-red-500">
-                          {t("Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 8 kí tự, trong đó bao gồm ít nhất 1 kí tự hoa, 1 kí tự thường, và 1 số")}
+                          {t(
+                            "Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 8 kí tự, trong đó bao gồm ít nhất 1 kí tự hoa, 1 kí tự thường, và 1 số"
+                          )}
                         </p>
                       ) : null
                     }
@@ -348,7 +356,7 @@ function Index() {
                     type="text"
                     value={address}
                     color={validAddress === true ? "success" : "gray"}
-                    placeholder="địa chỉ giao hàng mới"
+                    placeholder={router.locale == 'default' ? "địa chỉ giao hàng mới" : router.locale == 'en' ? "New address" : "新しいアドレス"}
                     onChange={(e: any) => setAddress(e.target.value)}
                     helperText={
                       validAddress === false ? (
@@ -365,7 +373,7 @@ function Index() {
                     type="text"
                     value={phone}
                     color={validPhone === true ? "success" : "gray"}
-                    placeholder="Số điện thoại mới"
+                    placeholder={router.locale == 'default' ? "Số điện thoại mới" : router.locale == 'en' ? "New phone number" : "新しい電話番号"}
                     onChange={(e: any) => setPhone(e.target.value)}
                     helperText={
                       validPhone === false ? (
@@ -398,13 +406,15 @@ function Index() {
                     color={validUrl === true ? "success" : "gray"}
                     type="text"
                     value={avatar}
-                    placeholder="url hình ảnh avt https://...."
+                    placeholder={router.locale == 'default' ? "url hình ảnh avt https://...." : router.locale == 'en' ? "URL image" : "URL画像"}
                     onChange={(e: any) => setAvatar(e.target.value)}
                     helperText={
                       validUrl === false ? (
                         <React.Fragment>
                           <p className="text-xs text-end w-full text-red-500">
-                           {t("URL avatar không hợp lệ. URL phải có đuôi là jpg jpeg png webp avif gif svg")}
+                            {t(
+                              "URL avatar không hợp lệ. URL phải có đuôi là jpg jpeg png webp avif gif svg"
+                            )}
                           </p>
                         </React.Fragment>
                       ) : null
@@ -450,7 +460,9 @@ function Index() {
                         {t("Xác thực 2 yếu tố đã được bật")}
                       </p>
                       <p className="text-center my-3">
-                        {t("Vui lòng kiểm tra email trong trương hợp bạn quên mã bí mật này")}
+                        {t(
+                          "Vui lòng kiểm tra email trong trương hợp bạn quên mã bí mật này"
+                        )}
                       </p>
                       {qrCode === " " ? (
                         ""

@@ -10,7 +10,7 @@ import {
   HiLogout,
 } from "react-icons/hi";
 import Link from "next/link";
-import { TextInput } from "flowbite-react";
+import { Dropdown, TextInput } from "flowbite-react";
 import axios from "axios";
 import { useCart } from "react-use-cart";
 import { useTranslation } from "react-i18next";
@@ -69,10 +69,25 @@ export default function TopBar({ visible, setVisible }: any) {
     }
 
     timeout.current = setTimeout(async () => {
+      let language = router.locale;
+      if (language === "default") {
+        language = "en";
+        try {
+          await axios
+            .get(
+              `http://localhost:3007/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
+            )
+            .then((res) => {
+              setResult(res.data[0]);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
       try {
         await axios
           .get(
-            `http://localhost:3007/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall`
+            `http://localhost:3007/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
           )
           .then((res) => {
             setResult(res.data[0]);
@@ -93,7 +108,13 @@ export default function TopBar({ visible, setVisible }: any) {
               className="border-white focus:border-white focus:ring-white w-full"
               value={inputSearch}
               type="search"
-              placeholder="Bạn đang tìm kiếm điều gì?"
+              placeholder={
+                router.locale == "default"
+                  ? "Bạn đang tìm kiếm điều gì?"
+                  : router.locale == "en"
+                  ? "What are you looking for?"
+                  : "何を探していますか"
+              }
               required
               onChange={handleSearch}
               // icon={}
@@ -110,7 +131,7 @@ export default function TopBar({ visible, setVisible }: any) {
 
       {user ? (
         <div className="flex justify-center md:justify-between py-2 w-11/12 mx-auto">
-          <h1 className="hidden md:block">ALL FOR YOUR HEALTH</h1>
+          <h1 className="hidden md:block">{t("ALL FOR YOUR HEALTH")}</h1>
           <div className="flex items-center gap-2">
             <Link href={"/account"}>
               <div className="flex gap-2 items-center border-r border-white pr-2">
@@ -131,11 +152,48 @@ export default function TopBar({ visible, setVisible }: any) {
                 <p className="text-xs">{t("Đăng xuất")}</p>
               </div>
             </Link>
+            <div className="flex items-center justify-center gap-2 ml-3">
+              <button
+                onClick={() => {
+                  router.push(router.asPath, router.asPath, {
+                    locale: "default",
+                  });
+                }}
+              >
+                <img
+                  className="w-fit h-4"
+                  src="/image/vietnam.png"
+                  alt="language"
+                />
+              </button>
+              <button
+                onClick={() => {
+                  router.push(router.asPath, router.asPath, { locale: "en" });
+                }}
+              >
+                <img
+                  className="w-fit h-4"
+                  src="/image/england.png"
+                  alt="language"
+                />
+              </button>
+              <button
+                onClick={() => {
+                  router.push(router.asPath, router.asPath, { locale: "ja" });
+                }}
+              >
+                <img
+                  className="w-fit h-4"
+                  src="/image/japan.png"
+                  alt="language"
+                />
+              </button>
+            </div>
           </div>
         </div>
       ) : (
         <div className="flex justify-center md:justify-between py-2 w-11/12 mx-auto">
-          <h1>ALL FOR YOUR HEALTH</h1>
+          <h1>{t("ALL FOR YOUR HEALTH")}</h1>
           <div className="md:flex items-center gap-2 hidden">
             <Link href={"/login"}>
               <div className="flex gap-1 items-center border-r border-white pr-2">
@@ -149,6 +207,43 @@ export default function TopBar({ visible, setVisible }: any) {
                 <p className="text-xs">{t("Đăng ký")}</p>
               </div>
             </Link>
+            <div className="flex items-center justify-center gap-2 ml-3">
+              <button
+                onClick={() => {
+                  router.push(router.asPath, router.asPath, {
+                    locale: "default",
+                  });
+                }}
+              >
+                <img
+                  className="w-fit h-4"
+                  src="/image/vietnam.png"
+                  alt="language"
+                />
+              </button>
+              <button
+                onClick={() => {
+                  router.push(router.asPath, router.asPath, { locale: "en" });
+                }}
+              >
+                <img
+                  className="w-fit h-4"
+                  src="/image/england.png"
+                  alt="language"
+                />
+              </button>
+              <button
+                onClick={() => {
+                  router.push(router.asPath, router.asPath, { locale: "ja" });
+                }}
+              >
+                <img
+                  className="w-fit h-4"
+                  src="/image/japan.png"
+                  alt="language"
+                />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -179,7 +274,13 @@ export default function TopBar({ visible, setVisible }: any) {
               className="hidden md:block"
               sizing="md"
               type="search"
-              placeholder="Bạn đang tìm kiếm điều gì?"
+              placeholder={
+                router.locale == "default"
+                  ? "Bạn đang tìm kiếm điều gì?"
+                  : router.locale == "en"
+                  ? "What are you looking for?"
+                  : "何を探していますか"
+              }
               required
               icon={HiOutlineSearch}
               value={inputSearch}
@@ -195,7 +296,7 @@ export default function TopBar({ visible, setVisible }: any) {
                   ? result.map((res: any) => {
                       return (
                         <Link
-                          href={"/product/" + res.id}
+                          href={"/product/" + res?.product?.slug}
                           key={res.id}
                           onClick={(e: any) => {
                             setResult(null);
@@ -203,13 +304,20 @@ export default function TopBar({ visible, setVisible }: any) {
                         >
                           <div className="flex gap-3 items-center border-b border-gray-300 w-full py-1 hover:bg-gray-100 px-3">
                             <img
-                              src={res.image}
+                              src={res?.product?.image}
                               className="w-12 h-12 rounded-md"
                             />
                             <div className="flex flex-col items-start">
-                              <h1>{res.productName}</h1>
+                              <h1>
+                                {router.locale === "default"
+                                  ? res?.product?.productName
+                                  : res?.enName}
+                              </h1>
                               <h1 className="font-medium">
-                                {Intl.NumberFormat().format(res.price)}đ
+                                {Intl.NumberFormat().format(
+                                  res?.product?.price
+                                )}
+                                đ
                               </h1>
                             </div>
                           </div>
@@ -257,7 +365,11 @@ export default function TopBar({ visible, setVisible }: any) {
                   key={category.id}
                   href={category.path}
                 >
-                  {router.locale === "en" ? category.enName : category.category}
+                  {router.locale === "en"
+                    ? category.enName
+                    : router.locale === "ja"
+                    ? category.jaName
+                    : category.category}
                 </Link>
               );
             })

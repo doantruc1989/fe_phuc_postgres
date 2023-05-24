@@ -24,6 +24,7 @@ function Index() {
   const [twoFAcode, setTwoFAcode] = useState("");
   const [user, setUser] = useState([] as any);
   const [is2faSuccess, setIs2faSuccess] = useState(false);
+  const [redirect, setRedirect] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("");
 
@@ -39,7 +40,13 @@ function Index() {
           if (!res.data.isTwoFactorAuthenticationEnabled) {
             localStorage.setItem("user", JSON.stringify(res?.data));
             setSuccess(true);
-            setIs2faEnabled(res?.data.isTwoFactorAuthenticationEnabled)
+            setIs2faEnabled(res?.data.isTwoFactorAuthenticationEnabled);
+            const timer = setTimeout(() => {
+              setRedirect(true);
+            }, 5000);
+            return () => {
+              clearTimeout(timer);
+            };
           } else {
             setSuccess(true);
             setAccessToken(res.data.tokens.accessToken);
@@ -70,6 +77,12 @@ function Index() {
         .then((res: any) => {
           localStorage.setItem("user", JSON.stringify(res?.data));
           setIs2faSuccess(true);
+          const timer = setTimeout(() => {
+            setRedirect(true);
+          }, 5000);
+          return () => {
+            clearTimeout(timer);
+          };
         });
     } catch (error: any) {
       toast(`${error?.response.data.message}. Please try again`, {
@@ -79,17 +92,24 @@ function Index() {
       });
     }
   };
+  redirect === true &&
+    router.push("/account", undefined, {
+      locale: router.locale,
+      shallow: true,
+    });
 
   return (
     <div className="h-auto mb-10">
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href={router.locale === "en" ? "/en" : "/"} icon={HiHome}>
-        {t("Trang chủ")}
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
+          {t("Trang chủ")}
           <ToastContainer />
         </Breadcrumb.Item>
         <Breadcrumb.Item>{t("Đăng nhập tài khoản")}</Breadcrumb.Item>
       </Breadcrumb>
-
       {success === false ? (
         <div className="flex flex-col items-center mt-10 gap-2 w-full md:w-11/12 lg:w-9/12 mx-auto">
           <h1 className="text-2xl font-medium uppercase">
@@ -123,7 +143,7 @@ function Index() {
               <p className="text-sm font-medium uppercase mb-2">email:</p>
               <TextInput
                 className="w-full"
-                placeholder="Nhập địa chỉ Email"
+                placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
                 type="email"
                 value={email}
                 onChange={(e: any) => {
@@ -132,10 +152,12 @@ function Index() {
               />
             </div>
             <div className="mt-5">
-              <p className="text-sm font-medium uppercase mb-2">{t("Mật khẩu:")}</p>
+              <p className="text-sm font-medium uppercase mb-2">
+                {t("Mật khẩu:")}
+              </p>
               <TextInput
                 className="w-full"
-                placeholder="Nhập Mật khẩu"
+                placeholder={router.locale == 'default' ? "Mật khẩu" : router.locale == 'en' ? "password" : "パスワード"}
                 type="password"
                 value={pwd}
                 onChange={(e: any) => {
@@ -174,12 +196,14 @@ function Index() {
       ) : is2faEnabled === false ? (
         <section className="text-base text-center capitalize font-medium my-20">
           <h1>
-            {t("Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc ")}
+            {t(
+              "Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc "
+            )}
           </h1>
           <p className="mt-6">
             {t("Bấm vào")}
             <Link className="text-green-600 underline" href="/">
-             {t(" đây ")}
+              {t(" đây ")}
             </Link>
             {t("để tới trang chủ ngay lập tức")}
           </p>
@@ -208,7 +232,9 @@ function Index() {
           ) : (
             <section className="text-base text-center capitalize font-medium my-20">
               <h1>
-                {t("Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc ")}
+                {t(
+                  "Bạn đã đăng nhập thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc "
+                )}
               </h1>
               <p className="mt-6">
                 {t("Bấm vào")}

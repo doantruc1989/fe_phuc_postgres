@@ -70,7 +70,7 @@ function Index() {
               <p className="text-sm font-medium uppercase mb-2">email:</p>
               <TextInput
                 className="w-full"
-                placeholder="Nhập địa chỉ Email"
+                placeholder={router.locale == 'default' ? "Email của bạn" : router.locale == 'en' ? "Your Email" : "あなたのメールアドレス"}
                 type="email"
                 value={email}
                 onChange={(e: any) => {

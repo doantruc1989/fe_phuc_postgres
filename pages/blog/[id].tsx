@@ -16,48 +16,58 @@ function Index() {
   const { t } = useTranslation("");
 
   useEffect(() => {
+    let language = router.locale;
+    if (language === "default") {
+      language = "en"
+      try {
+        axios.get(`/blog/${blogId}?lang=${language}`).then((res: any) => {
+          setBlog(res.data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
     try {
-      axios.get(`/blog/${blogId}`).then((res: any) => {
+      axios.get(`/blog/${blogId}?lang=${language}`).then((res: any) => {
         setBlog(res.data);
       });
     } catch (error) {
       console.log(error);
     }
-  }, [blogId]);
+  }, [router]);
 
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
-          href={router.locale === "en" ? "/en" : "/"}
+          href={router.locale === "en" ? "/en" : router.locale === "ja" ? "/ja" :"/"}
           icon={HiHome}
         >
           {t("Trang chủ")}
         </Breadcrumb.Item>
         <Breadcrumb.Item
-          href={router.locale === "en" ? "/en/blog" : "/blog"}
+          href={router.locale === "en" ? "/en/blog" : router.locale === "ja" ? "/ja/blog" : "/blog"}
           icon={HiOutlineShoppingBag}
           className="capitalize"
         >
           {t("Tin Tức")}
         </Breadcrumb.Item>
         <Breadcrumb.Item className="hidden md:flex">
-          {router.locale === "en" ? blog?.blogEn?.enTitle : blog?.title}
+          {router.locale === "default" ? blog?.blog?.title : blog?.transTitle}
         </Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-10 mb-6">
         <h1 className="font-medium text-center text-xl">
-          {" "}
-          {router.locale === "en" ? blog?.blogEn?.enTitle : blog?.title}
+        {router.locale === "default" ? blog?.blog?.title : blog?.transTitle}
         </h1>
         <div className="flex flex-col w-9/12 mx-auto mt-10">
-          <img src={blog?.image} alt="" />
+          <img src={blog?.blog?.image} alt="" />
         </div>
         <div className="text-justify mt-6 leading-loose mx-3 md:mx-0">
-          {router.locale === "en"
-            ? parse(`${blog?.blogEn?.enText}`)
-            : parse(`${blog?.text}`)}
+          {router.locale === "default"
+            ? parse(`${blog?.blog?.text}`)
+            : parse(`${blog?.transText}`)}
         </div>
       </div>
     </div>

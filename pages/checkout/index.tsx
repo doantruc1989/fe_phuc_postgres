@@ -166,6 +166,7 @@ function Index() {
           guest: users?.id === undefined ? email + " " + name : null,
         })
         .then((res: any) => {
+          console.log(res.data);
           router.push("/checkout/finish");
         });
     } catch (error) {
@@ -238,7 +239,7 @@ function Index() {
                               className="w-full"
                               type="text"
                               color={validPhone === true ? "success" : "gray"}
-                              placeholder="Số điện thoại"
+                              placeholder={router.locale == 'default' ? "Số điện thoại" : router.locale == 'en' ? "Phone number" : "電話番号"}
                               value={phone}
                               onChange={(e: any) => {
                                 setPhone(e.target.value);
@@ -253,7 +254,7 @@ function Index() {
                               className="w-full"
                               type="text"
                               color={validAddress === true ? "success" : "gray"}
-                              placeholder="Địa chỉ"
+                              placeholder={router.locale == 'default' ? "địa chỉ giao hàng" : router.locale == 'en' ? "address" : "アドレス"}
                               value={address}
                               onChange={(e: any) => {
                                 setAdress(e.target.value);
@@ -393,7 +394,7 @@ function Index() {
                         <TextInput
                           type="email"
                           color={validEmail === true ? "success" : "gray"}
-                          placeholder="Email của bạn"
+                          placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
                           value={email}
                           helperText={
                             validEmail === false ? (
@@ -417,7 +418,7 @@ function Index() {
                           className="w-full"
                           type="text"
                           color={validName === true ? "success" : "gray"}
-                          placeholder="Họ và tên"
+                          placeholder={router.locale == 'default' ? "Nhập họ và tên" : router.locale == 'en' ? "Fullname" : "フルネーム"}
                           value={name}
                           helperText={
                             validName === false ? (
@@ -441,7 +442,7 @@ function Index() {
                           className="w-full"
                           type="text"
                           color={validPhone === true ? "success" : "gray"}
-                          placeholder="Số điện thoại"
+                          placeholder={router.locale == 'default' ? "Số điện thoại" : router.locale == 'en' ? "Phone number" : "電話番号"}
                           value={phone}
                           helperText={
                             validPhone === false ? (
@@ -465,7 +466,7 @@ function Index() {
                           className="w-full"
                           type="text"
                           color={validAddress === true ? "success" : "gray"}
-                          placeholder="Địa chỉ"
+                          placeholder={router.locale == 'default' ? "địa chỉ giao hàng" : router.locale == 'en' ? "address" : "アドレス"}
                           value={address}
                           helperText={
                             validAddress === false ? (
@@ -547,7 +548,7 @@ function Index() {
                         }}
                       >
                         <option defaultChecked value={""}>
-                          --- Vui lòng chọn ---{t("--- Vui lòng chọn ---")}
+                          {t("--- Vui lòng chọn ---")}
                         </option>
                         {proDictricts
                           ? proDictricts?.district?.map(
@@ -783,10 +784,10 @@ function Index() {
                 >
                   <div className="flex gap-2 items-center w-9/12">
                     <div className="relative">
-                      <Link href={"/product/" + item.slug}>
+                      <Link href={"/product/" + item?.product?.slug}>
                         <img
                           className="h-10 w-12 rounded-md object-cover"
-                          src={item.image}
+                          src={item?.product?.image}
                           alt=""
                         />
                       </Link>
@@ -797,9 +798,9 @@ function Index() {
 
                     <div className="flex flex-col items-start w-full">
                       <div className="flex gap-1">
-                        <p>{router.locale === "en"
-                              ? `${item?.productEn?.enName}`
-                              : `${item?.productName}`}</p>
+                        <p>{router.locale === "default"
+                              ? `${item?.product?.productName}`
+                              : `${item?.enName}`}</p>
                       </div>
                       <p className="text-sm text-gray-400">descript</p>
                     </div>
@@ -813,7 +814,9 @@ function Index() {
           </div>
 
           <div className="flex items-center justify-between gap-2 border-b border-gray-300 py-4 px-6">
-            <TextInput className="w-3/5" placeholder="Nhập mã giảm giá" />
+            <TextInput className="w-3/5" 
+            placeholder={router.locale == 'default' ? "Nhập mã giảm giá" : router.locale == 'en' ? "Discount code" : "ディスカウントコード"}
+            />
             <Button
               disabled={true}
               className="w-2/5 bg-green-600 hover:bg-green-800"

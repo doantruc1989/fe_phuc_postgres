@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -12,6 +13,7 @@ import {
 const Footera = () => {
   const [subscribe, setSubscribe] = useState(false);
   const { t } = useTranslation('');
+  const router =useRouter()
   return (
     <div>
       <div className=" bg-[#f9c938] py-4 px-3 text-[#222]">
@@ -39,7 +41,7 @@ const Footera = () => {
                   type="search"
                   id="default-search"
                   className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                  placeholder="Email"
+                  placeholder={router.locale == 'default' ? "Vui lòng nhập email của bạn" : router.locale == 'en' ? "Please enter your email" : "メールアドレスを入力してください"}
                   required
                 />
                 <button

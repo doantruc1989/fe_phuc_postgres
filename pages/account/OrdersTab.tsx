@@ -1,14 +1,19 @@
 import { Dialog, Transition } from "@headlessui/react";
 import axios from "axios";
 import { Button, Label, TextInput } from "flowbite-react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { Fragment, useState } from "react";
+import { useTranslation } from "react-i18next";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
 
 function OrdersTab({ orders, paid, setPaid }: any) {
   const [payment, setPayment] = useState(false);
   const [orderId, setOrderId] = useState<number>();
   const axiosPrivate = useAxiosPrivate();
+  const router = useRouter();
+  const { t } = useTranslation("");
 
   const handlePay = (e: any) => {
     e.preventDefault();
@@ -17,7 +22,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
         ? {}
         : JSON.parse(localStorage.getItem("user") || "{}");
     const id = user.id;
-    
+
     axiosPrivate
       .put(`/cart/order/${orderId}`, {
         status: true,
@@ -31,7 +36,6 @@ function OrdersTab({ orders, paid, setPaid }: any) {
     <div className="p-3">
       {orders ? (
         orders.map((order: any) => {
-          
           return (
             <div
               key={order.id}
@@ -47,7 +51,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                       setOrderId(order.id);
                     }}
                   >
-                    <div>thanh toán</div>
+                    <div>{t("thanh toán")}</div>
                   </a>
                 ) : null
               ) : (
@@ -59,13 +63,13 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               )}
 
               <div className="flex gap-2 items-center justify-center">
-                <p className="font-medium text-sm">Đơn Hàng:</p>
+                <p className="font-medium text-sm">{t("Đơn Hàng:")}</p>
                 <p className="font-medium text-green-500">{order.id}</p>
               </div>
 
               <div className="flex justify-between items-center border-b border-t border-gray-400 my-3 text-sm pl-2 py-3">
                 <div className="w-9/12">
-                  <p className="font-medium">Địa chỉ giao hàng:</p>
+                  <p className="font-medium">{t("Địa chỉ giao hàng:")}</p>
                   <div className="pl-2">
                     <div className="flex gap-1 imtes-center">
                       <p>{order.username}</p>
@@ -74,12 +78,12 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                     <p className="w-full">{order.address}</p>
                   </div>
                   <div className="mt-2">
-                    <p className="font-medium">Phương thức vận chuyển:</p>
+                    <p className="font-medium">{t("Phương thức vận chuyển:")}</p>
                     <div className="pl-2">
                       {order.trans == 35000 ? (
-                        <p>Tiêu chuẩn</p>
+                        <p>{t("Tiêu chuẩn")}</p>
                       ) : (
-                        <p>Hoả tốc</p>
+                        <p>{t("Hoả tốc")}</p>
                       )}
                     </div>
                   </div>
@@ -93,18 +97,18 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                 {order?.orderItems?.map((item: any) => {
                   return (
                     <div
-                      key={item.id}
+                      key={item?.id}
                       className="flex items-center justify-between mb-3"
                     >
                       <div className="flex items-center gap-2">
                         <img
                           className="w-10 h-10 my-1"
-                          src={item.image}
+                          src={item?.product?.image}
                           alt=""
                         />
                         <div className="flex flex-col items-start">
                           <span>
-                            {item.productName + " x " + item.quantity}
+                            {router.locale === "default" ? item?.product?.productName : item?.enName} {" x "} {item.quantity}
                           </span>
                           <div className="flex justify-start gap-2">
                             <p className="text-gray-500">{item.type || null}</p>
@@ -186,19 +190,19 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                     )} */}
 
               <div className="px-2 flex justify-between items-center p border-t border-gray-400 pt-2">
-                <p className="font-medium text-sm">Phí Vận chuyển:</p>
+                <p className="font-medium text-sm">{t("Phí Vận chuyển:")}</p>
                 <p className="text-sm font-medium">
                   {Intl.NumberFormat().format(order.trans) + " đ"}
                 </p>
               </div>
               <div className="px-2 flex justify-between items-center pt-2">
-                <p className="font-medium">Tổng Tiền:</p>
+                <p className="font-medium">{t("Tổng Tiền:")}</p>
                 <p className="text-red-600 font-medium text-xl">
                   {Intl.NumberFormat().format(order.cartTotal)}đ
                 </p>
               </div>
               <div className="flex justify-center gap-1 text-xs">
-                <p>Trạng thái:</p>
+                <p>{t("Trạng thái:")}</p>
                 <div className="font-medium text-blue-600">
                   {order.status === false ? "Chưa thanh toán" : "Đã thanh toán"}
                 </div>
@@ -237,7 +241,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                         <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                           <div className="mt-2">
                             <p className="text-sm text-gray-500 text-center">
-                              Thanh Toán đơn hàng
+                              {t("Thanh Toán đơn hàng")}
                             </p>
                           </div>
 
@@ -320,7 +324,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                             {paid ? (
                               <div className="flex justify-center mt-3">
                                 <p className="mx-auto mb-3 text-green-500 font-medium text-lg">
-                                  Pay successfully!!!
+                                  {t("thanh toán thành công!!!")}
                                 </p>
                               </div>
                             ) : null}
@@ -328,7 +332,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                               className="my-3 mx-auto"
                               onClick={handlePay}
                             >
-                              Pay now
+                              {t("thanh toán")}
                             </Button>
                           </>
                         </Dialog.Panel>
@@ -440,14 +444,21 @@ function OrdersTab({ orders, paid, setPaid }: any) {
         })
       ) : (
         <div className="flex flex-col gap-5 items-center my-10">
-          <p className="text-lg font-medium">Bạn chưa có đơn hàng nào</p>
+          <p className="text-lg font-medium">{t("Bạn chưa có đơn hàng nào")}</p>
           <Link className="text-lg text-blue-600" href={"/giatotmoingay"}>
-            Mua sắm ngay thôi nào!
+            {t("Mua sắm ngay thôi nào!")}
           </Link>
         </div>
       )}
     </div>
   );
+}
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }
 
 export default OrdersTab;

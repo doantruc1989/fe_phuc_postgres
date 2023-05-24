@@ -12,37 +12,50 @@ import { useTranslation } from "react-i18next";
 
 function Index() {
   const router = useRouter();
-  const [blogs, setBlogs] = useState([] as any)
-  const { t } = useTranslation('');
+  const [blogs, setBlogs] = useState([] as any);
+  const { t } = useTranslation("");
 
   useEffect(() => {
-    try {
-      axios
-        .get(
-          `/blog`
-        )
-        .then((res: any) => {
-            setBlogs(res.data);
+    let language = router.locale;
+    if (language === "default") {
+      language = "en";
+      try {
+        axios.get(`/blog?lang=${language}`).then((res: any) => {
+          setBlogs(res.data);
         });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    try {
+      axios.get(`/blog?lang=${language}`).then((res: any) => {
+        setBlogs(res.data);
+      });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [router]);
   return (
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
-          href={router.locale === "en" ? "/en" : "/"}
+          href={
+            router.locale === "en"
+              ? "/en"
+              : router.locale === "ja"
+              ? "/ja"
+              : "/"
+          }
           icon={HiHome}
         >
-           {t("Trang chủ")}
+          {t("Trang chủ")}
         </Breadcrumb.Item>
         <Breadcrumb.Item
         //   href={"/" + productDetail[0]?.categoryID.path}
         //   icon={HiOutlineShoppingBag}
         //   className="capitalize"
         >
-           {t("Tin Tức")}
+          {t("Tin Tức")}
         </Breadcrumb.Item>
       </Breadcrumb>
 
@@ -50,25 +63,37 @@ function Index() {
         <h1 className="font-medium uppercase">{t("Tin Tức")}</h1>
 
         <div className="grid lg:grid-cols-4 gap-2 grid-cols-2 md:grid-cols-3 my-3 pb-6">
-          {blogs.map((blog: any) => {
+          {blogs.map((item: any) => {
             return (
               <div
-                key={blog.id}
+                key={item?.id}
                 className="rounded-md border border-gray-200 shadow-sm hover:shadow-xl bg-white"
               >
-                <Link href={router.locale === "en" ? `/en/blog/${blog.id}` : `/blog/${blog.id}`}>
+                <Link
+                  href={
+                    router.locale === "en"
+                      ? `/en/blog/${item?.blog?.id}`
+                      : router.locale === "ja"
+                      ? `/ja/blog/${item?.blog?.id}`
+                      : `/blog/${item?.blog?.id}`
+                  }
+                >
                   <img
-                    src={blog.image}
+                    src={item?.blog?.image}
                     className="rounded-t-md cursor-pointer w-full h-60"
                     alt="..."
                   />
                   <div className="cursor-pointer text-center text-xs">
                     <p className="font-medium text-base md:text-lg  text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-[70px] md:h-16 lg:h-20">
-                      {router.locale === "en" ? blog?.blogEn?.enTitle.substring(0, 40) : blog?.title.substring(0, 40)}
+                      {router.locale === "default"
+                        ? item?.blog?.title.substring(0, 40)
+                        : item?.transTitle.substring(0, 30)}
                     </p>
                   </div>
-                  <div className="mx-2 mb-2">
-                  {router.locale === "en" ? parse(`${blog?.blogEn?.enText.substring(0, 100)}...`) : parse(`${blog?.text.substring(0, 100)}...`) }
+                  <div className="mx-2 my-2">
+                    {router.locale === "default"
+                      ? parse(`${item?.blog?.text.substring(0, 100)}...`)
+                      : parse(`${item?.transText.substring(0, 100)}...`)}
                   </div>
                 </Link>
               </div>

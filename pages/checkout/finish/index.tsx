@@ -8,24 +8,29 @@ function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("");
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     localStorage.removeItem("react-use-cart");
     setIsSuccess(!isSuccess);
     const timer = setTimeout(() => {
-      router.push("/account");
+      setRedirect(true);
     }, 5000);
     return () => {
       clearTimeout(timer);
     };
   }, []);
+  redirect === true &&
+    router.push("/account", undefined, { locale: router.locale });
 
   return (
     <>
       {isSuccess && (
         <section className="text-base text-center capitalize font-medium my-20">
           <h1>
-            {t("Bạn đã đặt hàng thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc ")}
+            {t(
+              "Bạn đã đặt hàng thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc "
+            )}
           </h1>
           <p className="mt-6">
             {t("Bấm vào")}
@@ -39,7 +44,6 @@ function Index() {
     </>
   );
 }
-
 
 export async function getStaticProps({ locale }: any) {
   return {

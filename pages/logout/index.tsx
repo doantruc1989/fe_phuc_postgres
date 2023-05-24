@@ -9,6 +9,7 @@ function Index() {
   const router = useRouter();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
+  const [redirect, setRedirect] = useState(false)
 
   useEffect(() => {
     const axios = async () => {
@@ -16,7 +17,7 @@ function Index() {
         axiosPrivate.get("/auth/logout").then(() => {
           localStorage.removeItem("user");
           const timer = setTimeout(() => {
-            router.push("/");
+            setRedirect(true)
           }, 5000);
           return () => {
             clearTimeout(timer);
@@ -31,6 +32,9 @@ function Index() {
       controller.abort();
     };
   }, []);
+
+  redirect === true &&
+  router.push("/", undefined, { locale: router.locale })
 
   return (
     <div className="text-base text-center capitalize font-medium my-20">

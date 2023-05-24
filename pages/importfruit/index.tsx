@@ -23,10 +23,13 @@ function Index() {
   const { t } = useTranslation("");
   
   useEffect(() => {
+    let language = router.locale;
+    if(language === "default") {
+      language = "en"
     try {
       axios
         .get(
-          `http://localhost:3007/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}`
+          `http://localhost:3007/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
         )
         .then((res: any) => {
           setVnFruits(res.data[0]);
@@ -35,7 +38,20 @@ function Index() {
     } catch (error) {
       console.log(error);
     }
-  }, [page, condition, condition2, sortField, fromPrice, toPrice, search]);
+  }
+  try {
+    axios
+      .get(
+        `http://localhost:3007/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
+      )
+      .then((res: any) => {
+        setVnFruits(res.data[0]);
+        setTotalItems(res.data[1]);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+  }, [page, condition, condition2, sortField, fromPrice, toPrice, search, router]);
 
   return (
     <div>
@@ -711,42 +727,42 @@ function Index() {
                     >
                       <Link  href={
                           router.locale === "en"
-                            ? `/en/product/${fruit.slug}`
-                            : `/product/${fruit.slug}`
+                          ? `/en/product/${fruit?.product?.slug}`
+                          : router.locale === "ja" ? `/ja/product/${fruit?.product?.slug}` : `/product/${fruit?.product?.slug}`
                         }>
                         <div className="overflow-hidden">
                           <img
-                            src={fruit.image}
+                            src={fruit?.product?.image}
                             className="rounded-t-md cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                             alt="..."
                           />
                         </div>
                         <div className="cursor-pointer text-center text-xs">
                           <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-8">
-                          {router.locale === "en"
-                              ? `${fruit?.productEn?.enName.substring(
+                          {router.locale === "default"
+                              ? `${fruit?.product?.productName.substring(
                                   0,
                                   30
                                 )}...`
-                              : `${fruit?.productName.substring(0, 30)}...`}
+                              : `${fruit?.enName.substring(0, 25)}...`}
                           </p>
                           <div className="flex gap-3 items-center justify-center mt-1">
                             <div className="flex gap-1 pr-1 items-center border-r border-gray-200">
-                              <p>{fruit.stars}</p>
+                              <p>{fruit?.product?.stars}</p>
                               <Rating size="sm">
                                 <Rating.Star />
                               </Rating>
                             </div>
                             <div className="flex gap-1 items-center">
                               <p>{t("Đã bán")}</p>
-                              <p className="font-medium">{fruit.sold}</p>
+                              <p className="font-medium">{fruit?.product?.sold}</p>
                             </div>
                           </div>
                         </div>
 
                         <div className="flex gap-2 px-2 items-center justify-center">
                           <p className="text-xl md:text-base font-medium text-red-600 dark:text-white my-1">
-                            {Intl.NumberFormat().format(fruit.price) + " ₫"}
+                            {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
                           </p>
                           <p className="text-red-500 font-bold text-xs">
                             {"-" + 10 + "%"}

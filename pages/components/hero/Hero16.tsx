@@ -1,23 +1,34 @@
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Carousel from "react-multi-carousel";
+import axios from "../../../other/axios";
 
 const Hero16 = () => {
   const [blogs, setBlogs] = useState([] as any);
   const { t } = useTranslation("");
   const router = useRouter();
   useEffect(() => {
+    let language = router.locale;
+    if (language === "default") {
+      language = "en";
+      try {
+        axios.get(`/blog?lang=${language}`).then((res: any) => {
+          setBlogs(res.data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
     try {
-      axios.get(`http://localhost:3007/blog`).then((res: any) => {
+      axios.get(`/blog?lang=${language}`).then((res: any) => {
         setBlogs(res.data);
       });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [router]);
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 968 },
@@ -61,27 +72,37 @@ const Hero16 = () => {
           deviceType={"desktop"}
           dotListClass="custom-dot-list-style"
         >
-          {blogs?.map((blog: any) => {
+          {blogs?.map((item: any) => {
             return (
               <div
-                key={blog?.id}
+                key={item?.id}
                 className="rounded-lg mx-1 border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
               >
-                <Link href={router.locale === "en" ? `/en/blog/${blog.id}` : `/blog/${blog.id}`}>
+                <Link
+                  href={
+                    router.locale === "en"
+                      ? `/en/blog/${item?.blog?.id}`
+                      : router.locale === "ja"
+                      ? `/ja/blog/${item?.blog?.id}`
+                      : `/blog/${item?.blog?.id}`
+                  }
+                >
                   <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                     <p>New</p>
                   </div>
                   <div className="overflow-hidden">
                     <img
-                      src={blog?.image}
+                      src={item?.blog?.image}
                       className="rounded-t-lg cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                       alt="..."
                     />
                   </div>
 
-                  <div className="cursor-pointer text-center text-xs mb-3 h-14">
+                  <div className="cursor-pointer text-center text-xs mb-3 h-16">
                     <p className="font-medium text-base text-pink-500 dark:text-white mx-1 mt-2 text-ellipsis">
-                    {router.locale === "en" ? blog?.blogEn?.enTitle.substring(0, 40) : blog?.title.substring(0, 40)}
+                      {router.locale === "default"
+                        ? item?.blog?.title.substring(0, 40)
+                        : item?.transTitle.substring(0, 25)}
                     </p>
                   </div>
                 </Link>

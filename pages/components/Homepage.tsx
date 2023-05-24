@@ -24,7 +24,6 @@ const Homepage = () => {
       <Hero />
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto gap-6">
         <ScrollTop />
-
         <Hero2 />
         <Hero3 />
         <Hero4 />
