@@ -103,7 +103,7 @@ function Index() {
           icon={HiOutlineShoppingBag}
         >
           {router.locale === "en"
-            ? fruit?.product?.category?.name
+            ? fruit?.product?.category?.enName
             : router.locale === "ja"
             ? fruit?.product?.category?.jaName
             : fruit?.product?.category?.category}
