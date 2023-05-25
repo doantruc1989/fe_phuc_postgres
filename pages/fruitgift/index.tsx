@@ -23,34 +23,50 @@ function Index() {
   const { t } = useTranslation("");
   useEffect(() => {
     let language = router.locale;
-    if(language === "default") {
-      language = "en"
-    try {
-      axios
-        .get(
-          `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
-        )
-        .then((res: any) => {
-          setVnFruits(res.data[0]);
-          setTotalItems(res.data[1]);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  try {
-    axios
-      .get(
-        `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
-      )
-      .then((res: any) => {
-        setVnFruits(res.data[0]);
-        setTotalItems(res.data[1]);
+    router.events.on("routeChangeComplete", () => {
+      if (language === "default") {
+        language = "en";
+        try {
+          axios
+            .get(
+              `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
+            )
+            .then((res: any) => {
+              setVnFruits(res.data[0]);
+              setTotalItems(res.data[1]);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      try {
+        axios
+          .get(
+            `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
+          )
+          .then((res: any) => {
+            setVnFruits(res.data[0]);
+            setTotalItems(res.data[1]);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    return () => {
+      router.events.off("routeChangeComplete", () => {
+        console.log("stoped");
       });
-  } catch (error) {
-    console.log(error);
-  }
-  }, [page, condition, condition2, sortField, fromPrice, toPrice, search, router]);
+    };
+  }, [
+    page,
+    condition,
+    condition2,
+    sortField,
+    fromPrice,
+    toPrice,
+    search,
+    router,
+  ]);
 
   return (
     <div>
@@ -352,11 +368,15 @@ function Index() {
                       key={fruit.id}
                       className="rounded-md border hover:shadow-xl border-gray-200 shadow-sm bg-white"
                     >
-                      <Link  href={
+                      <Link
+                        href={
                           router.locale === "en"
                             ? `/en/product/${fruit?.product?.slug}`
-                            : router.locale === "ja" ? `/ja/product/${fruit?.product?.slug}` : `/product/${fruit?.product?.slug}`
-                        }>
+                            : router.locale === "ja"
+                            ? `/ja/product/${fruit?.product?.slug}`
+                            : `/product/${fruit?.product?.slug}`
+                        }
+                      >
                         <div className="overflow-hidden">
                           <img
                             src={fruit?.product?.image}
@@ -366,7 +386,7 @@ function Index() {
                         </div>
                         <div className="cursor-pointer text-center text-xs">
                           <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-8">
-                          {router.locale === "default"
+                            {router.locale === "default"
                               ? `${fruit?.product?.productName.substring(
                                   0,
                                   30
@@ -382,14 +402,17 @@ function Index() {
                             </div>
                             <div className="flex gap-1 items-center">
                               <p>{t("Đã bán")}</p>
-                              <p className="font-medium">{fruit?.product?.sold}</p>
+                              <p className="font-medium">
+                                {fruit?.product?.sold}
+                              </p>
                             </div>
                           </div>
                         </div>
 
                         <div className="flex gap-2 px-2 items-center justify-center">
                           <p className="text-xl md:text-base font-medium text-red-600 dark:text-white my-1">
-                            {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                            {Intl.NumberFormat().format(fruit?.product?.price) +
+                              " ₫"}
                           </p>
                           <p className="text-red-500 font-bold text-xs">
                             {"-" + 10 + "%"}

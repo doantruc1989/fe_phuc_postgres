@@ -8,6 +8,7 @@ import parse from "html-react-parser";
 import axios from "../../other/axios";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
+import { GetStaticPaths, GetStaticProps } from "next";
 
 function Index() {
   const [blog, setBlog] = useState([] as any);
@@ -18,7 +19,7 @@ function Index() {
   useEffect(() => {
     let language = router.locale;
     if (language === "default") {
-      language = "en"
+      language = "en";
       try {
         axios.get(`/blog/${blogId}?lang=${language}`).then((res: any) => {
           setBlog(res.data);
@@ -40,13 +41,25 @@ function Index() {
     <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
-          href={router.locale === "en" ? "/en" : router.locale === "ja" ? "/ja" :"/"}
+          href={
+            router.locale === "en"
+              ? "/en"
+              : router.locale === "ja"
+              ? "/ja"
+              : "/"
+          }
           icon={HiHome}
         >
           {t("Trang chủ")}
         </Breadcrumb.Item>
         <Breadcrumb.Item
-          href={router.locale === "en" ? "/en/blog" : router.locale === "ja" ? "/ja/blog" : "/blog"}
+          href={
+            router.locale === "en"
+              ? "/en/blog"
+              : router.locale === "ja"
+              ? "/ja/blog"
+              : "/blog"
+          }
           icon={HiOutlineShoppingBag}
           className="capitalize"
         >
@@ -59,7 +72,7 @@ function Index() {
 
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-10 mb-6">
         <h1 className="font-medium text-center text-xl">
-        {router.locale === "default" ? blog?.blog?.title : blog?.transTitle}
+          {router.locale === "default" ? blog?.blog?.title : blog?.transTitle}
         </h1>
         <div className="flex flex-col w-9/12 mx-auto mt-10">
           <img src={blog?.blog?.image} alt="" />
@@ -83,7 +96,41 @@ Index.getLayout = function getLayout(page: ReactElement) {
     </CartProvider>
   );
 };
+// export const getStaticProps: GetStaticProps = async (context, {locale} : any) => {
+//   // const { params }: any = context;
+//   // const response = await axios.get(`/blog/${params.id}?lang=${language}`);
+//   // const data = response.data;
 
+//   // if (!data.id) {
+//   //   return {
+//   //     notFound: true,
+//   //   };
+//   // }
+
+//   return {
+//     props: {
+//       ...(await serverSideTranslations(locale, ["common"])),
+//     },
+//   };
+// };
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const res = await axios.get(`/blog`);
+//   const resData = res.data;
+
+//   const paths = resData.map((item: any) => {
+//     return {
+//       params: { id: `${item.id}` },
+//     };
+//   });
+//   // const paths = [{params: {id: '2'}}]
+
+//   return {
+//     paths: paths,
+//     // paths: { params: { id: "1" } },
+//     fallback: true,
+//   };
+// };
 export async function getServerSideProps({ locale }: any) {
   return {
     props: {
