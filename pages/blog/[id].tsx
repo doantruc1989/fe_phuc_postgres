@@ -14,7 +14,7 @@ function Index(data:any) {
   const [blog, setBlog] = useState([] as any);
   const router = useRouter();
   const blogId = router.query.id;
-  const { t } = useTranslation("");
+  const { t } = useTranslation("common");
 
   // useEffect(() => {
   //   let language = router.locale;
