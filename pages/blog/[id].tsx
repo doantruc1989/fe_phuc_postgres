@@ -10,7 +10,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 
-function Index({ data }: any) {
+function Index(data:any) {
   const [blog, setBlog] = useState([] as any);
   const router = useRouter();
   const blogId = router.query.id;
@@ -62,21 +62,21 @@ function Index({ data }: any) {
           {t("Tin Tức")}
         </Breadcrumb.Item>
         <Breadcrumb.Item className="hidden md:flex">
-          {router.locale === "default" ? data?.blog?.title : data?.transTitle}
+          {router.locale === "default" ? data?.data?.blog?.title : data?.transTitle}
         </Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-10 mb-6">
         <h1 className="font-medium text-center text-xl">
-          {router.locale === "default" ? data?.blog?.title : data?.transTitle}
+          {router.locale === "default" ? data?.data?.blog?.title : data?.data?.transTitle}
         </h1>
         <div className="flex flex-col w-9/12 mx-auto mt-10">
-          <img src={data?.blog?.image} alt="" />
+          <img src={data?.data?.blog?.image} alt="" />
         </div>
         <div className="text-justify mt-6 leading-loose mx-3 md:mx-0">
           {router.locale === "default"
-            ? parse(`${data?.blog?.text}`)
-            : parse(`${data?.transText}`)}
+            ? parse(`${data?.data?.blog?.text}`)
+            : parse(`${data?.data?.transText}`)}
         </div>
       </div>
     </div>
@@ -93,11 +93,10 @@ Index.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-export const getStaticProps: GetStaticProps = async (
+export const getServerSideProps = async (
   context :
  any) => {
-
-  const response = await axios.get(`/blog/${context?.params?.id}?lang=${context.locale === "default" ? "en" : context.locale === "ja" ? "ja" : "en"}`);
+  const response = await axios.get(`/blog/${context.params.id}?lang=${context.locale === "default" ? "en" : context.locale === "ja" ? "ja" : "en"}`);
   const data = response.data;
 
   if (!data.id) {
@@ -108,19 +107,19 @@ export const getStaticProps: GetStaticProps = async (
 
   return {
     props: { 
-      ...(await serverSideTranslations(context.locale, ["common"])), 
-      data },
+      ...(await serverSideTranslations(context.locale, ["common"])), data
+      },
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = [{params: {id: '2'}}]
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const paths = [{params: {id: '2'}}]
 
-  return {
-    paths: paths,
-    fallback: true,
-  };
-};
+//   return {
+//     paths: paths,
+//     fallback: true,
+//   };
+// };
 
 // export const getServerSideProps: GetServerSideProps = async ({
 //   locale,
