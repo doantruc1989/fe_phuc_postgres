@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://phucpsql.webproject.click/';
+const BASE_URL = 'https://phucpsql.webproject.click';
 
 export default axios.create({
     baseURL: BASE_URL

@@ -23,40 +23,20 @@ function Index() {
   const { t } = useTranslation("");
   useEffect(() => {
     let language = router.locale;
-    router.events.on("routeChangeComplete", () => {
-      if (language === "default") {
-        language = "en";
-        try {
-          axios
-            .get(
-              `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
-            )
-            .then((res: any) => {
-              setVnFruits(res.data[0]);
-              setTotalItems(res.data[1]);
-            });
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      try {
-        axios
-          .get(
-            `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
-          )
-          .then((res: any) => {
-            setVnFruits(res.data[0]);
-            setTotalItems(res.data[1]);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    });
-    return () => {
-      router.events.off("routeChangeComplete", () => {
-        console.log("stoped");
-      });
-    };
+    try {
+      axios
+        .get(
+          `/product?page=${page}&take=20&filter=3&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
+          setVnFruits(res.data[0]);
+          setTotalItems(res.data[1]);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }, [
     page,
     condition,

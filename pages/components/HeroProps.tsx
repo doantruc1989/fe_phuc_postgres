@@ -1,4 +1,3 @@
-
 import { Rating } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,12 +13,14 @@ function HeroProps({ props }: any) {
   const router = useRouter();
   useEffect(() => {
     let language = router.locale;
-    if(language === "default") {
-      language = "en"
     try {
       axios
         .get(
-          `/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
+          `/product?page=1&take=20&filter=${props.filter}&condition2=${
+            props?.condition2
+          }&search=${props?.search}&lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
         )
         .then((res: any) => {
           setFruits(res.data[0]);
@@ -27,18 +28,6 @@ function HeroProps({ props }: any) {
     } catch (error) {
       console.log(error);
     }
-  }
-  try {
-    axios
-      .get(
-        `/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
-      )
-      .then((res: any) => {
-        setFruits(res.data[0]);
-      });
-  } catch (error) {
-    console.log(error);
-  }
   }, [props, router]);
 
   const responsive = {
@@ -94,7 +83,11 @@ function HeroProps({ props }: any) {
             >
               <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                 <HiStar className="font-medium text-sm" />
-                <p>{router.locale === "default" ? item?.product?.brand : item?.enBrand}</p>
+                <p>
+                  {router.locale === "default"
+                    ? item?.product?.brand
+                    : item?.enBrand}
+                </p>
               </div>
               <div className="overflow-hidden">
                 <img
@@ -106,7 +99,9 @@ function HeroProps({ props }: any) {
 
               <div className="cursor-pointer text-center text-xs">
                 <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 text-ellipsis h-8">
-                {router.locale === "default" ? `${item?.product?.productName.substring(0, 30)}...` : `${item?.enName.substring(0, 30)}...`}
+                  {router.locale === "default"
+                    ? `${item?.product?.productName.substring(0, 30)}...`
+                    : `${item?.enName.substring(0, 30)}...`}
                 </p>
                 <div className="flex gap-3 items-center justify-center mt-1">
                   <div className="flex gap-1 pr-1 items-center border-r border-gray-200">

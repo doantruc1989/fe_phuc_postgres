@@ -11,20 +11,16 @@ const Hero16 = () => {
   const router = useRouter();
   useEffect(() => {
     let language = router.locale;
-    if (language === "default") {
-      language = "en";
-      try {
-        axios.get(`/blog?lang=${language}`).then((res: any) => {
+    try {
+      axios
+        .get(
+          `/blog?lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
           setBlogs(res.data);
         });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    try {
-      axios.get(`/blog?lang=${language}`).then((res: any) => {
-        setBlogs(res.data);
-      });
     } catch (error) {
       console.log(error);
     }

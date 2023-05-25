@@ -70,24 +70,14 @@ export default function TopBar({ visible, setVisible }: any) {
 
     timeout.current = setTimeout(async () => {
       let language = router.locale;
-      if (language === "default") {
-        language = "en";
-        try {
-          await axios
-            .get(
-              `/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
-            )
-            .then((res) => {
-              setResult(res.data[0]);
-            });
-        } catch (error) {
-          console.log(error);
-        }
-      }
       try {
         await axios
           .get(
-            `/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
+            `/product?page=${page}&take=10&sortField=${
+              e.target.value
+            }&search=searchall&lang=${
+              language === "default" ? "en" : language === "ja" ? "ja" : "en"
+            }`
           )
           .then((res) => {
             setResult(res.data[0]);

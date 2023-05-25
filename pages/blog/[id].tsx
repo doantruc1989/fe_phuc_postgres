@@ -8,7 +8,7 @@ import parse from "html-react-parser";
 import axios from "../../other/axios";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 
 function Index() {
   const [blog, setBlog] = useState([] as any);
@@ -18,20 +18,16 @@ function Index() {
 
   useEffect(() => {
     let language = router.locale;
-    if (language === "default") {
-      language = "en";
-      try {
-        axios.get(`/blog/${blogId}?lang=${language}`).then((res: any) => {
+    try {
+      axios
+        .get(
+          `/blog/${blogId}?lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
           setBlog(res.data);
         });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    try {
-      axios.get(`/blog/${blogId}?lang=${language}`).then((res: any) => {
-        setBlog(res.data);
-      });
     } catch (error) {
       console.log(error);
     }
@@ -131,12 +127,14 @@ Index.getLayout = function getLayout(page: ReactElement) {
 //     fallback: true,
 //   };
 // };
-export async function getServerSideProps({ locale }: any) {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+}: any) => {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
     },
   };
-}
+};
 
 export default Index;

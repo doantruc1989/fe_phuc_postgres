@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 import axios from "../../other/axios";
+import { GetServerSideProps } from "next";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
@@ -55,18 +56,8 @@ function Index() {
 
   useEffect(() => {
     let language = router.locale;
-    if (language === "default") {
-      language = "en";
-      try {
-        axios.get(`/product/${fruitId}?lang=${language}`).then((res: any) => {
-          setFruit(res.data);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
     try {
-      axios.get(`/product/${fruitId}?lang=${language}`).then((res: any) => {
+      axios.get(`/product/${fruitId}?lang=${language === "default" ? "en" : language === "ja" ? "ja" : "en"}`).then((res: any) => {
         setFruit(res.data);
       });
     } catch (error) {
@@ -76,18 +67,8 @@ function Index() {
 
   useEffect(() => {
     let language = router.locale;
-    if (language === "default") {
-      language = "en";
-      try {
-        axios.get(`/blog?lang=${language}`).then((res: any) => {
-          setBlogs(res.data);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
     try {
-      axios.get(`/blog?lang=${language}`).then((res: any) => {
+      axios.get(`/blog?lang=${language === "default" ? "en" : language === "ja" ? "ja" : "en"}`).then((res: any) => {
         setBlogs(res.data);
       });
     } catch (error) {
@@ -364,7 +345,7 @@ Index.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-export async function getServerSideProps({ locale }: any) {
+export const getServerSideProps : GetServerSideProps = async ({ locale }: any) => {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),

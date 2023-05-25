@@ -1,4 +1,3 @@
-
 import { Rating } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,24 +14,12 @@ function Relativeproducts() {
   const { t } = useTranslation("");
   useEffect(() => {
     let language = router.locale;
-    if (language === "default") {
-      language = "en";
-      try {
-        axios
-          .get(
-            `/product?page=1&take=20&search=allRandom&lang=${language}`
-          )
-          .then((res: any) => {
-            setFruits(res.data);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
     try {
       axios
         .get(
-          `/product?page=1&take=20&search=allRandom&lang=${language}`
+          `/product?page=1&take=20&search=allRandom&lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
         )
         .then((res: any) => {
           setFruits(res.data);

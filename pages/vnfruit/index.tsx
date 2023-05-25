@@ -24,12 +24,12 @@ function Index() {
 
   useEffect(() => {
     let language = router.locale;
-    if(language === "default") {
-      language = "en"
     try {
       axios
         .get(
-          `/product?page=${page}&take=20&filter=1&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
+          `/product?page=${page}&take=20&filter=1&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
         )
         .then((res: any) => {
           setVnFruits(res.data[0]);
@@ -38,20 +38,16 @@ function Index() {
     } catch (error) {
       console.log(error);
     }
-  }
-  try {
-    axios
-      .get(
-        `/product?page=${page}&take=20&filter=1&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
-      )
-      .then((res: any) => {
-        setVnFruits(res.data[0]);
-        setTotalItems(res.data[1]);
-      });
-  } catch (error) {
-    console.log(error);
-  }
-  }, [page, condition, condition2, sortField, fromPrice, toPrice, search, router]);
+  }, [
+    page,
+    condition,
+    condition2,
+    sortField,
+    fromPrice,
+    toPrice,
+    search,
+    router,
+  ]);
 
   return (
     <div>
@@ -609,8 +605,10 @@ function Index() {
                       <Link
                         href={
                           router.locale === "en"
-                          ? `/en/product/${fruit?.product?.slug}`
-                          : router.locale === "ja" ? `/ja/product/${fruit?.product?.slug}` : `/product/${fruit?.product?.slug}`
+                            ? `/en/product/${fruit?.product?.slug}`
+                            : router.locale === "ja"
+                            ? `/ja/product/${fruit?.product?.slug}`
+                            : `/product/${fruit?.product?.slug}`
                         }
                       >
                         <div className="overflow-hidden">
@@ -638,14 +636,17 @@ function Index() {
                             </div>
                             <div className="flex gap-1 items-center">
                               <p>{t("Đã bán")}</p>
-                              <p className="font-medium">{fruit?.product?.sold}</p>
+                              <p className="font-medium">
+                                {fruit?.product?.sold}
+                              </p>
                             </div>
                           </div>
                         </div>
 
                         <div className="flex gap-2 px-2 items-center justify-center">
                           <p className="text-xl md:text-base font-medium text-red-600 dark:text-white my-1">
-                            {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                            {Intl.NumberFormat().format(fruit?.product?.price) +
+                              " ₫"}
                           </p>
                           <p className="text-red-500 font-bold text-xs">
                             {"-" + 10 + "%"}

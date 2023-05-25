@@ -1,4 +1,3 @@
-
 import { Button, Rating } from "flowbite-react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -25,24 +24,14 @@ function Hero2() {
 
   useEffect(() => {
     let language = router.locale;
-    if(language === "default") {
-      language = "en"
-      try {
-        axios
-          .get(
-            `/product?page=${page}&take=20&sortField=${sortField2?.sortField}&search=${sortField2?.search}&lang=${language}`
-          )
-          .then((res: any) => {
-            setFruits(res.data);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
     try {
       axios
         .get(
-          `/product?page=${page}&take=20&sortField=${sortField2?.sortField}&search=${sortField2?.search}&lang=${language}`
+          `/product?page=${page}&take=20&sortField=${
+            sortField2?.sortField
+          }&search=${sortField2?.search}&lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
         )
         .then((res: any) => {
           setFruits(res.data);
@@ -118,7 +107,9 @@ function Hero2() {
                   <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                     <HiStar className="font-medium text-sm" />
                     <p>
-                     {router.locale === "default" ? item?.product?.brand : item?.enBrand}
+                      {router.locale === "default"
+                        ? item?.product?.brand
+                        : item?.enBrand}
                     </p>
                   </div>
 
