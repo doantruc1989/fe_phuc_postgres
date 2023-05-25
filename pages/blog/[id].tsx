@@ -69,8 +69,8 @@ function Index() {
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-10 mb-6">
         <h1 className="font-medium text-center text-xl">
           {router.locale === "default"
-            ? blog?.data?.blog?.title
-            : blog?.data?.transTitle}
+            ? blog?.blog?.title
+            : blog?.transTitle}
         </h1>
         <div className="flex flex-col w-9/12 mx-auto mt-10">
           <img src={blog?.blog?.image} alt="" />

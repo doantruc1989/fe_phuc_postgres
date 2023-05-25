@@ -356,7 +356,7 @@ export default function TopBar({ visible, setVisible }: any) {
                   href={category.path}
                 >
                   {router.locale === "en"
-                    ? category.name
+                    ? category.enName
                     : router.locale === "ja"
                     ? category.jaName
                     : category.category}
