@@ -37,7 +37,7 @@ function SidebarComp() {
                     >
                       {router.locale === "default"
                         ? category.category
-                        : router.locale === "en" ? category.enName : category.jaName}
+                        : router.locale === "en" ? category.name : category.jaName}
                     </Link>
                   </Sidebar.Item>
                 );

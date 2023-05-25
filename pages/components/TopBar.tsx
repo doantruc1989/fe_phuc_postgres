@@ -301,7 +301,7 @@ export default function TopBar({ visible, setVisible }: any) {
                               <h1>
                                 {router.locale === "default"
                                   ? res?.product?.productName
-                                  : res?.enName}
+                                  : res?.name}
                               </h1>
                               <h1 className="font-medium">
                                 {Intl.NumberFormat().format(
@@ -356,7 +356,7 @@ export default function TopBar({ visible, setVisible }: any) {
                   href={category.path}
                 >
                   {router.locale === "en"
-                    ? category.enName
+                    ? category.name
                     : router.locale === "ja"
                     ? category.jaName
                     : category.category}

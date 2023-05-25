@@ -371,7 +371,7 @@ function Index() {
                                   0,
                                   30
                                 )}...`
-                              : `${fruit?.enName.substring(0, 25)}...`}
+                              : `${fruit?.name.substring(0, 25)}...`}
                           </p>
                           <div className="flex gap-3 items-center justify-center mt-1">
                             <div className="flex gap-1 pr-1 items-center border-r border-gray-200">

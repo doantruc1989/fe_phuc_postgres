@@ -103,7 +103,7 @@ function Index() {
           icon={HiOutlineShoppingBag}
         >
           {router.locale === "en"
-            ? fruit?.product?.category?.enName
+            ? fruit?.product?.category?.name
             : router.locale === "ja"
             ? fruit?.product?.category?.jaName
             : fruit?.product?.category?.category}
@@ -111,7 +111,7 @@ function Index() {
         <Breadcrumb.Item className="hidden md:flex">
           {router.locale === "default"
             ? fruit?.product?.productName
-            : fruit?.enName}
+            : fruit?.name}
           <ScrollTop />
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -159,7 +159,7 @@ function Index() {
           <h1 className="text-xl uppercase font-medium">
             {router.locale === "default"
               ? fruit?.product?.productName
-              : fruit?.enName}
+              : fruit?.name}
           </h1>
 
           <div className="flex gap-2 items-center justify-between my-2">
@@ -201,8 +201,8 @@ function Index() {
               <p className="font-medium">{t("Thương hiệu:")}</p>
               <p>
                 {router.locale === "default"
-                  ? fruit?.product?.enBrand
-                  : fruit?.enBrand}
+                  ? fruit?.product?.brand
+                  : fruit?.brand}
               </p>
             </div>
           </div>
@@ -276,7 +276,7 @@ function Index() {
               <div className="text-justify leading-loose">
                 {router.locale === "default"
                   ? parse(`${fruit?.product?.content}`)
-                  : parse(`${fruit?.enContent}`)}
+                  : parse(`${fruit?.content}`)}
               </div>
             </Tabs.Item>
             <Tabs.Item title={t("GIỚI THIỆU")}>

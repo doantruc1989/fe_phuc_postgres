@@ -85,7 +85,7 @@ function Relativeproducts() {
                 <p>
                   {router.locale === "defaul"
                     ? item?.product?.brand
-                    : item?.enBrand}
+                    : item?.brand}
                 </p>
               </div>
               <div className="overflow-hidden">
@@ -100,7 +100,7 @@ function Relativeproducts() {
                 <p className="font-medium text-gray-900 dark:text-white mx-1 mt-2 mb-3 text-ellipsis h-8">
                   {router.locale === "default"
                     ? `${item?.product?.productName.substring(0, 30)}...`
-                    : `${item?.enName.substring(0, 30)}...`}
+                    : `${item?.name.substring(0, 30)}...`}
                 </p>
                 <div className="flex gap-3 items-center justify-center mt-1">
                   <div className="flex gap-1 pr-1 items-center border-r border-gray-200">

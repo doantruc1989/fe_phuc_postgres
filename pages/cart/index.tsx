@@ -86,7 +86,7 @@ function Index() {
                           <div className="text-xs font-medium text-gray-900 dark:text-white">
                             {router.locale === "default"
                               ? `${item?.product?.productName}`
-                              : `${item?.enName}`}
+                              : `${item?.name}`}
                           </div>
                           <div>{item.type ? item.type : null}</div>
                         </Table.Cell>

@@ -108,7 +108,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                         />
                         <div className="flex flex-col items-start">
                           <span>
-                            {router.locale === "default" ? item?.product?.productName : item?.enName} {" x "} {item.quantity}
+                            {router.locale === "default" ? item?.product?.productName : item?.name} {" x "} {item.quantity}
                           </span>
                           <div className="flex justify-start gap-2">
                             <p className="text-gray-500">{item.type || null}</p>

@@ -801,7 +801,7 @@ function Index() {
                       <div className="flex gap-1">
                         <p>{router.locale === "default"
                               ? `${item?.product?.productName}`
-                              : `${item?.enName}`}</p>
+                              : `${item?.name}`}</p>
                       </div>
                       <p className="text-sm text-gray-400">descript</p>
                     </div>
