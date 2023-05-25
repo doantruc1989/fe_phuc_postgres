@@ -120,7 +120,7 @@ function Index() {
             <span className="font-medium">phucfresh.vn</span>
           </p>
           <div className="flex gap-4 mt-6">
-            <Link href={"http://localhost:3007/auth/facebook"}>
+            <Link href={"https://phucpsql.webproject.click/auth/facebook"}>
               <img
                 width="129px"
                 height="37px"
@@ -128,7 +128,7 @@ function Index() {
                 src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg"
               />
             </Link>
-            <Link href={"http://localhost:3007/auth/google"}>
+            <Link href={"https://phucpsql.webproject.click/auth/google"}>
               <img
                 width="129px"
                 height="37px"

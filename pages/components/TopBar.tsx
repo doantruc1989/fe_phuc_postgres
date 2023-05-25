@@ -11,11 +11,11 @@ import {
 } from "react-icons/hi";
 import Link from "next/link";
 import { Dropdown, TextInput } from "flowbite-react";
-import axios from "axios";
 import { useCart } from "react-use-cart";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import axios from "../../other/axios";
 
 export default function TopBar({ visible, setVisible }: any) {
   const { totalItems, isEmpty } = useCart();
@@ -39,7 +39,7 @@ export default function TopBar({ visible, setVisible }: any) {
 
   useEffect(() => {
     try {
-      axios.get("http://localhost:3007/product/category").then((res: any) => {
+      axios.get("/product/category").then((res: any) => {
         setCategories(res.data);
       });
     } catch (error) {
@@ -75,7 +75,7 @@ export default function TopBar({ visible, setVisible }: any) {
         try {
           await axios
             .get(
-              `http://localhost:3007/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
+              `/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
             )
             .then((res) => {
               setResult(res.data[0]);
@@ -87,7 +87,7 @@ export default function TopBar({ visible, setVisible }: any) {
       try {
         await axios
           .get(
-            `http://localhost:3007/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
+            `/product?page=${page}&take=10&sortField=${e.target.value}&search=searchall&lang=${language}`
           )
           .then((res) => {
             setResult(res.data[0]);

@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { Rating } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { HiStar } from "react-icons/hi";
 import Carousel from "react-multi-carousel";
+import axios from "../../other/axios";
 
 function HeroProps({ props }: any) {
   const [fruits, setFruits] = useState([] as any);
@@ -18,7 +19,7 @@ function HeroProps({ props }: any) {
     try {
       axios
         .get(
-          `http://localhost:3007/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
+          `/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
         )
         .then((res: any) => {
           setFruits(res.data[0]);
@@ -30,7 +31,7 @@ function HeroProps({ props }: any) {
   try {
     axios
       .get(
-        `http://localhost:3007/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
+        `/product?page=1&take=20&filter=${props.filter}&condition2=${props?.condition2}&search=${props?.search}&lang=${language}`
       )
       .then((res: any) => {
         setFruits(res.data[0]);

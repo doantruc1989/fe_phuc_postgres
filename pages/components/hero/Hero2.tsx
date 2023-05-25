@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { Button, Rating } from "flowbite-react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { HiCheck, HiStar } from "react-icons/hi";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import axios from "../../../other/axios";
 
 function Hero2() {
   const newProduct = {
@@ -29,7 +30,7 @@ function Hero2() {
       try {
         axios
           .get(
-            `http://localhost:3007/product?page=${page}&take=20&sortField=${sortField2?.sortField}&search=${sortField2?.search}&lang=${language}`
+            `/product?page=${page}&take=20&sortField=${sortField2?.sortField}&search=${sortField2?.search}&lang=${language}`
           )
           .then((res: any) => {
             setFruits(res.data);
@@ -41,7 +42,7 @@ function Hero2() {
     try {
       axios
         .get(
-          `http://localhost:3007/product?page=${page}&take=20&sortField=${sortField2?.sortField}&search=${sortField2?.search}&lang=${language}`
+          `/product?page=${page}&take=20&sortField=${sortField2?.sortField}&search=${sortField2?.search}&lang=${language}`
         )
         .then((res: any) => {
           setFruits(res.data);

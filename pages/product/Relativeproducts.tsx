@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { Rating } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { HiStar } from "react-icons/hi";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import axios from "../../other/axios";
 
 function Relativeproducts() {
   const [fruits, setFruits] = useState([] as any);
@@ -19,7 +20,7 @@ function Relativeproducts() {
       try {
         axios
           .get(
-            `http://localhost:3007/product?page=1&take=20&search=allRandom&lang=${language}`
+            `/product?page=1&take=20&search=allRandom&lang=${language}`
           )
           .then((res: any) => {
             setFruits(res.data);
@@ -31,7 +32,7 @@ function Relativeproducts() {
     try {
       axios
         .get(
-          `http://localhost:3007/product?page=1&take=20&search=allRandom&lang=${language}`
+          `/product?page=1&take=20&search=allRandom&lang=${language}`
         )
         .then((res: any) => {
           setFruits(res.data);

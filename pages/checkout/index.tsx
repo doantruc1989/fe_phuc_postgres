@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { Button, Label, Select, TextInput } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { HiUserCircle, HiOutlineChevronLeft } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartProvider, useCart } from "react-use-cart";
+import axios from "../../other/axios";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
 import LoginModal from "./LoginModal";
 import SecurityModal from "./SecurityModal";
@@ -102,7 +103,7 @@ function Index() {
   useEffect(() => {
     try {
       axios
-        .get("http://localhost:3007/homepage/provinces/all")
+        .get("/homepage/provinces/all")
         .then((res: any) => {
           setProvinces(res.data);
         });
@@ -153,7 +154,7 @@ function Index() {
   const handlePay = () => {
     try {
       axios
-        .post("http://localhost:3007/cart/order", {
+        .post("/cart/order", {
           address:
             users?.address ||
             address + ", " + ward + ", " + district + ", " + city,
@@ -275,7 +276,7 @@ function Index() {
                               try {
                                 axios
                                   .get(
-                                    `http://localhost:3007/homepage/provinces/${e.target.value}`
+                                    `/homepage/provinces/${e.target.value}`
                                   )
                                   .then((res: any) => {
                                     setProDictricts(res.data[0]);
@@ -314,7 +315,7 @@ function Index() {
                               try {
                                 axios
                                   .get(
-                                    `http://localhost:3007/homepage/provinces/city/${e.target.value}`
+                                    `/homepage/provinces/city/${e.target.value}`
                                   )
                                   .then((res: any) => {
                                     setProWards(
@@ -496,7 +497,7 @@ function Index() {
                           try {
                             axios
                               .get(
-                                `http://localhost:3007/homepage/provinces/${e.target.value}`
+                                `/homepage/provinces/${e.target.value}`
                               )
                               .then((res: any) => {
                                 setProDictricts(res.data[0]);
@@ -535,7 +536,7 @@ function Index() {
                           try {
                             axios
                               .get(
-                                `http://localhost:3007/homepage/provinces/city/${e.target.value}`
+                                `/homepage/provinces/city/${e.target.value}`
                               )
                               .then((res: any) => {
                                 setProWards(

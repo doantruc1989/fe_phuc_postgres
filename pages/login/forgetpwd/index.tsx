@@ -7,9 +7,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import axios from "../../../other/axios";
 
 function Index() {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ function Index() {
     e.preventDefault();
     try {
       await axios
-        .post("http://localhost:3007/mailing/forgot-password", {
+        .post("/mailing/forgot-password", {
           email,
         })
         .then((res: any) => {

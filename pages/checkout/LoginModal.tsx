@@ -1,5 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react";
-import axios from "axios";
 import { Button, TextInput } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import { useRouter } from "next/router";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+import axios from "../../other/axios";
 
 function LoginModal({ isLogin, setIsLogin }: any) {
   const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
     e.preventDefault();
     try {
       await axios
-        .post("http://localhost:3007/auth/signin", {
+        .post("/auth/signin", {
           email,
           password: pwd,
         })
@@ -77,7 +77,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                         {t("Đăng nhập để mua hàng và sử dụng những tiện ích mới nhất từ ")}<span className="font-medium">phucfresh.vn</span>
                       </p>
                       <div className="flex gap-4 mt-6">
-                        <Link href={"http://localhost:3007/auth/facebook"}>
+                        <Link href={"https://phucpsql.webproject.click/auth/facebook"}>
                           <img
                             width="129px"
                             height="37px"
@@ -85,7 +85,7 @@ function LoginModal({ isLogin, setIsLogin }: any) {
                             src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg"
                           />
                         </Link>
-                        <Link href={"http://localhost:3007/auth/google"}>
+                        <Link href={"https://phucpsql.webproject.click/auth/google"}>
                           <img
                             width="129px"
                             height="37px"

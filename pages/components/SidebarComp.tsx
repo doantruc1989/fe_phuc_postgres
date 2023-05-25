@@ -1,17 +1,18 @@
-import axios from "axios";
+
 import { Sidebar } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import axios from "../../other/axios";
 
 function SidebarComp() {
   const router = useRouter();
   const [categories, setCategories] = useState([] as any);
   useEffect(() => {
     try {
-      axios.get("http://localhost:3007/product/category").then((res: any) => {
+      axios.get("/product/category").then((res: any) => {
         setCategories(res.data);
       });
     } catch (error) {

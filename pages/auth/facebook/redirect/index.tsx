@@ -1,8 +1,8 @@
 
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import axios from "../../../../other/axios";
 
 function Index() {
   const [user, setUser] = useState([] as any);
@@ -10,7 +10,7 @@ function Index() {
 
   useEffect(() => {
     try {
-      axios.get(`http://localhost:3007${router.asPath}`).then((res: any) => {
+      axios.get(`/${router.asPath}`).then((res: any) => {
         setUser(res.data);
         
       });

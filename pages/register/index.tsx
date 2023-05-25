@@ -4,12 +4,13 @@ import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
 import { HiHome } from "react-icons/hi";
 import Link from "next/link";
-import axios from "axios";
+
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
+import axios from "../../other/axios";
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const NAME_REGEX = /^\s*\S+(?:\s+\S+){1}/;
@@ -69,7 +70,7 @@ function Index() {
     e.preventDefault();
     try {
       await axios
-        .post("http://localhost:3007/auth/signup", {
+        .post("/auth/signup", {
           email: email,
           password: pwd,
           username: name,
@@ -122,7 +123,7 @@ function Index() {
             <span className="font-medium">phucfresh.vn</span>
           </p>
           <div className="flex gap-4 mt-6">
-            <Link href={"http://localhost:3007/auth/facebook"}>
+            <Link href={"https://phucpsql.webproject.click/auth/facebook"}>
               <img
                 width="129px"
                 height="37px"
@@ -130,7 +131,7 @@ function Index() {
                 src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg"
               />
             </Link>
-            <Link href={"http://localhost:3007/auth/google"}>
+            <Link href={"https://phucpsql.webproject.click/auth/google"}>
               <img
                 width="129px"
                 height="37px"

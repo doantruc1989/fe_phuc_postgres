@@ -3,11 +3,12 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
 import { HiHome } from "react-icons/hi";
-import axios from "axios";
+
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import axios from "../../other/axios";
 
 function Index() {
   const [vnFruits, setVnFruits] = useState([] as any);
@@ -29,7 +30,7 @@ function Index() {
     try {
       axios
         .get(
-          `http://localhost:3007/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
+          `/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
         )
         .then((res: any) => {
           setVnFruits(res.data[0]);
@@ -42,7 +43,7 @@ function Index() {
   try {
     axios
       .get(
-        `http://localhost:3007/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
+        `/product?page=${page}&take=20&filter=2&condition2=${condition2}&condition=${condition}&sortField=${sortField}&fromPrice=${fromPrice}&toPrice=${toPrice}&search=${search}&lang=${language}`
       )
       .then((res: any) => {
         setVnFruits(res.data[0]);
