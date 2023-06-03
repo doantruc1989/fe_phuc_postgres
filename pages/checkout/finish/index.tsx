@@ -21,7 +21,7 @@ function Index() {
     };
   }, []);
   redirect === true &&
-    router.push("/account", undefined, { locale: router.locale });
+    router.push("/", undefined, { locale: router.locale });
 
   return (
     <>
@@ -29,7 +29,7 @@ function Index() {
         <section className="text-base text-center capitalize font-medium my-20">
           <h1>
             {t(
-              "Bạn đã đặt hàng thành công, hệ thống sẽ chuyển bạn tới trang cá nhân của bạn sau 5 giây nữa. Hoặc "
+              "Bạn đã đặt hàng thành công, hệ thống sẽ chuyển bạn tới trang chủ sau 5 giây nữa. Hoặc "
             )}
           </h1>
           <p className="mt-6">

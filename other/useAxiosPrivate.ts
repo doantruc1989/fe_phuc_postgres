@@ -24,7 +24,7 @@ const useAxiosPrivate = () => {
         if (!config.headers["Authorization"]) {
           config.headers[
             "Authorization"
-          ] = `Bearer ${user?.tokens.accessToken}`;
+          ] = `Bearer ${user?.tokens?.accessToken}`;
         }
         return config;
       },
@@ -42,7 +42,7 @@ const useAxiosPrivate = () => {
 
             axios.defaults.headers.common[
               "Authorization"
-            ] = `Bearer ${user?.tokens.refreshToken}`;
+            ] = `Bearer ${user?.tokens?.refreshToken}`;
             const response = await axios.get("/auth/refresh");
             localStorage.setItem("user", JSON.stringify(response?.data));
             const newAccessToken = response.data.tokens.accessToken

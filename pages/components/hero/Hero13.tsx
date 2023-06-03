@@ -1,27 +1,23 @@
 import Link from "next/link";
 import React from "react";
 
-function Hero13() {
+function Hero13({ hero13 }: any) {
   return (
-    <Link href="/friedfood">
-      <div className="mt-12 flex flex-col md:flex-row gap-3">
-        <div className="relative w-full overflow-hidden">
-          <img
-            className="w-full h-80 hover:scale-110 transition-all duration-500"
-            src="/image/hero13_1.png"
-            alt="hero13_1"
-          />
-        </div>
-
-        <div className="relative w-full overflow-hidden">
-          <img
-            className="w-full h-80 hover:scale-110 transition-all duration-500"
-            src="/image/hero13_2.png"
-            alt="hero13_1"
-          />
-        </div>
-      </div>
-    </Link>
+    <div className="mt-12 flex flex-col md:flex-row gap-3">
+      {hero13
+        ? hero13.map((item: any) => {
+            return (
+              <Link className="w-full" key={item.id} href={item.path}>
+                <img
+                  className="w-full h-80 object-cover hover:scale-110 transition-all duration-500"
+                  src={item.url}
+                  alt={item.name}
+                />
+              </Link>
+            );
+          })
+        : null}
+    </div>
   );
 }
 

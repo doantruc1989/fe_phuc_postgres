@@ -93,7 +93,7 @@ function Hero2() {
             return (
               <div
                 key={item?.id}
-                className="rounded-lg mx-1 border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
+                className="rounded-lg border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
               >
                 <Link
                   href={

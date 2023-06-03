@@ -1,20 +1,25 @@
 import Link from "next/link";
 import React from "react";
 
-function Hero3() {
+function Hero3({ hero3 }: any) {
   return (
     <div className="mt-12 flex flex-col md:flex-row gap-3">
-      <div className="relative w-full overflow-hidden">
-        <Link href="/fruitgift">
-          <img className="w-full object-cover hover:scale-110 transition-all duration-500" src="/image/hero3_1.png" alt="hero3_1" />
-        </Link>
-      </div>
-
-      <div className="relative w-full overflow-hidden">
-        <Link href="/fruitgift">
-          <img className="w-full object-cover hover:scale-110 transition-all duration-500" src="/image/hero3_2.png" alt="hero3_1" />
-        </Link>
-      </div>
+      {hero3
+        ? hero3.map((item: any) => {
+            return (
+              <Link 
+              className="w-full"
+              key={item.id}
+              href={item.path}>
+                <img
+                  className="w-full object-cover hover:scale-110 transition-all duration-500"
+                  src={item.url}
+                  alt={item.name}
+                />
+              </Link>
+            );
+          })
+        : null}
     </div>
   );
 }

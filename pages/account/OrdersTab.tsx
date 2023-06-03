@@ -25,7 +25,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
 
     axiosPrivate
       .put(`/cart/order/${orderId}`, {
-        status: true,
+        isPaid: true,
       })
       .then((res) => {
         setPaid(true);
@@ -41,8 +41,8 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               key={order.id}
               className="relative my-5 p-2 border border-green-600 rounded-xl"
             >
-              {order.status === false ? (
-                order.isPaid === "bank" || order.isPaid === "momo" ? (
+              {order.isPaid === false ? (
+                order.paymentMethod === "bank" || order.paymentMethod === "momo" ? (
                   <a
                     className="text-blue-600 text-xs cursor-pointer absolute right-2 top-3"
                     onClick={(e: any) => {

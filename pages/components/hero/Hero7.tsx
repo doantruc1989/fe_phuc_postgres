@@ -1,20 +1,26 @@
 import Link from 'next/link'
 import React from 'react'
 
-function Hero7() {
+function Hero7({hero7}:any) {
   return (
-    <Link href="/vnfruit">
     <div className="mt-12 flex flex-col md:flex-row gap-3">
-      <div className="relative overflow-hidden">
-        <img className="hover:scale-110 transition-all duration-500" src="/image/hero7_1.png" alt="hero7_1"/>
-      </div>
-
-      <div className="relative overflow-hidden">
-        <img className="hover:scale-110 transition-all duration-500" src="/image/hero7_2.png" alt="hero7_1"/>
-
-      </div>
+      {hero7
+        ? hero7.map((item: any) => {
+            return (
+              <Link 
+              className="w-full"
+              key={item.id}
+              href={item.path}>
+                <img
+                  className="w-full object-cover hover:scale-110 transition-all duration-500"
+                  src={item.url}
+                  alt={item.name}
+                />
+              </Link>
+            );
+          })
+        : null}
     </div>
-    </Link>
   )
 }
 

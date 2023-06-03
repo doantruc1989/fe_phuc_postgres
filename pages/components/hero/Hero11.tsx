@@ -1,27 +1,26 @@
 import Link from "next/link";
 import React from "react";
 
-function Hero11() {
+function Hero11({hero11}:any) {
   return (
-    <Link href="/drink">
-      <div className="mt-12 flex flex-col md:flex-row gap-3">
-        <div className="relative w-full overflow-hidden">
-          <img
-            className="w-full h-80 hover:scale-110 transition-all duration-500"
-            src="/image/hero11_1.png"
-            alt="hero11_1"
-          />
-        </div>
-
-        <div className="relative w-full overflow-hidden">
-          <img
-            className="w-full h-80 hover:scale-110 transition-all duration-500"
-            src="/image/hero11_2.png"
-            alt="hero11_1"
-          />
-        </div>
-      </div>
-    </Link>
+    <div className="mt-12 flex flex-col md:flex-row gap-3">
+      {hero11
+        ? hero11.map((item: any) => {
+            return (
+              <Link 
+              className="w-full"
+              key={item.id}
+              href={item.path}>
+                <img
+                  className="w-full h-80 object-cover hover:scale-110 transition-all duration-500"
+                  src={item.url}
+                  alt={item.name}
+                />
+              </Link>
+            );
+          })
+        : null}
+    </div>
   );
 }
 

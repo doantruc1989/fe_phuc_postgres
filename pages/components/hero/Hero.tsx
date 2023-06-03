@@ -1,10 +1,11 @@
 import { Card } from "flowbite-react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import axios from "../../../other/axios";
 
-function Hero() {
+function Hero({ slides }: any) {
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 968 },
@@ -40,20 +41,16 @@ function Hero() {
         removeArrowOnDeviceType={["tablet", "mobile", "desktop"]}
         deviceType={"desktop"}
         dotListClass="custom-dot-list-style"
-        // itemClass="carousel-item-margin-40-px"
       >
-        <Link href="/fruitgift">
-          <img className="w-full" src="/image/slider1.png" alt="slide1" />
-        </Link>
-        <Link href={"/vnfruit"}>
-          <img className="w-full" src="/image/slider2.png" alt="slide1" />
-        </Link>
-        <Link href={"/importfruit"}>
-          <img className="w-full" src="/image/slider3.png" alt="slide1" />
-        </Link>
-        <Link href={"/fruitgift"}>
-          <img className="w-full" src="/image/slider4.png" alt="slide1" />
-        </Link>
+        {slides
+          ? slides.map((item: any) => {
+              return (
+                <Link key={item.id} href={item.path}>
+                  <img className="w-full" src={item.url} alt={item.name} />
+                </Link>
+              );
+            })
+          : null}
       </Carousel>
     </div>
   );

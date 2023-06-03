@@ -1,19 +1,26 @@
 import Link from "next/link";
 import React from "react";
 
-function Hero5() {
+function Hero5({hero5} :any) {
   return (
-    <Link href="/importfruit">
-      <div className="mt-12 flex flex-col md:flex-row gap-3">
-        <div className="relative overflow-hidden">
-          <img className="hover:scale-110 transition-all duration-500" src="/image/hero5_1.png" alt="hero3_1" />
-        </div>
-
-        <div className="relative overflow-hidden">
-          <img className="hover:scale-110 transition-all duration-500" src="/image/hero5_2.png" alt="hero3_1" />
-        </div>
-      </div>
-    </Link>
+    <div className="mt-12 flex flex-col md:flex-row gap-3">
+      {hero5
+        ? hero5.map((item: any) => {
+            return (
+              <Link 
+              className="w-full"
+              key={item.id}
+              href={item.path}>
+                <img
+                  className="w-full object-cover hover:scale-110 transition-all duration-500"
+                  src={item.url}
+                  alt={item.name}
+                />
+              </Link>
+            );
+          })
+        : null}
+    </div>
   );
 }
 

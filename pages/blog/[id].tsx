@@ -34,54 +34,60 @@ function Index() {
   }, [router]);
 
   return (
-    <div>
-      <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item
-          href={
-            router.locale === "en"
-              ? "/en"
-              : router.locale === "ja"
-              ? "/ja"
-              : "/"
-          }
-          icon={HiHome}
-        >
-          {t("Trang chủ")}
-        </Breadcrumb.Item>
-        <Breadcrumb.Item
-          href={
-            router.locale === "en"
-              ? "/en/blog"
-              : router.locale === "ja"
-              ? "/ja/blog"
-              : "/blog"
-          }
-          icon={HiOutlineShoppingBag}
-          className="capitalize"
-        >
-          {t("Tin Tức")}
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className="hidden md:flex">
-          {router.locale === "default" ? blog?.blog?.title : blog?.transTitle}
-        </Breadcrumb.Item>
-      </Breadcrumb>
+    <>
+      {blog.id === undefined ? null : (
+        <div>
+          <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
+            <Breadcrumb.Item
+              href={
+                router.locale === "en"
+                  ? "/en"
+                  : router.locale === "ja"
+                  ? "/ja"
+                  : "/"
+              }
+              icon={HiHome}
+            >
+              {t("Trang chủ")}
+            </Breadcrumb.Item>
+            <Breadcrumb.Item
+              href={
+                router.locale === "en"
+                  ? "/en/blog"
+                  : router.locale === "ja"
+                  ? "/ja/blog"
+                  : "/blog"
+              }
+              icon={HiOutlineShoppingBag}
+              className="capitalize"
+            >
+              {t("Tin Tức")}
+            </Breadcrumb.Item>
+            <Breadcrumb.Item className="hidden md:flex">
+              {router.locale === "default"
+                ? blog?.blog?.title
+                : blog?.transTitle}
+            </Breadcrumb.Item>
+          </Breadcrumb>
 
-      <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-10 mb-6">
-        <h1 className="font-medium text-center text-xl">
-          {router.locale === "default"
-            ? blog?.blog?.title
-            : blog?.transTitle}
-        </h1>
-        <div className="flex flex-col w-9/12 mx-auto mt-10">
-          <img src={blog?.blog?.image} alt="" />
+          <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-10 mb-6">
+            <h1 className="font-medium text-center text-xl">
+              {router.locale === "default"
+                ? blog?.blog?.title
+                : blog?.transTitle}
+            </h1>
+            <div className="flex flex-col w-9/12 mx-auto mt-10">
+              <img src={blog?.blog?.image} alt="" />
+            </div>
+            <div className="text-justify mt-6 leading-loose mx-3 md:mx-0">
+              {router.locale === "default"
+                ? parse(`${blog?.blog?.text}`)
+                : parse(`${blog?.transText}`)}
+            </div>
+          </div>
         </div>
-        <div className="text-justify mt-6 leading-loose mx-3 md:mx-0">
-          {router.locale === "default"
-            ? parse(`${blog?.blog?.text}`)
-            : parse(`${blog?.transText}`)}
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 

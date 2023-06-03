@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 import axios from "../../other/axios";
+import { socket } from "../../other/socketIo";
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const NAME_REGEX = /^\s*\S+(?:\s+\S+){1}/;
@@ -79,12 +80,16 @@ function Index() {
         })
         .then((res: any) => {
           setSuccess(true);
-          localStorage.setItem("user", JSON.stringify(res?.data));
           setName("");
           setPwd("");
           setEmail("");
           setAdress("");
           setPhone("");
+          const data = {
+            title: `new user ${res.data.email}`,
+            path: '/user'
+          };
+          socket.emit("msgTobe", data);
           const timer = setTimeout(() => {
             setRedirect(true)
           }, 5000);

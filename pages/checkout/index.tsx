@@ -1,4 +1,3 @@
-
 import { Button, Label, Select, TextInput } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -10,10 +9,12 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartProvider, useCart } from "react-use-cart";
 import axios from "../../other/axios";
+import { socket } from "../../other/socketIo";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
 import LoginModal from "./LoginModal";
 import SecurityModal from "./SecurityModal";
 import TcModal from "./TcModal";
+
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const NAME_REGEX = /^\s*\S+(?:\s+\S+){1}/;
@@ -68,9 +69,9 @@ function Index() {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const user =
-      typeof Storage === "undefined"
-        ? {}
-        : JSON.parse(localStorage.getItem("user") || "{}");
+    typeof Storage === "undefined"
+      ? {}
+      : JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     setIsDisable(
@@ -89,24 +90,22 @@ function Index() {
   useEffect(() => {
     const axios = async () => {
       axiosPrivate.get(`/users/${user.id}`).then((res) => {
+        console.log(res.data)
         setUsers(res?.data);
       });
     };
-  
-    if(user.tokens){
+
+    if (user.tokens) {
       axios();
     }
-    return 
-
+    return;
   }, [isChange, isLogin]);
 
   useEffect(() => {
     try {
-      axios
-        .get("/homepage/provinces/all")
-        .then((res: any) => {
-          setProvinces(res.data);
-        });
+      axios.get("/homepage/provinces/all").then((res: any) => {
+        setProvinces(res.data);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -148,7 +147,6 @@ function Index() {
     return () => {
       controller.abort();
     };
-    
   };
 
   const handlePay = () => {
@@ -163,11 +161,15 @@ function Index() {
           cartTotal: total,
           user: users.id || null,
           orderItems: JSON.stringify(items),
-          isPaid: paymentMethod,
+          paymentMethod: paymentMethod,
           guest: users?.id === undefined ? email + " " + name : null,
         })
         .then((res: any) => {
-          console.log(res.data);
+          const data = {
+            title: `new order ${res.data.id}`,
+            path: '/order'
+          };
+          socket.emit("msgTobe", data);
           router.push("/checkout/finish");
         });
     } catch (error) {
@@ -240,7 +242,13 @@ function Index() {
                               className="w-full"
                               type="text"
                               color={validPhone === true ? "success" : "gray"}
-                              placeholder={router.locale == 'default' ? "Số điện thoại" : router.locale == 'en' ? "Phone number" : "電話番号"}
+                              placeholder={
+                                router.locale == "default"
+                                  ? "Số điện thoại"
+                                  : router.locale == "en"
+                                  ? "Phone number"
+                                  : "電話番号"
+                              }
                               value={phone}
                               onChange={(e: any) => {
                                 setPhone(e.target.value);
@@ -249,13 +257,21 @@ function Index() {
                           </div>
                         </div>
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">{t("Địa chỉ cụ thể:")}</Label>
+                          <Label className="w-1/3">
+                            {t("Địa chỉ cụ thể:")}
+                          </Label>
                           <div className="w-full">
                             <TextInput
                               className="w-full"
                               type="text"
                               color={validAddress === true ? "success" : "gray"}
-                              placeholder={router.locale == 'default' ? "địa chỉ giao hàng" : router.locale == 'en' ? "address" : "アドレス"}
+                              placeholder={
+                                router.locale == "default"
+                                  ? "địa chỉ giao hàng"
+                                  : router.locale == "en"
+                                  ? "address"
+                                  : "アドレス"
+                              }
                               value={address}
                               onChange={(e: any) => {
                                 setAdress(e.target.value);
@@ -275,9 +291,7 @@ function Index() {
                               setCity(e.target.value);
                               try {
                                 axios
-                                  .get(
-                                    `/homepage/provinces/${e.target.value}`
-                                  )
+                                  .get(`/homepage/provinces/${e.target.value}`)
                                   .then((res: any) => {
                                     setProDictricts(res.data[0]);
                                   });
@@ -318,9 +332,7 @@ function Index() {
                                     `/homepage/provinces/city/${e.target.value}`
                                   )
                                   .then((res: any) => {
-                                    setProWards(
-                                      res.data[0].wards
-                                    );
+                                    setProWards(res.data[0].wards);
                                   });
                               } catch (error) {
                                 console.log(error);
@@ -395,7 +407,13 @@ function Index() {
                         <TextInput
                           type="email"
                           color={validEmail === true ? "success" : "gray"}
-                          placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
+                          placeholder={
+                            router.locale == "default"
+                              ? "Email"
+                              : router.locale == "en"
+                              ? "Email"
+                              : "メール"
+                          }
                           value={email}
                           helperText={
                             validEmail === false ? (
@@ -419,7 +437,13 @@ function Index() {
                           className="w-full"
                           type="text"
                           color={validName === true ? "success" : "gray"}
-                          placeholder={router.locale == 'default' ? "Nhập họ và tên" : router.locale == 'en' ? "Fullname" : "フルネーム"}
+                          placeholder={
+                            router.locale == "default"
+                              ? "Nhập họ và tên"
+                              : router.locale == "en"
+                              ? "Fullname"
+                              : "フルネーム"
+                          }
                           value={name}
                           helperText={
                             validName === false ? (
@@ -443,7 +467,13 @@ function Index() {
                           className="w-full"
                           type="text"
                           color={validPhone === true ? "success" : "gray"}
-                          placeholder={router.locale == 'default' ? "Số điện thoại" : router.locale == 'en' ? "Phone number" : "電話番号"}
+                          placeholder={
+                            router.locale == "default"
+                              ? "Số điện thoại"
+                              : router.locale == "en"
+                              ? "Phone number"
+                              : "電話番号"
+                          }
                           value={phone}
                           helperText={
                             validPhone === false ? (
@@ -467,7 +497,13 @@ function Index() {
                           className="w-full"
                           type="text"
                           color={validAddress === true ? "success" : "gray"}
-                          placeholder={router.locale == 'default' ? "địa chỉ giao hàng" : router.locale == 'en' ? "address" : "アドレス"}
+                          placeholder={
+                            router.locale == "default"
+                              ? "địa chỉ giao hàng"
+                              : router.locale == "en"
+                              ? "address"
+                              : "アドレス"
+                          }
                           value={address}
                           helperText={
                             validAddress === false ? (
@@ -496,9 +532,7 @@ function Index() {
                           setCity(e.target.value);
                           try {
                             axios
-                              .get(
-                                `/homepage/provinces/${e.target.value}`
-                              )
+                              .get(`/homepage/provinces/${e.target.value}`)
                               .then((res: any) => {
                                 setProDictricts(res.data[0]);
                               });
@@ -535,13 +569,9 @@ function Index() {
                           setDistrict(e.target.value);
                           try {
                             axios
-                              .get(
-                                `/homepage/provinces/city/${e.target.value}`
-                              )
+                              .get(`/homepage/provinces/city/${e.target.value}`)
                               .then((res: any) => {
-                                setProWards(
-                                  res.data[0].wards
-                                );
+                                setProWards(res.data[0].wards);
                               });
                           } catch (error) {
                             console.log(error);
@@ -642,7 +672,7 @@ function Index() {
                         htmlFor="default-radio-2"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
-                         {t("Vận chuyển hoả tốc ")}50.000đ
+                        {t("Vận chuyển hoả tốc ")}50.000đ
                       </label>
                     </div>
 
@@ -673,7 +703,7 @@ function Index() {
                         htmlFor="default-radio-1"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
-                         {t("Thanh toán khi giao hàng ")}(COD)
+                        {t("Thanh toán khi giao hàng ")}(COD)
                       </label>
                     </div>
 
@@ -773,7 +803,9 @@ function Index() {
         <div className="lg:col-start-3 lg:col-end-4 bg-gray-50 border border-gray-300 md:h-screen pb-10">
           <div className="flex justify-end gap-2 font-medium text-xl py-3 border-b border-gray-300 px-3">
             <h1>{t("Đơn hàng")}</h1>
-            <p>({totalItems}  {t("sản phẩm")})</p>
+            <p>
+              ({totalItems} {t("sản phẩm")})
+            </p>
           </div>
 
           <div className="mt-6 text-xs px-6 border-b border-gray-300 pb-3">
@@ -799,9 +831,11 @@ function Index() {
 
                     <div className="flex flex-col items-start w-full">
                       <div className="flex gap-1">
-                        <p>{router.locale === "default"
-                              ? `${item?.product?.productName}`
-                              : `${item?.name}`}</p>
+                        <p>
+                          {router.locale === "default"
+                            ? `${item?.product?.productName}`
+                            : `${item?.name}`}
+                        </p>
                       </div>
                       <p className="text-sm text-gray-400">descript</p>
                     </div>
@@ -815,8 +849,15 @@ function Index() {
           </div>
 
           <div className="flex items-center justify-between gap-2 border-b border-gray-300 py-4 px-6">
-            <TextInput className="w-3/5" 
-            placeholder={router.locale == 'default' ? "Nhập mã giảm giá" : router.locale == 'en' ? "Discount code" : "ディスカウントコード"}
+            <TextInput
+              className="w-3/5"
+              placeholder={
+                router.locale == "default"
+                  ? "Nhập mã giảm giá"
+                  : router.locale == "en"
+                  ? "Discount code"
+                  : "ディスカウントコード"
+              }
             />
             <Button
               disabled={true}
