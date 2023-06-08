@@ -7,7 +7,7 @@ import Link from "next/link";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-// import "~slick-carousel/slick/slick.css"; 
+// import "~slick-carousel/slick/slick.css";
 // import "~slick-carousel/slick/slick-theme.css";
 import SidebarComp from "./SidebarComp";
 import { useTranslation } from "next-i18next";
@@ -15,7 +15,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
-  const { t } = useTranslation('');
+  const { t } = useTranslation("");
 
   const prop = {
     title: "tiki trang chủ home page tìm kiếm sản phẩm sales off giá rẻ",
@@ -53,25 +53,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="w-full mx-auto">
               <SidebarComp />
-              {/* {categories
-                ? categories.map((category: any) => {
-                    return (
-                      <>
-                        <div
-                          key={category.id}
-                          className="flex justify-between items-center capitalize"
-                        >
-                          <Link href={category.path}>
-                            <p>{category.category}</p>
-                          </Link>
-                          <HiChevronDown className="text-md" />
-                        </div>
-                        
-                      </>
-                    );
-                  })
-                : null} */}
-            
             </div>
           </div>
         </Sidebar>

@@ -52,9 +52,7 @@ function Index() {
           <ToastContainer />
         </Breadcrumb.Item>
         <Breadcrumb.Item
-        //   href={"/" + productDetail[0]?.categoryID.path}
-        //   icon={HiOutlineShoppingBag}
-        //   className="capitalize"
+  
         >
           {t("Đặt lại mật khẩu")}
         </Breadcrumb.Item>

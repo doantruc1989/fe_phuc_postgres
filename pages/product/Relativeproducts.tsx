@@ -90,7 +90,7 @@ function Relativeproducts() {
               </div>
               <div className="overflow-hidden">
                 <img
-                  src={item?.product?.image}
+                  src={item?.product?.productimage[0]?.url}
                   className="rounded-t-lg cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                   alt="..."
                 />

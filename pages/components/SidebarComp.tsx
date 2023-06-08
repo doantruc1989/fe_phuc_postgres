@@ -11,33 +11,36 @@ function SidebarComp() {
   const router = useRouter();
   const [categories, setCategories] = useState([] as any);
   useEffect(() => {
+    let language = router.locale;
     try {
-      axios.get("/product/category").then((res: any) => {
-        setCategories(res.data);
+      axios.get(`/product/category?lang=${
+        language === "default" ? "en" : language === "ja" ? "ja" : "en"
+      }`).then((res: any) => {
+        setCategories(res?.data);
       });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [router]);
 
   return (
     <Sidebar>
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           {categories
-            ? categories.map((category: any) => {
+            ? categories.map((item: any) => {
                 return (
-                  <Sidebar.Item key={category.id}>
+                  <Sidebar.Item key={item.id}>
                     <Link
                       href={
                         router.locale === "en"
-                          ? `/en/${category.path}`
-                          : router.locale === "ja" ? `/ja/${category.path}` : category.path
+                          ? `/en/${item.category.path}`
+                          : router.locale === "ja" ? `/ja/${item.category.path}` : item.category.path
                       }
                     >
                       {router.locale === "default"
-                        ? category.category
-                        : router.locale === "en" ? category.enName : category.jaName}
+                        ? item.category.category
+                        : router.locale === "en" ? item.name : item.name}
                     </Link>
                   </Sidebar.Item>
                 );
@@ -54,7 +57,7 @@ function SidebarComp() {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/vietnam.png"
                   alt="language"
                 />
@@ -65,7 +68,7 @@ function SidebarComp() {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/england.png"
                   alt="language"
                 />
@@ -76,7 +79,7 @@ function SidebarComp() {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/japan.png"
                   alt="language"
                 />

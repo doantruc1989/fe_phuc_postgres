@@ -1,3 +1,4 @@
+import { Spinner } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -39,6 +40,7 @@ function Index() {
             </Link>
             {t("để tới trang chủ ngay lập tức")}
           </p>
+          <Spinner className="mt-6" color="success" />
         </section>
       )}
     </>

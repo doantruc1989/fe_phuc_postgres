@@ -27,7 +27,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
       .put(`/cart/order/${orderId}`, {
         isPaid: true,
       })
-      .then((res) => {
+      .then(() => {
         setPaid(true);
       });
   };
@@ -42,7 +42,8 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               className="relative my-5 p-2 border border-green-600 rounded-xl"
             >
               {order.isPaid === false ? (
-                order.paymentMethod === "bank" || order.paymentMethod === "momo" ? (
+                order.paymentMethod === "bank" ||
+                order.paymentMethod === "momo" ? (
                   <a
                     className="text-blue-600 text-xs cursor-pointer absolute right-2 top-3"
                     onClick={(e: any) => {
@@ -78,7 +79,9 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                     <p className="w-full">{order.address}</p>
                   </div>
                   <div className="mt-2">
-                    <p className="font-medium">{t("Phương thức vận chuyển:")}</p>
+                    <p className="font-medium">
+                      {t("Phương thức vận chuyển:")}
+                    </p>
                     <div className="pl-2">
                       {order.trans == 35000 ? (
                         <p>{t("Tiêu chuẩn")}</p>
@@ -103,12 +106,15 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                       <div className="flex items-center gap-2">
                         <img
                           className="w-10 h-10 my-1"
-                          src={item?.product?.image}
+                          src={item?.product?.productimage[0]?.url}
                           alt=""
                         />
                         <div className="flex flex-col items-start">
                           <span>
-                            {router.locale === "default" ? item?.product?.productName : item?.name} {" x "} {item.quantity}
+                            {router.locale === "default"
+                              ? item?.product?.productName
+                              : item?.name}{" "}
+                            {" x "} {item.quantity}
                           </span>
                           <div className="flex justify-start gap-2">
                             <p className="text-gray-500">{item.type || null}</p>
@@ -135,59 +141,6 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                   );
                 })}
               </div>
-
-              {/* {isReview && (
-                      <div className="mt-2">
-                        <div className="my-1 flex gap-1 items-center">
-                          <h1>Đánh giá:</h1>
-                          <select
-                            value={reviewStars}
-                            onChange={(e: any) => {
-                              setReviewStars(e.target.value);
-                            }}
-                            className="border rounded-lg w-full bg-blue-100 border-blue-500 text-blue-900"
-                          >
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                          </select>
-                        </div>
-
-                        <Textarea
-                          value={reviewComment}
-                          onChange={(e: any) => {
-                            setReviewComment(e.target.value);
-                          }}
-                        />
-
-                        <div className="flex justify-center mt-2">
-                          <Button
-                            size={"xs"}
-                            onClick={() => {
-                              axios
-                                .post(
-                                  `http://localhost:3006/v2/product/comment/`,
-                                  {
-                                    comment: reviewComment || "tuyệt vời",
-                                    stars: reviewStars || 5,
-                                    user: users.id,
-                                    product: orderItems * 1,
-                                  }
-                                )
-                                .then((res: any) => {
-                                  setIsReview(false);
-                                  setReviewComment("");
-                                  setReviewStars(5);
-                                });
-                            }}
-                          >
-                            OK
-                          </Button>
-                        </div>
-                      </div>
-                    )} */}
 
               <div className="px-2 flex justify-between items-center p border-t border-gray-400 pt-2">
                 <p className="font-medium text-sm">{t("Phí Vận chuyển:")}</p>
@@ -341,104 +294,6 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                   </div>
                 </Dialog>
               </Transition>
-
-              {/* xac nhan nhan hang */}
-              {/* <Transition appear show={isReceived} as={Fragment}>
-                      <Dialog
-                        as="div"
-                        className="relative z-10"
-                        onClose={() => setIsReceived(!isReceived)}
-                      >
-                        <Transition.Child
-                          as={Fragment}
-                          enter="ease-out duration-300"
-                          enterFrom="opacity-0"
-                          enterTo="opacity-100"
-                          leave="ease-in duration-200"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                        >
-                          <div className="fixed inset-0 bg-black bg-opacity-25" />
-                        </Transition.Child>
-
-                        <div className="fixed inset-0 overflow-y-auto">
-                          <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child
-                              as={Fragment}
-                              enter="ease-out duration-300"
-                              enterFrom="opacity-0 scale-95"
-                              enterTo="opacity-100 scale-100"
-                              leave="ease-in duration-200"
-                              leaveFrom="opacity-100 scale-100"
-                              leaveTo="opacity-0 scale-95"
-                            >
-                              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                <div className="mt-2">
-                                  <div>
-                                    <p className="text-sm text-gray-500 text-center">
-                                      Xác nhận đã nhận hàng?
-                                    </p>
-                                  </div>
-                                  <div className="flex items-center justify-evenly my-6">
-                                    <Button
-                                      onClick={(e: any) => {
-                                        e.preventDefault;
-                                        setIsConfirm(!isConfirm);
-                                      }}
-                                      color={"failure"}
-                                      size="xs"
-                                    >
-                                      Trả hàng / Hoàn Tiền
-                                    </Button>
-
-                                    <Button
-                                      color={"info"}
-                                      size="xs"
-                                      onClick={(e: any) => {
-                                        e.preventDefault;
-                                        axios
-                                          .patch(
-                                            `http://localhost:3006/cart/admin/listorder/${orderId}`,
-                                            {
-                                              status: 3,
-                                            }
-                                          )
-                                          .then((res: any) => {
-                                            setIsConfirm(false);
-                                            setIsConfirmYes(true);
-                                            setTimeout(() => {
-                                              setIsReceived(false);
-                                              setIsConfirmYes(false);
-                                            }, 5000);
-                                          });
-                                      }}
-                                    >
-                                      Đã nhận
-                                    </Button>
-                                  </div>
-                                  {isConfirm && (
-                                    <div className="flex items-center justify-center">
-                                      <p className="text-xs text-red-400">
-                                        Chức năng đang phát triển
-                                      </p>
-                                    </div>
-                                  )}
-                                  {isConfirmYes && (
-                                    <div className="flex items-center justify-center">
-                                      <p className="text-xs text-green-400 text-center">
-                                        Xác nhận bạn đã nhận hàng. Hệ thống sẽ
-                                        chuyển bạn đến trang đánh giá. Vui lòng
-                                        đợi 1 chút!
-                                      </p>
-                                    </div>
-                                  )}
-                                </div>
-                              </Dialog.Panel>
-                            </Transition.Child>
-                          </div>
-                        </div>
-                      </Dialog>
-                    </Transition> */}
             </div>
           );
         })

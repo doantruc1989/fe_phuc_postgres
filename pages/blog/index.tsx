@@ -18,9 +18,15 @@ function Index() {
   useEffect(() => {
     let language = router.locale;
     try {
-      axios.get(`/blog?lang=${language === "default" ? "en" : language === "ja" ? "ja" : "en"}`).then((res: any) => {
-        setBlogs(res.data);
-      });
+      axios
+        .get(
+          `/blog?lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
+          setBlogs(res.data);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -40,13 +46,7 @@ function Index() {
         >
           {t("Trang chủ")}
         </Breadcrumb.Item>
-        <Breadcrumb.Item
-        //   href={"/" + productDetail[0]?.categoryID.path}
-        //   icon={HiOutlineShoppingBag}
-        //   className="capitalize"
-        >
-          {t("Tin Tức")}
-        </Breadcrumb.Item>
+        <Breadcrumb.Item>{t("Tin Tức")}</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="w-full md:w-11/12 lg:w-9/12 mx-auto mt-6">

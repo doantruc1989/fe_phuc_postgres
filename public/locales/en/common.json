@@ -16,6 +16,7 @@
     "Úc": "Australia",
     "Nam Phi": "South Africa",
     "Mỹ": "America",
+    "đánh giá":"reviews",
     "TRÁI CÂY VIỆT NAM": "VIETNAM FRUITS",
     "Bình An Farm": "Binh An Farm",
     "Đà lạt": "Da Lat",
@@ -261,5 +262,6 @@
     "Hoả tốc": "Express",
     "Tiêu chuẩn": "Standard",
     "Phương thức vận chuyển:": "Shipping method:",
-    "Đơn Hàng:": "Order:"
+    "Đơn Hàng:": "Order:",
+    "gọi ngay":"Call now"
 }

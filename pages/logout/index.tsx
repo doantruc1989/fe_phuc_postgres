@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Spinner } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +10,7 @@ function Index() {
   const router = useRouter();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
-  const [redirect, setRedirect] = useState(false)
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     const axios = async () => {
@@ -17,24 +18,27 @@ function Index() {
         axiosPrivate.get("/auth/logout").then(() => {
           localStorage.removeItem("user");
           const timer = setTimeout(() => {
-            setRedirect(true)
+            setRedirect(true);
           }, 5000);
           return () => {
             clearTimeout(timer);
           };
         });
       } catch (error) {
-        console.log(error);
+        if (error) {
+          localStorage.removeItem("user");
+          console.log(error);
+        }
       }
     };
     axios();
+
     return () => {
       controller.abort();
     };
   }, []);
 
-  redirect === true &&
-  router.push("/", undefined, { locale: router.locale })
+  redirect === true && router.push("/", undefined, { locale: router.locale });
 
   return (
     <div className="text-base text-center capitalize font-medium my-20">
@@ -47,6 +51,7 @@ function Index() {
         </Link>
         để tới trang chủ ngay lập tức
       </p>
+      <Spinner className="mt-6" color="success" />
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { Breadcrumb, Button, TextInput } from "flowbite-react";
-import React, { ReactElement, useState } from "react";
+import { Breadcrumb, Button, Spinner, TextInput } from "flowbite-react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
 import { HiHome } from "react-icons/hi";
@@ -9,11 +9,13 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
-
 import { useRouter } from "next/router";
 import axios from "../../other/axios";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
+const EMAIL_REGEX =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[0-9]).{8,24}$/;
 
 function Index() {
   const [email, setEmail] = useState("");
@@ -24,9 +26,22 @@ function Index() {
   const [twoFAcode, setTwoFAcode] = useState("");
   const [user, setUser] = useState([] as any);
   const [is2faSuccess, setIs2faSuccess] = useState(false);
+  const [validSubmit, setValidSubmit] = useState(false);
+  const [validPwd, setValidPwd] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("");
+
+  useEffect(() => {
+    setValidEmail(EMAIL_REGEX.test(email));
+  }, [email]);
+  useEffect(() => {
+    setValidPwd(PWD_REGEX.test(pwd));
+  }, [pwd]);
+  useEffect(() => {
+    setValidSubmit(validEmail === true && validPwd === true);
+  }, [validEmail, validPwd]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -38,6 +53,8 @@ function Index() {
         })
         .then((res: any) => {
           if (!res.data.isTwoFactorAuthenticationEnabled) {
+            setEmail("");
+            setPwd("");
             localStorage.setItem("user", JSON.stringify(res?.data));
             setSuccess(true);
             setIs2faEnabled(res?.data.isTwoFactorAuthenticationEnabled);
@@ -52,6 +69,8 @@ function Index() {
             setAccessToken(res.data.tokens.accessToken);
             setUser(res.data);
             setIs2faEnabled(res.data.isTwoFactorAuthenticationEnabled);
+            setEmail("");
+            setPwd("");
           }
         });
     } catch (err: any) {
@@ -76,6 +95,8 @@ function Index() {
         })
         .then((res: any) => {
           localStorage.setItem("user", JSON.stringify(res?.data));
+          setEmail("");
+          setPwd("");
           setIs2faSuccess(true);
           const timer = setTimeout(() => {
             setRedirect(true);
@@ -143,7 +164,13 @@ function Index() {
               <p className="text-sm font-medium uppercase mb-2">email:</p>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Email"
+                    : router.locale == "en"
+                    ? "Email"
+                    : "メール"
+                }
                 type="email"
                 value={email}
                 onChange={(e: any) => {
@@ -157,7 +184,13 @@ function Index() {
               </p>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Mật khẩu" : router.locale == 'en' ? "password" : "パスワード"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Mật khẩu"
+                    : router.locale == "en"
+                    ? "password"
+                    : "パスワード"
+                }
                 type="password"
                 value={pwd}
                 onChange={(e: any) => {
@@ -169,6 +202,7 @@ function Index() {
 
           <div className="mt-3 flex flex-col items-center gap-3 w-full">
             <Button
+              disabled={!validSubmit}
               className="bg-green-600 uppercase hover:bg-green-800 w-1/2"
               onClick={handleSubmit}
             >
@@ -207,6 +241,7 @@ function Index() {
             </Link>
             {t("để tới trang chủ ngay lập tức")}
           </p>
+          <Spinner className="mt-6" color="success" />
         </section>
       ) : (
         <div className="w-9/12 mx-auto">
@@ -243,6 +278,7 @@ function Index() {
                 </Link>
                 {t("để tới trang chủ ngay lập tức")}
               </p>
+              <Spinner className="mt-6" color="success" />
             </section>
           )}
         </div>

@@ -42,9 +42,8 @@ function Index() {
             <div className="lg:col-start-1 lg:col-end-4 w-full rounded-lg mx-auto mb-6">
               <Table striped={true}>
                 <Table.Head>
-                  <Table.HeadCell></Table.HeadCell>
-                  <Table.HeadCell className="hidden lg:block">
-                    {t("Tên sản phẩm")}
+                  <Table.HeadCell>
+                    <p className="hidden md:block">{t("Tên sản phẩm")}</p>
                   </Table.HeadCell>
                   <Table.HeadCell>
                     <p className="text-end">{t("Đơn giá")}</p>
@@ -63,40 +62,36 @@ function Index() {
                         className="bg-gray-100 dark:border-gray-700 dark:bg-gray-800"
                         key={item.id}
                       >
-                        <Table.Cell className="py-0 pl-0">
-                          <div className="pl-4 flex justify-start items-center mx-auto">
-                            <Link
-                              href={
-                                router.locale === "en"
-                                  ? `/en/product/${item?.product?.slug}`
-                                  : router.locale === "ja"
-                                  ? `/ja/product/${item?.product?.slug}`
-                                  : `/product/${item?.product?.slug}`
-                              }
-                            >
-                              <img
-                                src={item?.product?.image}
-                                className="w-14 h-14 object-cover"
-                                alt=".."
-                              />
-                            </Link>
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell className="hidden lg:flex lg:flex-col lg:items-start">
-                          <div className="text-xs font-medium text-gray-900 dark:text-white">
-                            {router.locale === "default"
-                              ? `${item?.product?.productName}`
-                              : `${item?.name}`}
-                          </div>
-                          <div>{item.type ? item.type : null}</div>
+                        <Table.Cell className="pr-0">
+                          <Link
+                            className="flex items-center justify-start gap-2 mx-auto"
+                            href={
+                              router.locale === "en"
+                                ? `/en/product/${item?.product?.slug}`
+                                : router.locale === "ja"
+                                ? `/ja/product/${item?.product?.slug}`
+                                : `/product/${item?.product?.slug}`
+                            }
+                          >
+                            <img
+                              src={item?.product?.productimage[0]?.url}
+                              className="w-14 h-14 object-cover"
+                              alt=".."
+                            />
+                            <div className="font-medium text-sm hidden md:block">
+                              {router.locale === "default"
+                                ? `${item?.product?.productName}`
+                                : `${item?.name}`}
+                            </div>
+                          </Link>
                         </Table.Cell>
                         <Table.Cell>
                           <div className="font-medium text-sm text-end">
                             {Intl.NumberFormat().format(item.price) + "₫"}
                           </div>
-                          <div className="text-xs text-red-600">
+                          {/* <div className="text-xs text-red-600">
                             {item.discount ? `Đã giảm ${item?.product?.discount}%` : null}
-                          </div>
+                          </div> */}
                         </Table.Cell>
                         <Table.Cell>
                           <div className="flex items-center justify-center">

@@ -90,7 +90,6 @@ function Index() {
   useEffect(() => {
     const axios = async () => {
       axiosPrivate.get(`/users/${user.id}`).then((res) => {
-        console.log(res.data)
         setUsers(res?.data);
       });
     };
@@ -820,7 +819,7 @@ function Index() {
                       <Link href={"/product/" + item?.product?.slug}>
                         <img
                           className="h-10 w-12 rounded-md object-cover"
-                          src={item?.product?.image}
+                          src={item?.product?.productimage[0]?.url}
                           alt=""
                         />
                       </Link>

@@ -513,7 +513,7 @@ function Index() {
                       >
                         <div className="overflow-hidden">
                           <img
-                            src={fruit?.product?.image}
+                            src={fruit?.product?.productimage[0]?.url}
                             className="rounded-t-md cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                             alt="..."
                           />

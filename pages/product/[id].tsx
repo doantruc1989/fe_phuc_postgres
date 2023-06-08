@@ -1,8 +1,8 @@
 import { Breadcrumb, Button, Rating, Tabs, TextInput } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactElement, useEffect, useState } from "react";
-import { HiHome, HiOutlineShoppingBag } from "react-icons/hi";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { HiHome, HiOutlineShoppingBag, HiPhone } from "react-icons/hi";
 import { CartProvider, useCart } from "react-use-cart";
 import Layout from "../components/Layout";
 import Relativeproducts from "./Relativeproducts";
@@ -15,24 +15,46 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 import axios from "../../other/axios";
 import { GetServerSideProps } from "next";
+import ImageViewer from "../components/ImageViewer";
+import useOnScreen from "../../other/useOnScreen";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
+  const [category, setCategory] = useState([] as any);
   const router = useRouter();
   const fruitId = router.query.id;
   const [blogs, setBlogs] = useState([] as any);
+  const [image, setImage] = useState([] as any);
+  const [url, setUrl] = useState("");
+  const [imageModal, setImageModal] = useState(false);
+  const modalRef: any = useRef();
   const { addItem } = useCart();
   const { t } = useTranslation("");
+  // const [offset, setOffset] = useState(0);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const isVisible = useOnScreen(buttonRef);
 
-  const pagination = [
-    fruit?.product?.image,
-    fruit?.product?.productimage?.image1,
-    fruit?.product?.productimage?.image2,
-    fruit?.product?.productimage?.image3,
-    fruit?.product?.productimage?.image4,
-    fruit?.product?.productimage?.image5,
-  ];
+  // useEffect(() => {
+  //   const onScroll = () => setOffset(window.pageYOffset);
+  //   // clean up code
+  //   window.removeEventListener("scroll", onScroll);
+  //   window.addEventListener("scroll", onScroll, { passive: true });
+  //   return () => window.removeEventListener("scroll", onScroll);
+  // }, []);
 
+  useEffect(() => {
+    let handler = (e: any) => {
+      if (!modalRef.current?.contains(e.target)) {
+        setImageModal(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  }, []);
+
+  const pagination = image.map((item: any) => item.url);
   const settings = {
     customPaging: function (i: number) {
       return (
@@ -57,9 +79,17 @@ function Index() {
   useEffect(() => {
     let language = router.locale;
     try {
-      axios.get(`/product/${fruitId}?lang=${language === "default" ? "en" : language === "ja" ? "ja" : "en"}`).then((res: any) => {
-        setFruit(res.data);
-      });
+      axios
+        .get(
+          `/product/${fruitId}?lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
+          setFruit(res?.data?.product);
+          setImage(res?.data?.product?.product?.productimage);
+          setCategory(res?.data?.category);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -68,16 +98,22 @@ function Index() {
   useEffect(() => {
     let language = router.locale;
     try {
-      axios.get(`/blog?lang=${language === "default" ? "en" : language === "ja" ? "ja" : "en"}`).then((res: any) => {
-        setBlogs(res.data);
-      });
+      axios
+        .get(
+          `/blog?lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
+          setBlogs(res.data);
+        });
     } catch (error) {
       console.log(error);
     }
   }, [router]);
 
   return (
-    <div>
+    <div className="relative">
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
           href={
@@ -103,10 +139,10 @@ function Index() {
           icon={HiOutlineShoppingBag}
         >
           {router.locale === "en"
-            ? fruit?.product?.category?.enName
+            ? category?.name
             : router.locale === "ja"
-            ? fruit?.product?.category?.jaName
-            : fruit?.product?.category?.category}
+            ? category?.name
+            : category?.category?.category}
         </Breadcrumb.Item>
         <Breadcrumb.Item className="hidden md:flex">
           {router.locale === "default"
@@ -115,43 +151,86 @@ function Index() {
           <ScrollTop />
         </Breadcrumb.Item>
       </Breadcrumb>
+
+      {isVisible === false ? (
+        <div className="sticky top-0 z-50 w-full bg-white shadow-md">
+          <div className="flex items-center justify-center md:justify-between md:w-9/12 w-full mx-auto py-1">
+            <div className="md:flex gap-2 items-center justify-start hidden">
+              <img className="h-14 w-14" src={image[0]?.url} />
+              <div className="flex flex-col items-start">
+                <p className="font-medium uppercase text-xs">
+                  {router.locale === "default"
+                    ? fruit?.product?.productName
+                    : fruit?.name}
+                </p>
+                <div className="flex gap-2 items-center">
+                  <p>Giá bán:</p>
+                  <p className="text-xl text-green-600">
+                    {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full md:w-fit">
+              <Button
+                size="xs"
+                className="w-full md:w-fit bg-[#236815] hover:bg-red-400"
+                onClick={() => {
+                  console.log(fruit);
+                  addItem({ ...fruit, price: fruit?.product?.price });
+                  toast("Đã thêm vào giỏ hàng", {
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    type: toast.TYPE.SUCCESS,
+                    className: "toast-message",
+                  });
+                }}
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-sm font-medium uppercase">
+                    {t("Mua ngay với giá")}{" "}
+                    <span>
+                      {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                    </span>
+                  </p>
+                  <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
+                </div>
+              </Button>
+              <a 
+              className="border-green-600 border p-1.5 text-white bg-[#236815] rounded-lg"
+              href="tel:0949119338">
+                <HiPhone className="block lg:hidden w-fit h-11" />
+                <div className="hidden lg:flex flex-col gap-1 items-center justify-center">
+                  <p className="text-sm font-medium uppercase">{t("gọi ngay")}</p>
+                  <p className="text-xs">0949.119.338</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 mt-6 mb-14 w-full md:w-11/12 lg:w-9/12 mx-auto gap-6">
         <div className="md:col-start-1 md:col-end-2 lg:col-end-4 mb-6">
           <Slider {...settings} className="w-full mx-auto h-fit">
-            <img
-              className="h-[380px] object-cover rounded-lg"
-              src={fruit?.product?.image}
-            />
-            {fruit?.product?.productimage?.image1 ? (
-              <img
-                className="h-[380px] object-cover rounded-lg"
-                src={fruit?.product?.productimage?.image1}
-              />
-            ) : null}
-            {fruit?.product?.productimage?.image2 ? (
-              <img
-                className="h-[380px] object-cover rounded-lg"
-                src={fruit?.product?.productimage?.image2}
-              />
-            ) : null}
-            {fruit?.product?.productimage?.image3 ? (
-              <img
-                className="h-[380px] object-cover rounded-lg"
-                src={fruit?.product?.productimage?.image3}
-              />
-            ) : null}
-            {fruit?.product?.productimage?.image4 ? (
-              <img
-                className="h-[380px] object-cover rounded-lg"
-                src={fruit?.product?.productimage?.image4}
-              />
-            ) : null}
-            {fruit?.product?.productimage?.image5 ? (
-              <img
-                className="h-[380px] object-cover rounded-lg"
-                src={fruit?.product?.productimage?.image5}
-              />
-            ) : null}
+            {image.map((item: any) => {
+              return (
+                <a
+                  href=""
+                  key={item.id}
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    setUrl(item.url);
+                    setImageModal(true);
+                  }}
+                >
+                  <img
+                    className="h-[380px] w-full object-cover rounded-lg"
+                    src={item.url}
+                  />
+                </a>
+              );
+            })}
           </Slider>
         </div>
 
@@ -179,7 +258,7 @@ function Index() {
               </Rating>
             </div>
             <h5 className="text-sm">
-              {t("Đã bán:")} {fruit?.product?.sold}
+              {t("Đã bán")} {fruit?.product?.sold}
               {/* {router.locale === "en"
                 ? `Sold: ${fruit?.sold}`
                 : `Đã bán: ${fruit?.sold}`} */}
@@ -214,28 +293,30 @@ function Index() {
             </p>
           </div>
 
-          <Button
-            className="my-4 mx-auto bg-[#236815] hover:bg-red-400"
-            onClick={() => {
-              console.log(fruit);
-              addItem({ ...fruit, price: fruit?.product?.price });
-              toast("Đã thêm vào giỏ hàng", {
-                position: toast.POSITION.BOTTOM_RIGHT,
-                type: toast.TYPE.SUCCESS,
-                className: "toast-message",
-              });
-            }}
-          >
-            <div className="flex flex-col items-center gap-1">
-              <p className="text-sm font-medium uppercase">
-                {t("Mua ngay với giá")}{" "}
-                <span>
-                  {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
-                </span>
-              </p>
-              <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
-            </div>
-          </Button>
+          <div ref={buttonRef}>
+            <Button
+              className="my-4 mx-auto bg-[#236815] hover:bg-red-400"
+              onClick={() => {
+                console.log(fruit);
+                addItem({ ...fruit, price: fruit?.product?.price });
+                toast("Đã thêm vào giỏ hàng", {
+                  position: toast.POSITION.BOTTOM_RIGHT,
+                  type: toast.TYPE.SUCCESS,
+                  className: "toast-message",
+                });
+              }}
+            >
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-sm font-medium uppercase">
+                  {t("Mua ngay với giá")}{" "}
+                  <span>
+                    {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                  </span>
+                </p>
+                <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
+              </div>
+            </Button>
+          </div>
         </div>
 
         <div className="col-start-7 col-end-9 hidden lg:block">
@@ -285,7 +366,7 @@ function Index() {
           </Tabs.Group>
         </div>
 
-        <div className="hidden lg:block lg:col-start-7 lg:col-end-9">
+        <div className="lg:block lg:col-start-7 lg:col-end-9">
           <Tabs.Group
             aria-label="Tabs with underline"
             style="underline"
@@ -325,6 +406,13 @@ function Index() {
         </div>
       </div>
 
+      <ImageViewer
+        imageModal={imageModal}
+        setImageModal={setImageModal}
+        url={url}
+        ref={modalRef}
+      />
+
       <div className="w-full md:w-11/12  my-6 mx-auto">
         <h2 className="text-2xl uppercase font-medium mb-6">
           {t("Có thể bạn đang tìm kiếm")}
@@ -345,12 +433,14 @@ Index.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-export const getServerSideProps : GetServerSideProps = async ({ locale }: any) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+}: any) => {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
     },
   };
-}
+};
 
 export default Index;

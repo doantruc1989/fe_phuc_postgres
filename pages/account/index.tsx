@@ -74,23 +74,23 @@ console.log(orders)
       ? {}
       : JSON.parse(localStorage.getItem("user") || "{}");
 
-  useEffect(() => {
-    router.events.on("routeChangeComplete", () => {
-      router.reload();
-    });
-    if (!user.isEmailConfirmed) {
-      try {
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${user.tokens.refreshToken}`;
-        axios.get("/auth/verifyagain").then((res: any) => {
-          console.log(res.data);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   router.events.on("routeChangeComplete", () => {
+  //     router.reload();
+  //   });
+  //   if (!user.isEmailConfirmed) {
+  //     try {
+  //       axios.defaults.headers.common[
+  //         "Authorization"
+  //       ] = `Bearer ${user.tokens.refreshToken}`;
+  //       axios.get("/auth/verifyagain").then((res: any) => {
+  //         console.log(res.data);
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     const getUsers = async () => {

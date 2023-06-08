@@ -38,14 +38,21 @@ export default function TopBar({ visible, setVisible }: any) {
   }, []);
 
   useEffect(() => {
+    let language = router.locale;
     try {
-      axios.get("/product/category").then((res: any) => {
-        setCategories(res.data);
-      });
+      axios
+        .get(
+          `/product/category?lang=${
+            language === "default" ? "en" : language === "ja" ? "ja" : "en"
+          }`
+        )
+        .then((res: any) => {
+          setCategories(res?.data);
+        });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     let handler = (e: any) => {
@@ -130,10 +137,12 @@ export default function TopBar({ visible, setVisible }: any) {
                   src={user.image}
                   alt="avatar"
                 />
-                <p className="text-xs uppercase">
-                  {t("xin chào, ")}
-                  {user.username}
-                </p>
+                <div className="flex gap-2 items-center">
+                  <p className="hidden md:block text-xs uppercase">
+                    {t("xin chào, ")}
+                  </p>
+                  <p className="text-xs uppercase"> {user.username}</p>
+                </div>
               </div>
             </Link>
             <Link href={"/logout"}>
@@ -206,7 +215,7 @@ export default function TopBar({ visible, setVisible }: any) {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/vietnam.png"
                   alt="language"
                 />
@@ -217,7 +226,7 @@ export default function TopBar({ visible, setVisible }: any) {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/england.png"
                   alt="language"
                 />
@@ -228,7 +237,7 @@ export default function TopBar({ visible, setVisible }: any) {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/japan.png"
                   alt="language"
                 />
@@ -294,7 +303,7 @@ export default function TopBar({ visible, setVisible }: any) {
                         >
                           <div className="flex gap-3 items-center border-b border-gray-300 w-full py-1 hover:bg-gray-100 px-3">
                             <img
-                              src={res?.product?.image}
+                              src={res?.product?.productimage[0]?.url}
                               className="w-12 h-12 rounded-md"
                             />
                             <div className="flex flex-col items-start">
@@ -321,7 +330,9 @@ export default function TopBar({ visible, setVisible }: any) {
 
           <div className="flex gap-6 items-center">
             <div className="hidden md:flex items-center gap-4">
-              <HiPhone className="text-3xl" />
+              <a href="tel:0949119338">
+                <HiPhone className="text-3xl" />
+              </a>
               <div className="flex flex-col gap-1 items-center border-white border-l pl-3">
                 <p> Hotline 24/7</p>
                 <p className="text-lg">0949 119 338</p>
@@ -348,18 +359,18 @@ export default function TopBar({ visible, setVisible }: any) {
 
       <div className="hidden md:flex md:items-center md:justify-evenly md:gap-3 py-3 w-11/12 mx-auto text-xs uppercase">
         {categories
-          ? categories.map((category: any) => {
+          ? categories.map((item: any) => {
               return (
                 <Link
                   className="text-center"
-                  key={category.id}
-                  href={category.path}
+                  key={item?.id}
+                  href={item?.category?.path}
                 >
                   {router.locale === "en"
-                    ? category.enName
+                    ? item?.name
                     : router.locale === "ja"
-                    ? category.jaName
-                    : category.category}
+                    ? item?.name
+                    : item?.category?.category}
                 </Link>
               );
             })

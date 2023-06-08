@@ -43,9 +43,8 @@ const useAxiosPrivate = () => {
             axios.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${user?.tokens?.refreshToken}`;
-            const response = await axios.get("/auth/refresh");
-            localStorage.setItem("user", JSON.stringify(response?.data));
-            const newAccessToken = response.data.tokens.accessToken
+            const newTokens = await refresh();
+            const newAccessToken = newTokens?.tokens?.accessToken;
             onRefreshed(newAccessToken);
             subscribers = [];
             isRefreshing = false;
