@@ -16,7 +16,6 @@ import { useTranslation } from "react-i18next";
 import axios from "../../other/axios";
 import { GetServerSideProps } from "next";
 import ImageViewer from "../components/ImageViewer";
-import useOnScreen from "../../other/useOnScreen";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
@@ -30,17 +29,21 @@ function Index() {
   const modalRef: any = useRef();
   const { addItem } = useCart();
   const { t } = useTranslation("");
-  // const [offset, setOffset] = useState(0);
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const isVisible = useOnScreen(buttonRef);
+  const [offsetHeight, setOffsetHeight] = useState(0);
+  const buttonRef: any = useRef();
+  const [y, setY] = useState<number>(0);
+  const windowWidth = window.innerWidth;
 
-  // useEffect(() => {
-  //   const onScroll = () => setOffset(window.pageYOffset);
-  //   // clean up code
-  //   window.removeEventListener("scroll", onScroll);
-  //   window.addEventListener("scroll", onScroll, { passive: true });
-  //   return () => window.removeEventListener("scroll", onScroll);
-  // }, []);
+  useEffect(() => {
+    setY(buttonRef?.current?.offsetTop + 100)
+  },[windowWidth])
+
+  useEffect(() => {
+    const onScroll = () => setOffsetHeight(window.pageYOffset);
+    window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     let handler = (e: any) => {
@@ -152,7 +155,7 @@ function Index() {
         </Breadcrumb.Item>
       </Breadcrumb>
 
-      {isVisible === false ? (
+      {offsetHeight > y ? (
         <div className="sticky top-0 z-50 w-full bg-white shadow-md">
           <div className="flex items-center justify-center md:justify-between md:w-9/12 w-full mx-auto py-1">
             <div className="md:flex gap-2 items-center justify-start hidden">
@@ -196,12 +199,15 @@ function Index() {
                   <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
                 </div>
               </Button>
-              <a 
-              className="border-green-600 border p-1.5 text-white bg-[#236815] rounded-lg"
-              href="tel:0949119338">
+              <a
+                className="border-green-600 border p-1.5 text-white bg-[#236815] rounded-lg"
+                href="tel:0949119338"
+              >
                 <HiPhone className="block lg:hidden w-fit h-11" />
                 <div className="hidden lg:flex flex-col gap-1 items-center justify-center">
-                  <p className="text-sm font-medium uppercase">{t("gọi ngay")}</p>
+                  <p className="text-sm font-medium uppercase">
+                    {t("gọi ngay")}
+                  </p>
                   <p className="text-xs">0949.119.338</p>
                 </div>
               </a>
@@ -209,7 +215,7 @@ function Index() {
           </div>
         </div>
       ) : null}
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 mt-6 mb-14 w-full md:w-11/12 lg:w-9/12 mx-auto gap-6">
         <div className="md:col-start-1 md:col-end-2 lg:col-end-4 mb-6">
           <Slider {...settings} className="w-full mx-auto h-fit">
@@ -293,7 +299,7 @@ function Index() {
             </p>
           </div>
 
-          <div ref={buttonRef}>
+          <div>
             <Button
               className="my-4 mx-auto bg-[#236815] hover:bg-red-400"
               onClick={() => {
@@ -313,7 +319,9 @@ function Index() {
                     {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
                   </span>
                 </p>
-                <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
+                <p ref={buttonRef} className="text-xs">
+                  {t("Đặt mua giao hàng tận nơi")}
+                </p>
               </div>
             </Button>
           </div>

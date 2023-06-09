@@ -10,7 +10,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 
 function Index() {
-  const { totalUniqueItems, items, updateItemQuantity, cartTotal } = useCart();
+  const { totalUniqueItems, items, updateItemQuantity, cartTotal, removeItem } =
+    useCart();
   const router = useRouter();
   const [delModal, setDelModal] = useState(false);
   const [itemId, setItemId] = useState("");
@@ -180,10 +181,7 @@ function Index() {
                                           <Button
                                             color="success"
                                             onClick={(e: any) => {
-                                              updateItemQuantity(
-                                                itemId,
-                                                item.quantity! - 1
-                                              );
+                                              removeItem(itemId);
                                               setDelModal(false);
                                             }}
                                           >
