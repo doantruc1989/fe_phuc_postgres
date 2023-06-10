@@ -30,13 +30,28 @@ function Index() {
   const { addItem } = useCart();
   const { t } = useTranslation("");
   const [offsetHeight, setOffsetHeight] = useState(0);
-  const buttonRef: any = useRef();
-  const [y, setY] = useState<number>(0);
-  const windowWidth = window.innerWidth;
+  const [el, setEl] = useState("");
+  const [el2, setEl2] = useState("");
+  const [el3, setEl3] = useState("");
 
   useEffect(() => {
-    setY(buttonRef?.current?.offsetTop + 100)
-  },[windowWidth])
+    if (offsetHeight > 455 && innerWidth > 768) {
+      setEl2("md:flex gap-2 items-center justify-start hidden");
+      setEl3(
+        "`border-green-600 border w-fit p-1.5 text-white bg-[#236815] rounded-lg"
+      );
+      return setEl("fixed shadow-md");
+    } else if (offsetHeight > 885 && innerWidth <= 768) {
+      setEl2("md:flex gap-2 items-center justify-start hidden");
+      setEl3(
+        "`border-green-600 border w-fit p-1.5 text-white bg-[#236815] rounded-lg"
+      );
+      return setEl("fixed shadow-md");
+    }
+    setEl2("hidden");
+    setEl3("hidden");
+    return setEl("mt-4");
+  }, [offsetHeight]);
 
   useEffect(() => {
     const onScroll = () => setOffsetHeight(window.pageYOffset);
@@ -155,67 +170,6 @@ function Index() {
         </Breadcrumb.Item>
       </Breadcrumb>
 
-      {offsetHeight > y ? (
-        <div className="sticky top-0 z-50 w-full bg-white shadow-md">
-          <div className="flex items-center justify-center md:justify-between md:w-9/12 w-full mx-auto py-1">
-            <div className="md:flex gap-2 items-center justify-start hidden">
-              <img className="h-14 w-14" src={image[0]?.url} />
-              <div className="flex flex-col items-start">
-                <p className="font-medium uppercase text-xs">
-                  {router.locale === "default"
-                    ? fruit?.product?.productName
-                    : fruit?.name}
-                </p>
-                <div className="flex gap-2 items-center">
-                  <p>Giá bán:</p>
-                  <p className="text-xl text-green-600">
-                    {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 w-full md:w-fit">
-              <Button
-                size="xs"
-                className="w-full md:w-fit bg-[#236815] hover:bg-red-400"
-                onClick={() => {
-                  console.log(fruit);
-                  addItem({ ...fruit, price: fruit?.product?.price });
-                  toast("Đã thêm vào giỏ hàng", {
-                    position: toast.POSITION.BOTTOM_RIGHT,
-                    type: toast.TYPE.SUCCESS,
-                    className: "toast-message",
-                  });
-                }}
-              >
-                <div className="flex flex-col items-center gap-1">
-                  <p className="text-sm font-medium uppercase">
-                    {t("Mua ngay với giá")}{" "}
-                    <span>
-                      {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
-                    </span>
-                  </p>
-                  <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
-                </div>
-              </Button>
-              <a
-                className="border-green-600 border p-1.5 text-white bg-[#236815] rounded-lg"
-                href="tel:0949119338"
-              >
-                <HiPhone className="block lg:hidden w-fit h-11" />
-                <div className="hidden lg:flex flex-col gap-1 items-center justify-center">
-                  <p className="text-sm font-medium uppercase">
-                    {t("gọi ngay")}
-                  </p>
-                  <p className="text-xs">0949.119.338</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 mt-6 mb-14 w-full md:w-11/12 lg:w-9/12 mx-auto gap-6">
         <div className="md:col-start-1 md:col-end-2 lg:col-end-4 mb-6">
           <Slider {...settings} className="w-full mx-auto h-fit">
@@ -299,7 +253,7 @@ function Index() {
             </p>
           </div>
 
-          <div>
+          {/* <div>
             <Button
               className="my-4 mx-auto bg-[#236815] hover:bg-red-400"
               onClick={() => {
@@ -324,6 +278,63 @@ function Index() {
                 </p>
               </div>
             </Button>
+          </div> */}
+
+          <div className={`left-0 top-0 z-50 w-full bg-white ${el}`}>
+            <div className="flex items-center justify-center md:justify-between md:w-9/12 w-full mx-auto py-1">
+              <div className={`${el2}`}>
+                <img className="h-14 w-14" src={image[0]?.url} />
+                <div className="flex flex-col items-start">
+                  <p className="font-medium uppercase text-xs">
+                    {router.locale === "default"
+                      ? fruit?.product?.productName
+                      : fruit?.name}
+                  </p>
+                  <div className="flex gap-2 items-center">
+                    <p>Giá bán:</p>
+                    <p className="text-xl text-green-600">
+                      {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 w-full md:w-fit">
+                <Button
+                  size="xs"
+                  className="w-full md:w-fit bg-[#236815] hover:bg-red-400"
+                  onClick={() => {
+                    console.log(fruit);
+                    addItem({ ...fruit, price: fruit?.product?.price });
+                    toast("Đã thêm vào giỏ hàng", {
+                      position: toast.POSITION.BOTTOM_RIGHT,
+                      type: toast.TYPE.SUCCESS,
+                      className: "toast-message",
+                    });
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-sm font-medium uppercase">
+                      {t("Mua ngay với giá")}{" "}
+                      <span>
+                        {Intl.NumberFormat().format(fruit?.product?.price) +
+                          " ₫"}
+                      </span>
+                    </p>
+                    <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
+                  </div>
+                </Button>
+                <a className={`${el3}`} href="tel:0949119338">
+                  <HiPhone className="block lg:hidden w-10 h-10" />
+                  <div className="hidden lg:flex flex-col gap-1 items-center justify-center">
+                    <p className="text-sm font-medium uppercase">
+                      {t("gọi ngay")}
+                    </p>
+                    <p className="text-xs">0949.119.338</p>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 

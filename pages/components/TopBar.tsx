@@ -129,7 +129,7 @@ export default function TopBar({ visible, setVisible }: any) {
       {user ? (
         <div className="flex justify-center md:justify-between py-2 w-11/12 mx-auto">
           <h1 className="hidden md:block">{t("ALL FOR YOUR HEALTH")}</h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 truncate">
             <Link href={"/account"}>
               <div className="flex gap-2 items-center border-r border-white pr-2">
                 <img
@@ -160,7 +160,7 @@ export default function TopBar({ visible, setVisible }: any) {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/vietnam.png"
                   alt="language"
                 />
@@ -171,7 +171,7 @@ export default function TopBar({ visible, setVisible }: any) {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/england.png"
                   alt="language"
                 />
@@ -182,7 +182,7 @@ export default function TopBar({ visible, setVisible }: any) {
                 }}
               >
                 <img
-                  className="w-fit h-4"
+                  className="w-6 h-4"
                   src="/image/japan.png"
                   alt="language"
                 />
