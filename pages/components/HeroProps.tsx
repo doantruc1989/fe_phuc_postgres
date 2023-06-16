@@ -11,6 +11,7 @@ function HeroProps({ props }: any) {
   const [fruits, setFruits] = useState([] as any);
   const { t } = useTranslation("");
   const router = useRouter();
+
   useEffect(() => {
     let language = router.locale;
     try {
@@ -81,7 +82,7 @@ function HeroProps({ props }: any) {
                   : `/product/${item.product?.slug}`
               }
             >
-              <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
+              <div className="flex items-center gap-1 px-1 z-20 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                 <HiStar className="font-medium text-sm" />
                 <p>
                   {router.locale === "default"
@@ -89,12 +90,17 @@ function HeroProps({ props }: any) {
                     : item?.brand}
                 </p>
               </div>
-              <div className="overflow-hidden">
+              <div className="relative flex items-center justify-center overflow-hidden">
                 <img
                   src={item?.product?.productimage[0]?.url}
                   className="rounded-t-lg cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                   alt="..."
                 />
+                {item?.product?.discount?.value === undefined ? null : (
+                  <span className="text-[10px] absolute bg-red-700 text-white px-1 rounded -md top-0 right-0">{`SALE ${
+                    item?.product?.discount?.value * 100
+                  }%`}</span>
+                )}
               </div>
 
               <div className="cursor-pointer text-center text-xs">
@@ -117,18 +123,22 @@ function HeroProps({ props }: any) {
                 </div>
               </div>
 
-              {item?.product?.discount?.disPercent ? (
-                <div className="flex gap-2 pl-2 items-center justify-center">
-                  <p className="text-base md:text-sm font-medium text-red-600 dark:text-white my-1">
+              {item?.product?.discount?.value === undefined ? (
+                <div className="flex items-center justify-center mt-2">
+                  <p className="text-base font-medium text-red-600 dark:text-white my-2">
                     {Intl.NumberFormat().format(item?.product?.price)} đ
-                  </p>
-                  <p className="text-red-500 font-bold text-xs">
-                    {"-" + item?.product?.discount?.disPercent + "%"}
                   </p>
                 </div>
               ) : (
                 <div className="flex gap-2 pl-2 items-center justify-center mt-2">
-                  <p className="text-lg font-medium text-red-600 dark:text-white my-1">
+                  <p className="text-base font-medium text-red-600 dark:text-white my-2">
+                    {Intl.NumberFormat().format(
+                      item?.product?.price *
+                        (1 - item?.product?.discount?.value)
+                    )}{" "}
+                    đ
+                  </p>
+                  <p className="text-xs line-through">
                     {Intl.NumberFormat().format(item?.product?.price)} đ
                   </p>
                 </div>

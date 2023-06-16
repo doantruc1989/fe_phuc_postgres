@@ -80,9 +80,17 @@ function Index() {
                               alt=".."
                             />
                             <div className="font-medium text-sm hidden md:block">
-                              {router.locale === "default"
-                                ? `${item?.product?.productName}`
-                                : `${item?.name}`}
+                              <p>
+                                {router.locale === "default"
+                                  ? `${item?.product?.productName}`
+                                  : `${item?.name}`}
+                              </p>
+
+                              <div className="text-xs text-gray-400 flex items-center gap-1">
+                                {item?.itemType?.attribute?.map((res: any) => {
+                                  return <p key={res.id}>{res.value}</p>;
+                                })}
+                              </div>
                             </div>
                           </Link>
                         </Table.Cell>
@@ -90,9 +98,9 @@ function Index() {
                           <div className="font-medium text-sm text-end">
                             {Intl.NumberFormat().format(item.price) + "₫"}
                           </div>
-                          {/* <div className="text-xs text-red-600">
-                            {item.discount ? `Đã giảm ${item?.product?.discount}%` : null}
-                          </div> */}
+                          <div className="text-xs text-red-600 text-end">
+                            {item?.product?.discount?.value === undefined ? null : `giảm ${item?.product?.discount?.value * 100}%`}
+                          </div>
                         </Table.Cell>
                         <Table.Cell>
                           <div className="flex items-center justify-center">
@@ -199,14 +207,6 @@ function Index() {
                         <Table.Cell>
                           <div className="font-medium text-end text-green-700">
                             {Intl.NumberFormat().format(item.itemTotal) + "₫"}
-                            {/* <button
-                              onClick={() => {
-                                setItemId(item.id)
-                                setDelModal(!delModal)}}
-                              className="text-lg rounded-full bg-red-500 px-2 text-white"
-                            >
-                              &times;
-                            </button> */}
                           </div>
                         </Table.Cell>
                       </Table.Row>

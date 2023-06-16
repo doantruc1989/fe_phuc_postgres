@@ -24,6 +24,8 @@ const ADDRESS_REGEX = /^\s*\S+(?:\s+\S+){2}/;
 function Index() {
   const [users, setUsers] = useState([] as any);
   const [fee, setFee] = useState(35000);
+  const [transFee, setTransFee] = useState(0);
+  const [transportBy, setTransportBy] = useState("standard");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const { totalItems, items, cartTotal } = useCart();
   const [total, setTotal] = useState(cartTotal);
@@ -47,6 +49,9 @@ function Index() {
   const [isChange, setIsChange] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [coupon, setCoupon] = useState("");
+  const [isCoupon, setIsCoupon] = useState(false);
+  const [couponValue, setCouponValue] = useState(0);
   const router = useRouter();
   const { t } = useTranslation("");
 
@@ -111,8 +116,20 @@ function Index() {
   }, []);
 
   useEffect(() => {
-    setTotal(cartTotal + fee);
-  }, [fee]);
+    isCoupon === false
+      ? setTotal(cartTotal + fee)
+      : couponValue === null
+      ? setTotal(cartTotal)
+      : setTotal(cartTotal + (fee - couponValue <= 0 ? 0 : fee - couponValue));
+  }, [fee, isCoupon, couponValue]);
+
+  useEffect(() => {
+    isCoupon === false
+      ? setTransFee(fee)
+      : couponValue === null
+      ? setTransFee(0)
+      : setTransFee(fee - couponValue <= 0 ? 0 : fee - couponValue);
+  }, [fee, isCoupon, couponValue]);
 
   const handleUpdateAdd = () => {
     const axios = async () => {
@@ -156,7 +173,8 @@ function Index() {
             users?.address ||
             address + ", " + ward + ", " + district + ", " + city,
           phone: users?.phone || phone,
-          trans: fee,
+          trans: transFee,
+          transportBy: transportBy,
           cartTotal: total,
           user: users.id || null,
           orderItems: JSON.stringify(items),
@@ -166,7 +184,7 @@ function Index() {
         .then((res: any) => {
           const data = {
             title: `new order ${res.data.id}`,
-            path: '/order'
+            path: "/order",
           };
           socket.emit("msgTobe", data);
           router.push("/checkout/finish");
@@ -639,6 +657,7 @@ function Index() {
                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         onChange={(e: any) => {
                           setFee(35000);
+                          setTransportBy("standard");
                         }}
                       />
                       <label
@@ -665,6 +684,7 @@ function Index() {
                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         onChange={(e: any) => {
                           setFee(50000);
+                          setTransportBy("express");
                         }}
                       />
                       <label
@@ -690,7 +710,7 @@ function Index() {
                     <div className="flex items-center">
                       <input
                         defaultChecked
-                        id="default-radio-1"
+                        id="default-radio-3"
                         type="radio"
                         name="default-radio"
                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -699,7 +719,7 @@ function Index() {
                         }}
                       />
                       <label
-                        htmlFor="default-radio-1"
+                        htmlFor="default-radio-3"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
                         {t("Thanh toán khi giao hàng ")}(COD)
@@ -716,7 +736,7 @@ function Index() {
                   <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
                     <div className="flex items-center">
                       <input
-                        id="default-radio-2"
+                        id="default-radio-4"
                         type="radio"
                         name="default-radio"
                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -725,7 +745,7 @@ function Index() {
                         }}
                       />
                       <label
-                        htmlFor="default-radio-2"
+                        htmlFor="default-radio-4"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
                         {t("Thanh Toán Trực Tuyến")}
@@ -742,7 +762,7 @@ function Index() {
                   <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
                     <div className="flex items-center">
                       <input
-                        id="default-radio-3"
+                        id="default-radio-5"
                         type="radio"
                         name="default-radio"
                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -751,7 +771,7 @@ function Index() {
                         }}
                       />
                       <label
-                        htmlFor="default-radio-3"
+                        htmlFor="default-radio-5"
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
                         {t("Thanh toán qua Ví điện tử MoMo")}
@@ -799,7 +819,7 @@ function Index() {
           </div>
         </div>
 
-        <div className="lg:col-start-3 lg:col-end-4 bg-gray-50 border border-gray-300 md:h-screen pb-10">
+        <div className="lg:col-start-3 lg:col-end-4 bg-gray-50 border border-gray-300 md:h-auto pb-10">
           <div className="flex justify-end gap-2 font-medium text-xl py-3 border-b border-gray-300 px-3">
             <h1>{t("Đơn hàng")}</h1>
             <p>
@@ -836,7 +856,11 @@ function Index() {
                             : `${item?.name}`}
                         </p>
                       </div>
-                      <p className="text-sm text-gray-400">descript</p>
+                      <div className="text-xs text-gray-400 flex items-center gap-1">
+                        {item?.itemType?.attribute?.map((res: any) => {
+                          return <p key={res.id}>{res.value}</p>;
+                        })}
+                      </div>
                     </div>
                   </div>
                   <div className="w-fit">
@@ -847,23 +871,72 @@ function Index() {
             })}
           </div>
 
-          <div className="flex items-center justify-between gap-2 border-b border-gray-300 py-4 px-6">
-            <TextInput
-              className="w-3/5"
-              placeholder={
-                router.locale == "default"
-                  ? "Nhập mã giảm giá"
-                  : router.locale == "en"
-                  ? "Discount code"
-                  : "ディスカウントコード"
-              }
-            />
-            <Button
-              disabled={true}
-              className="w-2/5 bg-green-600 hover:bg-green-800"
-            >
-              <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
-            </Button>
+          <div className="border-b border-gray-300 py-4 px-6">
+            <div className="flex items-center justify-between gap-2 ">
+              <TextInput
+                className="w-3/5"
+                placeholder={
+                  router.locale == "default"
+                    ? "Nhập mã giảm giá"
+                    : router.locale == "en"
+                    ? "Discount code"
+                    : "ディスカウントコード"
+                }
+                value={coupon}
+                onChange={(e: any) => {
+                  setCoupon(e.target.value);
+                }}
+              />
+              <Button
+                disabled={coupon === "" ? true : false}
+                className="w-2/5 bg-green-600 hover:bg-green-800"
+                onClick={async () => {
+                  try {
+                    axios.defaults.headers.common[
+                      "Authorization"
+                    ] = `Bearer ${user?.tokens?.accessToken}`;
+                    await axios
+                      .get(`/product/coupon/${coupon}`)
+                      .then((res: any) => {
+                        if (res?.data?.name === coupon) {
+                          setCoupon("");
+                          setCouponValue(res?.data?.value);
+                          setIsCoupon(true);
+                          return toast("Apply coupon successfully", {
+                            position: toast.POSITION.TOP_RIGHT,
+                            type: toast.TYPE.SUCCESS,
+                            className: "toast-message",
+                          });
+                        }
+                        toast("Invalid Coupon", {
+                          position: toast.POSITION.TOP_RIGHT,
+                          type: toast.TYPE.ERROR,
+                          className: "toast-message",
+                        });
+                      });
+                  } catch (error) {
+                    toast("Coupon is only applied to registered customers", {
+                      position: toast.POSITION.TOP_RIGHT,
+                      type: toast.TYPE.ERROR,
+                      className: "toast-message",
+                    });
+                  }
+                }}
+              >
+                <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
+              </Button>
+            </div>
+
+            {isCoupon === false ? null : couponValue === null ? (
+              <p className="w-full text-center mt-2 text-xs text-green-700 italic">
+                *{t("Bạn đã được miễn phí vận chuyển")}
+              </p>
+            ) : (
+              <p className="w-full text-center mt-2 text-xs text-green-700 italic">
+                *{t("Bạn đã được giảm ")}
+                {couponValue}đ{t(" phí vận chuyển.")}
+              </p>
+            )}
           </div>
 
           <div className="mt-6 mx-6 border-b border-gray-300 pb-3">
@@ -873,7 +946,7 @@ function Index() {
             </div>
             <div className="flex items-center justify-between mt-3">
               <p>{t("Phí vận chuyển")}</p>
-              <p>{Intl.NumberFormat().format(fee) + " ₫"}</p>
+              <p>{Intl.NumberFormat().format(transFee) + " ₫"}</p>
             </div>
           </div>
 

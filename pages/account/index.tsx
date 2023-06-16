@@ -52,7 +52,7 @@ function Index() {
   const { Canvas } = useQRCode();
   const router = useRouter();
   const { t } = useTranslation("");
-console.log(orders)
+
   useEffect(() => {
     setValidPw(PWD_REGEX.test(userPw) && userPw === userPw2 && userPw !== "");
   }, [userPw, userPw2]);

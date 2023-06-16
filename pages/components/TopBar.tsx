@@ -294,33 +294,65 @@ export default function TopBar({ visible, setVisible }: any) {
                 {result !== null
                   ? result.map((res: any) => {
                       return (
-                        <Link
+                        <a
                           href={"/product/" + res?.product?.slug}
                           key={res.id}
                           onClick={(e: any) => {
                             setResult(null);
                           }}
                         >
-                          <div className="flex gap-3 items-center border-b border-gray-300 w-full py-1 hover:bg-gray-100 px-3">
+                          <div className="flex relative gap-3 items-center border-b border-gray-300 w-full py-1 hover:bg-gray-100 px-3">
                             <img
                               src={res?.product?.productimage[0]?.url}
                               className="w-12 h-12 rounded-md"
                             />
+                            {res?.product?.discount?.value ===
+                            undefined ? null : (
+                              <span className="text-[10px] absolute bg-red-700 text-white px-1 rounded -md bottom-0 right-1">{`SALE ${
+                                res?.product?.discount?.value * 100
+                              }%`}</span>
+                            )}
                             <div className="flex flex-col items-start">
                               <h1>
                                 {router.locale === "default"
                                   ? res?.product?.productName
                                   : res?.name}
                               </h1>
-                              <h1 className="font-medium">
+                              {/* <h1 className="font-medium">
                                 {Intl.NumberFormat().format(
                                   res?.product?.price
                                 )}
                                 đ
-                              </h1>
+                              </h1> */}
+                              {res?.product?.discount?.value === undefined ? (
+                                <div className="flex items-center">
+                                  <p className="font-mediu dark:text-white">
+                                    {Intl.NumberFormat().format(
+                                      res?.product?.price
+                                    )}{" "}
+                                    đ
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="flex gap-2 items-center ">
+                                  <p className="font-medium text-red-600 dark:text-white">
+                                    {Intl.NumberFormat().format(
+                                      res?.product?.price *
+                                        (1 - res?.product?.discount?.value)
+                                    )}{" "}
+                                    đ
+                                  </p>
+                                  <p className="text-[11px] line-through">
+                                    {Intl.NumberFormat().format(
+                                      res?.product?.price
+                                    )}{" "}
+                                    đ
+                                  </p>
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </Link>
+                        </a>
                       );
                     })
                   : null}

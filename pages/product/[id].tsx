@@ -1,7 +1,15 @@
-import { Breadcrumb, Button, Rating, Tabs, TextInput } from "flowbite-react";
+import {
+  Breadcrumb,
+  Button,
+  Label,
+  Radio,
+  Rating,
+  Tabs,
+  TextInput,
+} from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useId, useRef, useState } from "react";
 import { HiHome, HiOutlineShoppingBag, HiPhone } from "react-icons/hi";
 import { CartProvider, useCart } from "react-use-cart";
 import Layout from "../components/Layout";
@@ -19,6 +27,9 @@ import ImageViewer from "../components/ImageViewer";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
+  const [variant, setVariant] = useState([] as any);
+  const [price, setPrice] = useState(0);
+  const [discount, setDiscount] = useState([] as any);
   const [category, setCategory] = useState([] as any);
   const router = useRouter();
   const fruitId = router.query.id;
@@ -33,6 +44,11 @@ function Index() {
   const [el, setEl] = useState("");
   const [el2, setEl2] = useState("");
   const [el3, setEl3] = useState("");
+  const [isClear, setIsClear] = useState(false);
+  const [clearDisplay, setClearDisplay] = useState(false);
+  const [itemType, setItemType] = useState([] as any);
+
+  console.log(discount);
 
   useEffect(() => {
     if (offsetHeight > 455 && innerWidth > 768) {
@@ -104,14 +120,17 @@ function Index() {
           }`
         )
         .then((res: any) => {
+          setVariant(res?.data?.product?.product?.productVariant);
           setFruit(res?.data?.product);
+          setPrice(res?.data?.product?.product?.price);
           setImage(res?.data?.product?.product?.productimage);
           setCategory(res?.data?.category);
+          setDiscount(res?.data?.product?.product?.discount);
         });
     } catch (error) {
       console.log(error);
     }
-  }, [router]);
+  }, [router, isClear]);
 
   useEffect(() => {
     let language = router.locale;
@@ -176,6 +195,7 @@ function Index() {
             {image.map((item: any) => {
               return (
                 <a
+                  className="relative"
                   href=""
                   key={item.id}
                   onClick={(e: any) => {
@@ -188,6 +208,11 @@ function Index() {
                     className="h-[380px] w-full object-cover rounded-lg"
                     src={item.url}
                   />
+                  {discount?.value === undefined ? null : (
+                    <span className="text-base absolute bg-red-700 text-white px-1 rounded -md top-0 left-0">{`SALE ${
+                      discount?.value * 100
+                    }%`}</span>
+                  )}
                 </a>
               );
             })}
@@ -219,22 +244,12 @@ function Index() {
             </div>
             <h5 className="text-sm">
               {t("Đã bán")} {fruit?.product?.sold}
-              {/* {router.locale === "en"
-                ? `Sold: ${fruit?.sold}`
-                : `Đã bán: ${fruit?.sold}`} */}
             </h5>
           </div>
 
           <div className="flex gap-3 text-xs mt-2 justify-between items-center">
             <div className="flex gap-3">
               <p className="font-medium">{t("Tình trạng:")}</p>
-              {/* <p>
-                {fruit?.product?.quantity > 50 ? router.locale === "en" ? "Available"
-                    : "Còn hàng"
-                  : router.locale === "ja"
-                  ? "Out of order"
-                  : "Hết hàng"}
-              </p> */}
             </div>
             <div className="flex gap-3">
               <p className="font-medium">{t("Thương hiệu:")}</p>
@@ -246,39 +261,83 @@ function Index() {
             </div>
           </div>
 
-          <div className="mt-3">
-            <p className="text-3xl text-red-500 font-medium">
-              {" "}
-              {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
-            </p>
+          {discount?.value === undefined ? (
+            <div className="mt-3 flex items-center justify-between">
+              <p className="text-3xl text-red-500 font-medium">
+                {" "}
+                {Intl.NumberFormat().format(price) + " ₫"}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-3 flex items-end justify-start gap-4">
+              <p className="text-3xl text-red-500 font-medium">
+                {" "}
+                {Intl.NumberFormat().format(price * (1 - discount?.value)) +
+                  " ₫"}
+              </p>
+              <p className="text-base line-through">
+                {Intl.NumberFormat().format(price)} đ
+              </p>
+            </div>
+          )}
+          {variant.length !== 0 ? (
+            <div className="my-3 flex items-center justify-between">
+              <p className="font-medium">{t("Loại")}:</p>
+              {clearDisplay === false ? null : (
+                <div
+                  className="text-red-600 text-sm underline cursor-pointer"
+                  onClick={(e: any) => {
+                    e.preventDefault;
+                    setIsClear(!isClear);
+                    setClearDisplay(false);
+                  }}
+                >
+                  clear
+                </div>
+              )}
+            </div>
+          ) : null}
+          <div className="mb-3 grid grid-cols-3 gap-5 items-center justify-center">
+            {variant.length !== 0
+              ? variant.map((item: any) => {
+                  return (
+                    <div
+                      key={item.id}
+                      className="border border-green-600 mx-auto w-fit p-2 rounded-md bg-green-700 text-white hover:bg-green-500 text-center align-middle"
+                    >
+                      {item?.attribute
+                        ? item?.attribute?.map((res: any) => {
+                            return (
+                              <div
+                                key={res.id}
+                                className="flex items-center gap-2 justify-center"
+                              >
+                                <Radio
+                                  id={res.id}
+                                  className="cursor-pointer"
+                                  name="variant"
+                                  defaultChecked={clearDisplay}
+                                  onClick={() => {
+                                    setPrice(item.price);
+                                    setItemType(item);
+                                    setClearDisplay(true);
+                                  }}
+                                />
+                                <Label
+                                  htmlFor={res.id}
+                                  className="cursor-pointer text-white"
+                                >
+                                  {res.value}
+                                </Label>
+                              </div>
+                            );
+                          })
+                        : null}
+                    </div>
+                  );
+                })
+              : null}
           </div>
-
-          {/* <div>
-            <Button
-              className="my-4 mx-auto bg-[#236815] hover:bg-red-400"
-              onClick={() => {
-                console.log(fruit);
-                addItem({ ...fruit, price: fruit?.product?.price });
-                toast("Đã thêm vào giỏ hàng", {
-                  position: toast.POSITION.BOTTOM_RIGHT,
-                  type: toast.TYPE.SUCCESS,
-                  className: "toast-message",
-                });
-              }}
-            >
-              <div className="flex flex-col items-center gap-1">
-                <p className="text-sm font-medium uppercase">
-                  {t("Mua ngay với giá")}{" "}
-                  <span>
-                    {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
-                  </span>
-                </p>
-                <p ref={buttonRef} className="text-xs">
-                  {t("Đặt mua giao hàng tận nơi")}
-                </p>
-              </div>
-            </Button>
-          </div> */}
 
           <div className={`left-0 top-0 z-50 w-full bg-white ${el}`}>
             <div className="flex items-center justify-center md:justify-between md:w-9/12 w-full mx-auto py-1">
@@ -292,9 +351,17 @@ function Index() {
                   </p>
                   <div className="flex gap-2 items-center">
                     <p>Giá bán:</p>
-                    <p className="text-xl text-green-600">
-                      {Intl.NumberFormat().format(fruit?.product?.price) + " ₫"}
-                    </p>
+                    {discount?.value === undefined ? (
+                      <span className="text-xl text-red-600">
+                        {Intl.NumberFormat().format(price) + " ₫"}
+                      </span>
+                    ) : (
+                      <span className="text-xl text-red-600">
+                        {Intl.NumberFormat().format(
+                          price * (1 - discount?.value)
+                        ) + " ₫"}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -304,8 +371,19 @@ function Index() {
                   size="xs"
                   className="w-full md:w-fit bg-[#236815] hover:bg-red-400"
                   onClick={() => {
-                    console.log(fruit);
-                    addItem({ ...fruit, price: fruit?.product?.price });
+                    addItem({
+                      ...fruit,
+                      itemType: itemType.length === 0 ? null : itemType,
+                      price:
+                        discount?.value === undefined
+                          ? price
+                          : price * (1 - discount?.value),
+                      id:
+                        itemType.id === undefined
+                          ? fruit.product.id
+                          : `${fruit.product.id}.${itemType.id}`,
+                    });
+                  
                     toast("Đã thêm vào giỏ hàng", {
                       position: toast.POSITION.BOTTOM_RIGHT,
                       type: toast.TYPE.SUCCESS,
@@ -316,10 +394,15 @@ function Index() {
                   <div className="flex flex-col items-center gap-1">
                     <p className="text-sm font-medium uppercase">
                       {t("Mua ngay với giá")}{" "}
-                      <span>
-                        {Intl.NumberFormat().format(fruit?.product?.price) +
-                          " ₫"}
-                      </span>
+                      {discount?.value === undefined ? (
+                        <span>{Intl.NumberFormat().format(price) + " ₫"}</span>
+                      ) : (
+                        <span>
+                          {Intl.NumberFormat().format(
+                            price * (1 - discount?.value)
+                          ) + " ₫"}
+                        </span>
+                      )}
                     </p>
                     <p className="text-xs">{t("Đặt mua giao hàng tận nơi")}</p>
                   </div>

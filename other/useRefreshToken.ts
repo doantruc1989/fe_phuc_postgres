@@ -11,11 +11,10 @@ const useRefreshToken = () => {
   const refresh = async () => {
     axios.defaults.headers.common[
       "Authorization"
-    ] = `Bearer ${user?.tokens.refreshToken}`;
+    ] = `Bearer ${user?.tokens?.refreshToken}`;
     try {
       const response = await axios.get("/auth/refresh");
       const newUser = response.data;
-      console.log(newUser);
       localStorage.setItem("user", JSON.stringify(response?.data));
       return newUser;
     } catch (error) {

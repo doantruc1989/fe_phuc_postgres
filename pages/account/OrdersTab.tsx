@@ -83,11 +83,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                       {t("Phương thức vận chuyển:")}
                     </p>
                     <div className="pl-2">
-                      {order.trans == 35000 ? (
-                        <p>{t("Tiêu chuẩn")}</p>
-                      ) : (
-                        <p>{t("Hoả tốc")}</p>
-                      )}
+                      {order.transportBy}
                     </div>
                   </div>
                 </div>
@@ -116,20 +112,10 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                               : item?.name}{" "}
                             {" x "} {item.quantity}
                           </span>
-                          <div className="flex justify-start gap-2">
-                            <p className="text-gray-500">{item.type || null}</p>
-                            {order.status === 3 ? (
-                              <a
-                                //   onClick={(e: any) => {
-                                //     e.preventDefault;
-                                //     setIsReview(!isReview);
-                                //     setOrderItems(item.id.split(".")[0]);
-                                //   }}
-                                className="text-blue-500 cursor-pointer"
-                              >
-                                [đánh giá]
-                              </a>
-                            ) : null}
+                          <div className="text-xs text-gray-400 flex items-center gap-1">
+                            {item?.itemType?.attribute?.map((res: any) => {
+                              return <p key={res.id}>{res.value}</p>;
+                            })}
                           </div>
                         </div>
                       </div>
@@ -157,7 +143,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               <div className="flex justify-center gap-1 text-xs">
                 <p>{t("Trạng thái:")}</p>
                 <div className="font-medium text-blue-600">
-                  {order.status === false ? "Chưa thanh toán" : "Đã thanh toán"}
+                  {order.status}
                 </div>
               </div>
 

@@ -19,6 +19,7 @@ function Hero2() {
   const { t } = useTranslation("");
   const router = useRouter();
   const [fruits, setFruits] = useState([] as any);
+  const [discount, setDiscount] = useState([] as any);
   const [page, setPage] = useState(1);
   const [sortField2, setSortField2] = useState(newProduct);
 
@@ -119,6 +120,11 @@ function Hero2() {
                       className="rounded-t-lg cursor-pointer w-full h-60 object-cover hover:scale-110 transition-all duration-500"
                       alt="..."
                     />
+                    {item?.product?.discount?.value === undefined ? null : (
+                      <span className="text-[10px] absolute bg-red-700 text-white px-1 rounded -md top-0 right-0">{`SALE ${
+                        item?.product?.discount?.value * 100
+                      }%`}</span>
+                    )}
                   </div>
 
                   <div className="cursor-pointer text-center text-xs">
@@ -141,18 +147,22 @@ function Hero2() {
                     </div>
                   </div>
 
-                  {item?.product?.discount?.disPercent ? (
-                    <div className="flex gap-2 pl-2 items-center justify-center">
-                      <p className="text-base md:text-sm font-medium text-red-600 dark:text-white my-1">
+                  {item?.product?.discount?.value === undefined ? (
+                    <div className="flex items-center justify-center mt-2">
+                      <p className="text-base font-medium text-red-600 dark:text-white my-2">
                         {Intl.NumberFormat().format(item?.product?.price)} đ
-                      </p>
-                      <p className="text-red-500 font-bold text-xs">
-                        {"-" + item?.product?.discount?.disPercent + "%"}
                       </p>
                     </div>
                   ) : (
                     <div className="flex gap-2 pl-2 items-center justify-center mt-2">
-                      <p className="text-lg font-medium text-red-600 dark:text-white my-1">
+                      <p className="text-base font-medium text-red-600 dark:text-white my-2">
+                        {Intl.NumberFormat().format(
+                          item?.product?.price *
+                            (1 - item?.product?.discount?.value)
+                        )}{" "}
+                        đ
+                      </p>
+                      <p className="text-xs line-through">
                         {Intl.NumberFormat().format(item?.product?.price)} đ
                       </p>
                     </div>
