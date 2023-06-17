@@ -98,8 +98,8 @@ export default function TopBar({ visible, setVisible }: any) {
   return (
     <div className="bg-[#194a0f] text-white text-sm font-medium">
       {search ? (
-        <div className="text-black relative font-normal bg-white h-12 flex w-full items-center">
-          <div className="flex items-center w-full px-2">
+        <div className="text-black relative font-normal bg-white h-12 w-full">
+          <div className="flex items-center justify-start w-full px-2">
             <HiOutlineSearch className="w-fit text-lg" />
             <input
               className="border-white flex-1 focus:border-white focus:ring-white w-full"
@@ -117,7 +117,7 @@ export default function TopBar({ visible, setVisible }: any) {
             />
           </div>
           <button
-            className="text-xl absolute right-1 top-1 bg-white"
+            className="text-xl absolute right-1 top-1 text-black"
             onClick={() => setSearch(false)}
           >
             <HiX />
