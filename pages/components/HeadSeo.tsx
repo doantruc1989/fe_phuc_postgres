@@ -15,31 +15,31 @@ function HeadSeo({ prop }: any) {
       ></meta>
       <meta
         name="keywords"
-        content={seo.keywords || "tiki clone practice"}
+        content={seo.keywords || "trai cay tuoi xanh sach ho chi minh sai gon"}
       ></meta>
       <meta
         name="description"
-        content={seo.description || "tiki clone practice"}
+        content={seo.description || "trai cay tuoi xanh sach ho chi minh sai gon"}
       ></meta>
       <meta
         property="og:title"
-        content={seo.ogTitle || "tiki clone practice"}
+        content={seo.ogTitle || "trai cay tuoi xanh sach ho chi minh sai gon"}
       />
       <meta
         property="og:type"
-        content={seo.ogType || "book, phone, iphone, samsung, 13, 14"}
+        content={seo.ogType || "trai cay tuoi xanh sach ho chi minh sai gon"}
       />
       <meta
         property="og:url"
         content={
-          seo.ogUlr || "https://fetiki2-bt1m-8g05lbo1s-doantruc1989.vercel.app/"
+          seo.ogUlr || "https://phucpsql.quocson.site/"
         }
       />
       <meta
         property="og:image"
         content={
           seo.ogImage ||
-          "https://fetiki2-bt1m-8g05lbo1s-doantruc1989.vercel.app/image/logotiki.png"
+          "https://phucpsql.quocson.site/"
         }
       />
       <meta charSet="utf-8"></meta>

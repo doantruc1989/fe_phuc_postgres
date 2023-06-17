@@ -19,8 +19,6 @@ function Hero2() {
   const { t } = useTranslation("");
   const router = useRouter();
   const [fruits, setFruits] = useState([] as any);
-  const [discount, setDiscount] = useState([] as any);
-  const [page, setPage] = useState(1);
   const [sortField2, setSortField2] = useState(newProduct);
 
   useEffect(() => {
@@ -28,7 +26,7 @@ function Hero2() {
     try {
       axios
         .get(
-          `/product?page=${page}&take=20&sortField=${
+          `/product?page=1&take=20&sortField=${
             sortField2?.sortField
           }&search=${sortField2?.search}&lang=${
             language === "default" ? "en" : language === "ja" ? "ja" : "en"
@@ -94,7 +92,7 @@ function Hero2() {
             return (
               <div
                 key={item?.id}
-                className="rounded-lg border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
+                className="rounded-lg mx-1 border border-gray-200 shadow-sm hover:shadow-lg bg-white mb-1.5"
               >
                 <Link
                   href={
@@ -105,7 +103,7 @@ function Hero2() {
                       : `/product/${item.product.slug}`
                   }
                 >
-                  <div className="flex items-center gap-1 px-1 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
+                  <div className="flex items-center gap-1 px-1 z-20 font-medium text-white absolute border rounded-tl-md rounded-br-md border-gray-400 bg-blue-500 text-sm md:text-[10px] uppercase">
                     <HiStar className="font-medium text-sm" />
                     <p>
                       {router.locale === "default"
@@ -149,21 +147,21 @@ function Hero2() {
 
                   {item?.product?.discount?.value === undefined ? (
                     <div className="flex items-center justify-center mt-2">
-                      <p className="text-base font-medium text-red-600 dark:text-white my-2">
-                        {Intl.NumberFormat().format(item?.product?.price)} đ
+                      <p className="text-sm font-medium text-red-600 dark:text-white my-2">
+                        {Intl.NumberFormat().format(item?.product?.price)}đ
                       </p>
                     </div>
                   ) : (
-                    <div className="flex gap-2 pl-2 items-center justify-center mt-2">
-                      <p className="text-base font-medium text-red-600 dark:text-white my-2">
+                    <div className="flex gap-2 items-center justify-center mt-2">
+                      <p className="text-sm font-medium text-red-600 dark:text-white my-2">
                         {Intl.NumberFormat().format(
                           item?.product?.price *
                             (1 - item?.product?.discount?.value)
                         )}{" "}
                         đ
                       </p>
-                      <p className="text-xs line-through">
-                        {Intl.NumberFormat().format(item?.product?.price)} đ
+                      <p className="text-[11px] line-through">
+                        {Intl.NumberFormat().format(item?.product?.price)}đ
                       </p>
                     </div>
                   )}

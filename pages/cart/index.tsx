@@ -87,8 +87,8 @@ function Index() {
                               </p>
 
                               <div className="text-xs text-gray-400 flex items-center gap-1">
-                                {item?.itemType?.attribute?.map((res: any) => {
-                                  return <p key={res.id}>{res.value}</p>;
+                                {item?.itemType?.variantAttribute?.map((res: any) => {
+                                  return <p key={res.id}>{res.attribute.value}</p>;
                                 })}
                               </div>
                             </div>

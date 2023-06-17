@@ -82,9 +82,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                     <p className="font-medium">
                       {t("Phương thức vận chuyển:")}
                     </p>
-                    <div className="pl-2">
-                      {order.transportBy}
-                    </div>
+                    <div className="pl-2">{order.transportBy}</div>
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 items-end justify-center w-3/12">
@@ -99,7 +97,10 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                       key={item?.id}
                       className="flex items-center justify-between mb-3"
                     >
-                      <div className="flex items-center gap-2">
+                      <Link
+                        href={`/product/${item?.product?.slug}`}
+                        className="flex items-center gap-2"
+                      >
                         <img
                           className="w-10 h-10 my-1"
                           src={item?.product?.productimage[0]?.url}
@@ -113,12 +114,16 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                             {" x "} {item.quantity}
                           </span>
                           <div className="text-xs text-gray-400 flex items-center gap-1">
-                            {item?.itemType?.attribute?.map((res: any) => {
-                              return <p key={res.id}>{res.value}</p>;
-                            })}
+                            {item?.itemType?.variantAttribute?.map(
+                              (res: any) => {
+                                return (
+                                  <p key={res.id}>{res.attribute.value}</p>
+                                );
+                              }
+                            )}
                           </div>
                         </div>
-                      </div>
+                      </Link>
 
                       <div className="font-medium ml-5">
                         {Intl.NumberFormat().format(item.itemTotal) + "đ"}
@@ -142,9 +147,7 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               </div>
               <div className="flex justify-center gap-1 text-xs">
                 <p>{t("Trạng thái:")}</p>
-                <div className="font-medium text-blue-600">
-                  {order.status}
-                </div>
+                <div className="font-medium text-blue-600">{order.status}</div>
               </div>
 
               {/* thanh toán */}

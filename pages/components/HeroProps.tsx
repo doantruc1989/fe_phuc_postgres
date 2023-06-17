@@ -125,21 +125,20 @@ function HeroProps({ props }: any) {
 
               {item?.product?.discount?.value === undefined ? (
                 <div className="flex items-center justify-center mt-2">
-                  <p className="text-base font-medium text-red-600 dark:text-white my-2">
-                    {Intl.NumberFormat().format(item?.product?.price)} đ
+                  <p className="text-sm font-medium text-red-600 dark:text-white my-2">
+                    {Intl.NumberFormat().format(item?.product?.price)}đ
                   </p>
                 </div>
               ) : (
-                <div className="flex gap-2 pl-2 items-center justify-center mt-2">
-                  <p className="text-base font-medium text-red-600 dark:text-white my-2">
+                <div className="flex gap-2 items-center justify-center mt-2">
+                  <p className="text-sm font-medium text-red-600 dark:text-white my-2">
                     {Intl.NumberFormat().format(
                       item?.product?.price *
                         (1 - item?.product?.discount?.value)
-                    )}{" "}
-                    đ
+                    )}đ
                   </p>
-                  <p className="text-xs line-through">
-                    {Intl.NumberFormat().format(item?.product?.price)} đ
+                  <p className="text-[11px] line-through">
+                    {Intl.NumberFormat().format(item?.product?.price)}đ
                   </p>
                 </div>
               )}

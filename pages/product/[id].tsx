@@ -48,8 +48,6 @@ function Index() {
   const [clearDisplay, setClearDisplay] = useState(false);
   const [itemType, setItemType] = useState([] as any);
 
-  console.log(discount);
-
   useEffect(() => {
     if (offsetHeight > 455 && innerWidth > 768) {
       setEl2("md:flex gap-2 items-center justify-start hidden");
@@ -303,36 +301,30 @@ function Index() {
                   return (
                     <div
                       key={item.id}
-                      className="border border-green-600 mx-auto w-fit p-2 rounded-md bg-green-700 text-white hover:bg-green-500 text-center align-middle"
+                      className="flex items-center gap-1 border border-green-600 mx-auto w-fit p-2 rounded-md bg-green-700 text-white hover:bg-green-500 text-center align-middle"
                     >
-                      {item?.attribute
-                        ? item?.attribute?.map((res: any) => {
-                            return (
-                              <div
-                                key={res.id}
-                                className="flex items-center gap-2 justify-center"
-                              >
-                                <Radio
-                                  id={res.id}
-                                  className="cursor-pointer"
-                                  name="variant"
-                                  defaultChecked={clearDisplay}
-                                  onClick={() => {
-                                    setPrice(item.price);
-                                    setItemType(item);
-                                    setClearDisplay(true);
-                                  }}
-                                />
-                                <Label
-                                  htmlFor={res.id}
-                                  className="cursor-pointer text-white"
-                                >
-                                  {res.value}
-                                </Label>
-                              </div>
-                            );
-                          })
-                        : null}
+                      <Radio
+                        id={item.id}
+                        className="cursor-pointer"
+                        name="variant"
+                        defaultChecked={clearDisplay}
+                        onClick={() => {
+                          setPrice(item.price);
+                          setItemType(item);
+                          setClearDisplay(true);
+                        }}
+                      />
+                      <Label
+                        htmlFor={item.id}
+                        className="cursor-pointer text-white flex flex-col"
+                      >
+                        {item?.variantAttribute
+                          ? item?.variantAttribute?.map((res: any) => {
+                              console.log(res);
+                              return <p key={res.id}>{res.attribute.value}</p>;
+                            })
+                          : null}
+                      </Label>
                     </div>
                   );
                 })
@@ -383,7 +375,7 @@ function Index() {
                           ? fruit.product.id
                           : `${fruit.product.id}.${itemType.id}`,
                     });
-                  
+
                     toast("Đã thêm vào giỏ hàng", {
                       position: toast.POSITION.BOTTOM_RIGHT,
                       type: toast.TYPE.SUCCESS,

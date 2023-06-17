@@ -18,10 +18,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation("");
 
   const prop = {
-    title: "tiki trang chủ home page tìm kiếm sản phẩm sales off giá rẻ",
-    keywords: "tiki trang chủ home page tìm kiếm sản phẩm sales off giá rẻ",
+    title: "PhucFresh trái cây tươi",
+    keywords: "trai cay nhap khau tuoi xanh ngot nho xoai cam buoi vietgap",
     description:
-      "tiki làm trang trang chủ home page tìm kiếm sản phẩm sales off giá rẻ đơn giản easy",
+      "trai cay tuoi xanh sach ho chi minh sai gon",
   };
   return (
     <React.Fragment>
