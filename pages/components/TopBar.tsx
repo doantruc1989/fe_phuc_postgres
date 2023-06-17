@@ -99,23 +99,26 @@ export default function TopBar({ visible, setVisible }: any) {
     <div className="bg-[#194a0f] text-white text-sm font-medium">
       {search ? (
         <div className="text-black relative font-normal bg-white h-12 w-full">
-          <div className="flex items-center justify-start w-full px-2">
-            <HiOutlineSearch className="w-fit text-lg" />
-            <input
-              className="border-white flex-1 focus:border-white focus:ring-white w-full"
-              value={inputSearch}
-              type="search"
-              placeholder={
-                router.locale == "default"
-                  ? "Bạn đang tìm kiếm điều gì?"
-                  : router.locale == "en"
-                  ? "What are you looking for?"
-                  : "何を探していますか"
-              }
-              required
-              onChange={handleSearch}
-            />
+          <div className="w-full">
+            <div className="flex items-center justify-start w-full px-2">
+              <HiOutlineSearch className="w-fit text-lg" />
+              <input
+                className="border-white flex-1 focus:border-white focus:ring-white w-full"
+                value={inputSearch}
+                type="search"
+                placeholder={
+                  router.locale == "default"
+                    ? "Bạn đang tìm kiếm điều gì?"
+                    : router.locale == "en"
+                    ? "What are you looking for?"
+                    : "何を探していますか"
+                }
+                required
+                onChange={handleSearch}
+              />
+            </div>
           </div>
+          
           <button
             className="text-xl absolute right-1 top-1 text-black"
             onClick={() => setSearch(false)}
@@ -287,7 +290,7 @@ export default function TopBar({ visible, setVisible }: any) {
             />
             {inputSearch === "" ? null : (
               <div
-                className="text-xs left-0 w-full top-[80px] md:top-[42px] bg-white text-black h-auto absolute z-30 rounded-lg pb-1"
+                className="text-xs left-0 w-full top-[48px] md:top-[42px] bg-white text-black h-auto absolute z-30 rounded-lg pb-1"
                 ref={searchref}
               >
                 {result !== null
