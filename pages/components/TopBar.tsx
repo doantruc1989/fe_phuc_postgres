@@ -98,11 +98,11 @@ export default function TopBar({ visible, setVisible }: any) {
   return (
     <div className="bg-[#194a0f] text-white text-sm font-medium">
       {search ? (
-        <div className="text-black relative font-normal bg-white h-20 flex justify-center items-center">
-          <div className="flex items-center w-2/3">
+        <div className="text-black relative font-normal bg-white h-12 flex w-full items-center">
+          <div className="flex items-center w-full px-2">
             <HiOutlineSearch className="w-fit text-lg" />
             <input
-              className="border-white focus:border-white focus:ring-white w-full"
+              className="border-white flex-1 focus:border-white focus:ring-white w-full"
               value={inputSearch}
               type="search"
               placeholder={
@@ -114,7 +114,6 @@ export default function TopBar({ visible, setVisible }: any) {
               }
               required
               onChange={handleSearch}
-              // icon={}
             />
           </div>
           <button

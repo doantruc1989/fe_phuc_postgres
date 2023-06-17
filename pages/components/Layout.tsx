@@ -16,12 +16,18 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
   const { t } = useTranslation("");
+  const [user, setUser] = useState([] as any);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    const user = stored ? JSON.parse(stored) : "";
+    setUser(user);
+  }, []);
 
   const prop = {
     title: "PhucFresh trái cây tươi",
     keywords: "trai cay nhap khau tuoi xanh ngot nho xoai cam buoi vietgap",
-    description:
-      "trai cay tuoi xanh sach ho chi minh sai gon",
+    description: "trai cay tuoi xanh sach ho chi minh sai gon",
   };
   return (
     <React.Fragment>
@@ -36,20 +42,35 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 src="/image/logo.png"
                 alt="logo"
               />
-              <div className="flex justify-around gap-10 mt-3 font-medium w-full py-3">
-                <Link
-                  className="hover:bg-green-100 px-3 py-2 rounded-lg"
-                  href={"/login"}
-                >
-                  {t("Đăng nhập")}
-                </Link>
-                <Link
-                  className="hover:bg-green-100 px-3 py-2 rounded-lg"
-                  href={"/register"}
-                >
-                  {t("Đăng ký")}
-                </Link>
-              </div>
+              {user?.id === undefined ? (
+                <div className="flex justify-around gap-10 mt-3 font-medium w-full py-3">
+                  <Link
+                    className="hover:bg-green-100 px-3 py-2 rounded-lg"
+                    href={"/login"}
+                  >
+                    {t("Đăng nhập")}
+                  </Link>
+                  <Link
+                    className="hover:bg-green-100 px-3 py-2 rounded-lg"
+                    href={"/register"}
+                  >
+                    {t("Đăng ký")}
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex justify-center items-center gap-2 mt-3 font-medium w-full py-3">
+                  <p>Welcome back,</p>
+                  <div className="flex items-center gap-2">
+                  <p>{user?.username}</p>
+                  <img
+                  className="h-5 w-5 rounded-full object-cover"
+                  src={user.image}
+                  alt="avatar"
+                />
+                  </div>
+                 
+                </div>
+              )}
             </div>
             <div className="w-full mx-auto">
               <SidebarComp />
