@@ -3,6 +3,7 @@ import {
   Breadcrumb,
   Button,
   Label,
+  Select,
   Textarea,
   TextInput,
   ToggleSwitch,
@@ -52,14 +53,25 @@ function Index() {
   const { Canvas } = useQRCode();
   const router = useRouter();
   const { t } = useTranslation("");
+  const [city, setCity] = useState("");
+  const [provinces, setProvinces] = useState([] as any);
+  const [district, setDistrict] = useState("");
+  const [proDictricts, setProDictricts] = useState([] as any);
+  const [ward, setWard] = useState("");
+  const [proWards, setProWards] = useState([] as any);
 
   useEffect(() => {
     setValidPw(PWD_REGEX.test(userPw) && userPw === userPw2 && userPw !== "");
   }, [userPw, userPw2]);
 
   useEffect(() => {
-    setValidAddress(ADDRESS_REGEX.test(address));
-  }, [address]);
+    setValidAddress(
+      ADDRESS_REGEX.test(address) &&
+        city !== "" &&
+        district !== "" &&
+        ward !== ""
+    );
+  }, [address, city, district, ward]);
 
   useEffect(() => {
     setValidPhone(PHONE_REGEX.test(phone));
@@ -68,6 +80,16 @@ function Index() {
   useEffect(() => {
     setValidUrl(AVT_REGEX.test(avatar));
   }, [avatar]);
+
+  useEffect(() => {
+    try {
+      axios.get("/homepage/provinces/all").then((res: any) => {
+        setProvinces(res.data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   const user =
     typeof Storage === "undefined"
@@ -150,14 +172,14 @@ function Index() {
     try {
       axiosPrivate
         .put(`/users/${users.id}`, {
-          address: address || users.address,
+          address: `${city}, ${district}, ${ward}, ${address}` || users.address,
           phone: phone || users.phone,
         })
         .then((res: any) => {
           setIsSuccess(!isSuccess);
           const newUser = {
             ...user,
-            address: res.data.address || users.address,
+            address: `${city}, ${district}, ${ward}, ${address}` || users.address,
             phone: res?.data.phone || users.phone,
           };
           localStorage.setItem("user", JSON.stringify(newUser));
@@ -201,7 +223,6 @@ function Index() {
         }
       );
     }
-    
   };
 
   const handleChange2Fa = () => {
@@ -314,7 +335,13 @@ function Index() {
                   <TextInput
                     color={validPw === true ? "success" : "gray"}
                     value={userPw}
-                    placeholder={router.locale == 'default' ? "Mật khẩu mới" : router.locale == 'en' ? "New password" : "新しいパスワード"}
+                    placeholder={
+                      router.locale == "default"
+                        ? "Mật khẩu mới"
+                        : router.locale == "en"
+                        ? "New password"
+                        : "新しいパスワード"
+                    }
                     onChange={(e) => setUserPw(e.target.value)}
                     type="password"
                     className="mb-3"
@@ -323,7 +350,13 @@ function Index() {
                   <TextInput
                     color={validPw === true ? "success" : "gray"}
                     value={userPw2}
-                    placeholder={router.locale == 'default' ? "Nhập lại mật khẩu" : router.locale == 'en' ? "Retype password" : "パスワードを再入力してください"}
+                    placeholder={
+                      router.locale == "default"
+                        ? "Nhập lại mật khẩu"
+                        : router.locale == "en"
+                        ? "Retype password"
+                        : "パスワードを再入力してください"
+                    }
                     onChange={(e) => setUserPw2(e.target.value)}
                     type="password"
                     helperText={
@@ -352,11 +385,114 @@ function Index() {
                   <h1 className="text-center my-6 font-medium uppercase">
                     {t("Đổi địa chỉ")}
                   </h1>
+                  <div className="flex flex-col md:flex-row items-center md:justify-between gap-2">
+                    <Select
+                      className="w-full"
+                      id="state"
+                      required={true}
+                      value={city}
+                      onChange={async (e: any) => {
+                        setCity(e.target.value);
+                        if (e.target.value !== "") {
+                          try {
+                            await axios
+                              .get(`/homepage/provinces/${e.target.value}`)
+                              .then((res: any) => {
+                                setProDictricts(res.data[0]);
+                              });
+                          } catch (error) {
+                            console.log(error);
+                          }
+                        }
+                      }}
+                    >
+                      <option defaultChecked value={""}>
+                        {t("--- Vui lòng chọn ---")}
+                      </option>
+                      {provinces
+                        ? provinces.map((item: any, index: any) => {
+                            return (
+                              <option value={item.cities} key={index}>
+                                {item.cities}
+                              </option>
+                            );
+                          })
+                        : null}
+                    </Select>
+
+                    <Select
+                      disabled={city === "" ? true : false}
+                      className="w-full"
+                      id="state"
+                      required={true}
+                      value={district}
+                      onChange={async (e: any) => {
+                        setDistrict(e.target.value);
+                        if (e.target.value !== "") {
+                          try {
+                            await axios
+                              .get(`/homepage/provinces/city/${e.target.value}`)
+                              .then((res: any) => {
+                                setProWards(res.data[0].wards);
+                              });
+                          } catch (error) {
+                            console.log(error);
+                          }
+                        }
+                      }}
+                    >
+                      <option defaultChecked value={""}>
+                        {t("--- Vui lòng chọn ---")}
+                      </option>
+                      {proDictricts
+                        ? proDictricts?.district?.map(
+                            (item: any, index: any) => {
+                              return (
+                                <option value={item.districts} key={index}>
+                                  {item.districts}
+                                </option>
+                              );
+                            }
+                          )
+                        : null}
+                    </Select>
+
+                    <Select
+                      disabled={district === "" ? true : false}
+                      className="w-full"
+                      id="state"
+                      required={true}
+                      value={ward}
+                      onChange={async (e: any) => {
+                        setWard(e.target.value);
+                      }}
+                    >
+                      <option defaultChecked value={""}>
+                        {t("--- Vui lòng chọn ---")}
+                      </option>
+                      {proWards
+                        ? proWards.map((item: any, index: any) => {
+                            return (
+                              <option value={item.name} key={index}>
+                                {item.name}
+                              </option>
+                            );
+                          })
+                        : null}
+                    </Select>
+                  </div>
                   <TextInput
+                    className="mt-2"
                     type="text"
                     value={address}
                     color={validAddress === true ? "success" : "gray"}
-                    placeholder={router.locale == 'default' ? "địa chỉ giao hàng mới" : router.locale == 'en' ? "New address" : "新しいアドレス"}
+                    placeholder={
+                      router.locale == "default"
+                        ? "địa chỉ giao hàng mới"
+                        : router.locale == "en"
+                        ? "New address"
+                        : "新しいアドレス"
+                    }
                     onChange={(e: any) => setAddress(e.target.value)}
                     helperText={
                       validAddress === false ? (
@@ -369,11 +505,17 @@ function Index() {
                     }
                   />
                   <TextInput
-                    className="mt-3"
+                    className="mt-2"
                     type="text"
                     value={phone}
                     color={validPhone === true ? "success" : "gray"}
-                    placeholder={router.locale == 'default' ? "Số điện thoại mới" : router.locale == 'en' ? "New phone number" : "新しい電話番号"}
+                    placeholder={
+                      router.locale == "default"
+                        ? "Số điện thoại mới"
+                        : router.locale == "en"
+                        ? "New phone number"
+                        : "新しい電話番号"
+                    }
                     onChange={(e: any) => setPhone(e.target.value)}
                     helperText={
                       validPhone === false ? (
@@ -406,7 +548,13 @@ function Index() {
                     color={validUrl === true ? "success" : "gray"}
                     type="text"
                     value={avatar}
-                    placeholder={router.locale == 'default' ? "url hình ảnh avt https://...." : router.locale == 'en' ? "URL image" : "URL画像"}
+                    placeholder={
+                      router.locale == "default"
+                        ? "url hình ảnh avt https://...."
+                        : router.locale == "en"
+                        ? "URL image"
+                        : "URL画像"
+                    }
                     onChange={(e: any) => setAvatar(e.target.value)}
                     helperText={
                       validUrl === false ? (

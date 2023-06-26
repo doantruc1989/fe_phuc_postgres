@@ -1,4 +1,4 @@
-import { Button, Label, Select, TextInput } from "flowbite-react";
+import { Button, Label, Select, Spinner, TextInput } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
@@ -11,6 +11,7 @@ import { CartProvider, useCart } from "react-use-cart";
 import axios from "../../other/axios";
 import { socket } from "../../other/socketIo";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
+import JandTapi from "../components/JandTapi";
 import LoginModal from "./LoginModal";
 import SecurityModal from "./SecurityModal";
 import TcModal from "./TcModal";
@@ -24,12 +25,15 @@ const ADDRESS_REGEX = /^\s*\S+(?:\s+\S+){2}/;
 function Index() {
   const [users, setUsers] = useState([] as any);
   const [fee, setFee] = useState(35000);
+  const [feeFromApi, setFeeFromApi] = useState(0);
   const [transFee, setTransFee] = useState(0);
   const [transportBy, setTransportBy] = useState("standard");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const { totalItems, items, cartTotal } = useCart();
   const [total, setTotal] = useState(cartTotal);
   const [secutityModal, setSecurityModal] = useState(false);
+  const [isTakingFee, setTakingFee] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [tcModal, setTcModal] = useState(false);
   const [city, setCity] = useState("");
   const [provinces, setProvinces] = useState([] as any);
@@ -93,6 +97,33 @@ function Index() {
   }, [phone, address]);
 
   useEffect(() => {
+    const userAddress = user?.address?.split(",");
+    try {
+      axios
+        .get(
+          `/homepage/checkfee?filter=${userAddress[1]}&sortField=${userAddress[0]}`
+        )
+        .then((res: any) => {
+          setTakingFee(true);
+          setIsLoading(true);
+          const timer = setTimeout(() => {
+            setFeeFromApi(res?.data?.fee?.ship_fee_only + 10000);
+            setTakingFee(false);
+          }, 2000);
+          return () => {
+            clearTimeout(timer);
+          };
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [isChange, users]);
+
+  useEffect(() => {
+    setFee(feeFromApi);
+  }, [feeFromApi]);
+
+  useEffect(() => {
     const axios = async () => {
       axiosPrivate.get(`/users/${user.id}`).then((res) => {
         setUsers(res?.data);
@@ -138,14 +169,24 @@ function Index() {
           .put(`/users/${users.id}`, {
             address:
               address !== ""
-                ? address + ", " + ward + ", " + district + ", " + city
+                ? `${city}, ${district}, ${ward}, ${address}`
                 : users.address,
             phone: phone !== "" ? phone : users.phone,
           })
           .then((res: any) => {
+            const newUser = {
+              ...user,
+              address:
+                `${city}, ${district}, ${ward}, ${address}` || users.address,
+              phone: res?.data.phone || users.phone,
+            };
+            localStorage.setItem("user", JSON.stringify(newUser));
             setIsChange(false);
             setPhone("");
             setAdress("");
+            setDistrict('')
+            setCity('')
+            setWard('')
             if (res.data) {
               toast("Update user address successfully", {
                 position: toast.POSITION.TOP_RIGHT,
@@ -385,8 +426,30 @@ function Index() {
                             color={ward !== "" ? "success" : "gray"}
                             required={true}
                             value={ward}
-                            onChange={(e: any) => {
+                            onChange={async (e: any) => {
                               setWard(e.target.value);
+
+                              try {
+                                await axios
+                                  .get(
+                                    `/homepage/checkfee?filter=${district}&sortField=${city}`
+                                  )
+                                  .then((res: any) => {
+                                    setIsLoading(true);
+                                    setTakingFee(true);
+                                    const timer = setTimeout(() => {
+                                      setFeeFromApi(
+                                        res?.data?.fee?.ship_fee_only + 10000
+                                      );
+                                      setTakingFee(false);
+                                    }, 2000);
+                                    return () => {
+                                      clearTimeout(timer);
+                                    };
+                                  });
+                              } catch (error) {
+                                console.log(error);
+                              }
                             }}
                           >
                             <option defaultChecked value={""}>
@@ -582,10 +645,10 @@ function Index() {
                         color={district !== "" ? "success" : "gray"}
                         required={true}
                         value={district}
-                        onChange={(e: any) => {
+                        onChange={async (e: any) => {
                           setDistrict(e.target.value);
                           try {
-                            axios
+                            await axios
                               .get(`/homepage/provinces/city/${e.target.value}`)
                               .then((res: any) => {
                                 setProWards(res.data[0].wards);
@@ -621,8 +684,29 @@ function Index() {
                         color={ward !== "" ? "success" : "gray"}
                         required={true}
                         value={ward}
-                        onChange={(e: any) => {
+                        onChange={async (e: any) => {
                           setWard(e.target.value);
+                          try {
+                            await axios
+                              .get(
+                                `/homepage/checkfee?filter=${district}&sortField=${city}`
+                              )
+                              .then((res: any) => {
+                                setIsLoading(true);
+                                setTakingFee(true);
+                                const timer = setTimeout(() => {
+                                  setFeeFromApi(
+                                    res?.data?.fee?.ship_fee_only + 10000
+                                  );
+                                  setTakingFee(false);
+                                }, 2000);
+                                return () => {
+                                  clearTimeout(timer);
+                                };
+                              });
+                          } catch (error) {
+                            console.log(error);
+                          }
                         }}
                       >
                         <option defaultChecked value={""}>
@@ -645,63 +729,79 @@ function Index() {
 
               <div>
                 <h1 className="font-bold">{t("Vận chuyển")}</h1>
-
-                <div className="border border-gray-200 rounded-md mt-3">
-                  <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
-                    <div className="flex items-center">
-                      <input
-                        defaultChecked
-                        id="default-radio-1"
-                        type="radio"
-                        name="trans-radio"
-                        className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={(e: any) => {
-                          setFee(35000);
-                          setTransportBy("standard");
-                        }}
-                      />
-                      <label
-                        htmlFor="default-radio-1"
-                        className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        J&T 35.000đ
-                      </label>
-                    </div>
-
-                    <img
-                      className="h-10 w-10 rounded-md"
-                      src="/image/jtexpress.png"
-                      alt="momo"
-                    />
+                {isLoading === false ? (
+                  <div className="px-1 text-end italic mt-2">
+                    Bạn vui lòng nhập địa chỉ để chúng tôi tính toán phí vận
+                    chuyển.
                   </div>
+                ) : (
+                  <div className="border border-gray-200 rounded-md mt-3">
+                    <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
+                      <div className="flex items-center">
+                        <input
+                          defaultChecked
+                          id="default-radio-1"
+                          type="radio"
+                          name="trans-radio"
+                          className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          onChange={(e: any) => {
+                            setFee(feeFromApi);
+                            setTransportBy("standard");
+                          }}
+                        />
+                        <label
+                          htmlFor="default-radio-1"
+                          className="flex items-center gap-2 ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          <p>GH Tiết Kiệm</p>
+                          {isTakingFee === true ? (
+                            <Spinner color="success" />
+                          ) : (
+                            <p>
+                              {Intl.NumberFormat().format(feeFromApi) + "₫"}
+                            </p>
+                          )}
+                        </label>
+                      </div>
 
-                  <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
-                    <div className="flex items-center">
-                      <input
-                        id="default-radio-2"
-                        type="radio"
-                        name="trans-radio"
-                        className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={(e: any) => {
-                          setFee(50000);
-                          setTransportBy("express");
-                        }}
+                      <img
+                        className="h-10 w-10 rounded-md"
+                        src="/image/ghtk.jpg"
+                        alt="momo"
                       />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        {t("Vận chuyển hoả tốc ")}50.000đ
-                      </label>
                     </div>
+                    {city === "Thành phố Hồ Chí Minh" ||
+                    users?.address?.split(",")[0] ===
+                      "Thành phố Hồ Chí Minh" ? (
+                      <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
+                        <div className="flex items-center">
+                          <input
+                            id="default-radio-2"
+                            type="radio"
+                            name="trans-radio"
+                            className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            onChange={(e: any) => {
+                              setFee(50000);
+                              setTransportBy("express");
+                            }}
+                          />
+                          <label
+                            htmlFor="default-radio-2"
+                            className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            {t("Vận chuyển hoả tốc ")}50.000đ
+                          </label>
+                        </div>
 
-                    <img
-                      className="h-10 w-10 rounded-md"
-                      src="/image/expressdelivery.png"
-                      alt="momo"
-                    />
+                        <img
+                          className="h-10 w-10 rounded-md"
+                          src="/image/expressdelivery.png"
+                          alt="momo"
+                        />
+                      </div>
+                    ) : null}
                   </div>
-                </div>
+                )}
 
                 <h1 className="font-bold mt-6">{t("Thanh Toán")}</h1>
 

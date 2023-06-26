@@ -1,4 +1,11 @@
-import { Breadcrumb, Button, Label, TextInput, Tooltip } from "flowbite-react";
+import {
+  Breadcrumb,
+  Button,
+  Label,
+  Select,
+  TextInput,
+  Tooltip,
+} from "flowbite-react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
@@ -35,7 +42,13 @@ function Index() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("");
-  const [redirect, setRedirect] = useState(false)
+  const [redirect, setRedirect] = useState(false);
+  const [city, setCity] = useState("");
+  const [provinces, setProvinces] = useState([] as any);
+  const [district, setDistrict] = useState("");
+  const [proDictricts, setProDictricts] = useState([] as any);
+  const [ward, setWard] = useState("");
+  const [proWards, setProWards] = useState([] as any);
 
   useEffect(() => {
     setValidEmail(EMAIL_REGEX.test(email));
@@ -50,8 +63,13 @@ function Index() {
   }, [phone]);
 
   useEffect(() => {
-    setValidAddress(ADDRESS_REGEX.test(address));
-  }, [address]);
+    setValidAddress(
+      ADDRESS_REGEX.test(address) &&
+        city !== "" &&
+        district !== "" &&
+        ward !== ""
+    );
+  }, [address, city, district, ward]);
 
   useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd) && pwd === retypePwd);
@@ -75,7 +93,7 @@ function Index() {
           email: email,
           password: pwd,
           username: name,
-          address: address,
+          address: `${city}, ${district}, ${ward}, ${address}`,
           phone: phone,
         })
         .then((res: any) => {
@@ -87,11 +105,11 @@ function Index() {
           setPhone("");
           const data = {
             title: `new user ${res.data.email}`,
-            path: '/user'
+            path: "/user",
           };
           socket.emit("msgTobe", data);
           const timer = setTimeout(() => {
-            setRedirect(true)
+            setRedirect(true);
           }, 5000);
           return () => {
             clearTimeout(timer);
@@ -108,23 +126,38 @@ function Index() {
     }
   };
 
+  useEffect(() => {
+    try {
+      axios.get("/homepage/provinces/all").then((res: any) => {
+        setProvinces(res.data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   redirect === true &&
-  router.push("/login", undefined, { locale: router.locale })
+    router.push("/login", undefined, { locale: router.locale });
 
   return (
     <div className="h-auto mb-16">
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
-        <Breadcrumb.Item href={router.locale === "en" ? "/en" : "/"} icon={HiHome}>
-        {t("Trang chủ")}
+        <Breadcrumb.Item
+          href={router.locale === "en" ? "/en" : "/"}
+          icon={HiHome}
+        >
+          {t("Trang chủ")}
           <ToastContainer />
         </Breadcrumb.Item>
         <Breadcrumb.Item>{t("Đăng ký tài khoản")}</Breadcrumb.Item>
       </Breadcrumb>
       {success === false ? (
         <div className="flex flex-col items-center mt-10 gap-2 w-full md:w-11/12 lg:w-9/12 mx-auto">
-          <h1 className="text-2xl font-medium uppercase">{t("Đăng ký tài khoản")}</h1>
+          <h1 className="text-2xl font-medium uppercase">
+            {t("Đăng ký tài khoản")}
+          </h1>
           <p className="text-center">
-     {t("Đăng ký để mua hàng và sử dụng những tiện ích mới nhất từ ")}
+            {t("Đăng ký để mua hàng và sử dụng những tiện ích mới nhất từ ")}
             <span className="font-medium">phucfresh.vn</span>
           </p>
           <div className="flex gap-4 mt-6">
@@ -153,7 +186,13 @@ function Index() {
               </Label>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Nhập họ và tên" : router.locale == 'en' ? "Fullname" : "フルネーム"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Nhập họ và tên"
+                    : router.locale == "en"
+                    ? "Fullname"
+                    : "フルネーム"
+                }
                 type="text"
                 value={name}
                 onChange={(e: any) => {
@@ -166,9 +205,111 @@ function Index() {
               <Label className="text-sm font-medium uppercase">
                 {t("Địa chỉ giao hàng:")}
               </Label>
+
+              <div className="flex flex-col md:flex-row items-center md:justify-between gap-2">
+                <Select
+                  className="w-full"
+                  id="state"
+                  required={true}
+                  value={city}
+                  onChange={async (e: any) => {
+                    setCity(e.target.value);
+                    if (e.target.value !== "") {
+                      try {
+                        await axios
+                          .get(`/homepage/provinces/${e.target.value}`)
+                          .then((res: any) => {
+                            setProDictricts(res.data[0]);
+                          });
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }
+                  }}
+                >
+                  <option defaultChecked value={""}>
+                    {t("--- Vui lòng chọn ---")}
+                  </option>
+                  {provinces
+                    ? provinces.map((item: any, index: any) => {
+                        return (
+                          <option value={item.cities} key={index}>
+                            {item.cities}
+                          </option>
+                        );
+                      })
+                    : null}
+                </Select>
+
+                <Select
+                  disabled={city === "" ? true : false}
+                  className="w-full"
+                  id="state"
+                  required={true}
+                  value={district}
+                  onChange={async (e: any) => {
+                    setDistrict(e.target.value);
+                    if (e.target.value !== "") {
+                      try {
+                        await axios
+                          .get(`/homepage/provinces/city/${e.target.value}`)
+                          .then((res: any) => {
+                            setProWards(res.data[0].wards);
+                          });
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }
+                  }}
+                >
+                  <option defaultChecked value={""}>
+                    {t("--- Vui lòng chọn ---")}
+                  </option>
+                  {proDictricts
+                    ? proDictricts?.district?.map((item: any, index: any) => {
+                        return (
+                          <option value={item.districts} key={index}>
+                            {item.districts}
+                          </option>
+                        );
+                      })
+                    : null}
+                </Select>
+
+                <Select
+                  disabled={district === "" ? true : false}
+                  className="w-full"
+                  id="state"
+                  required={true}
+                  value={ward}
+                  onChange={async (e: any) => {
+                    setWard(e.target.value);
+                  }}
+                >
+                  <option defaultChecked value={""}>
+                    {t("--- Vui lòng chọn ---")}
+                  </option>
+                  {proWards
+                    ? proWards.map((item: any, index: any) => {
+                        return (
+                          <option value={item.name} key={index}>
+                            {item.name}
+                          </option>
+                        );
+                      })
+                    : null}
+                </Select>
+              </div>
+
               <TextInput
-                className="w-full"
-                placeholder={router.locale == 'default' ? "địa chỉ giao hàng" : router.locale == 'en' ? "address" : "アドレス"}
+                className="w-full mt-2"
+                placeholder={
+                  router.locale == "default"
+                    ? "Địa chỉ cụ thể"
+                    : router.locale == "en"
+                    ? "address"
+                    : "アドレス"
+                }
                 type="text"
                 value={address}
                 onChange={(e: any) => {
@@ -189,7 +330,13 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Số điện thoại" : router.locale == 'en' ? "Phone number" : "電話番号"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Số điện thoại"
+                    : router.locale == "en"
+                    ? "Phone number"
+                    : "電話番号"
+                }
                 type="text"
                 value={phone}
                 onChange={(e: any) => {
@@ -204,7 +351,13 @@ function Index() {
               </Label>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Email" : router.locale == 'en' ? "Email" : "メール"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Email"
+                    : router.locale == "en"
+                    ? "Email"
+                    : "メール"
+                }
                 type="email"
                 value={email}
                 onChange={(e: any) => {
@@ -225,7 +378,13 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Mật khẩu" : router.locale == 'en' ? "password" : "パスワード"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Mật khẩu"
+                    : router.locale == "en"
+                    ? "password"
+                    : "パスワード"
+                }
                 type="password"
                 value={pwd}
                 onChange={(e: any) => {
@@ -245,7 +404,13 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
-                placeholder={router.locale == 'default' ? "Nhập lại mật khẩu" : router.locale == 'en' ? "Retype password" : "パスワードを再入力してください"}
+                placeholder={
+                  router.locale == "default"
+                    ? "Nhập lại mật khẩu"
+                    : router.locale == "en"
+                    ? "Retype password"
+                    : "パスワードを再入力してください"
+                }
                 type="password"
                 value={retypePwd}
                 onChange={(e: any) => {
@@ -275,7 +440,9 @@ function Index() {
       ) : (
         <section className="text-base text-center capitalize font-medium mt-20">
           <h1>
-            {t("Bạn đã đăng ký thành công, hệ thống sẽ chuyển bạn tới trang đăng nhập sau 5 giây nữa. Hoặc ")}
+            {t(
+              "Bạn đã đăng ký thành công, hệ thống sẽ chuyển bạn tới trang đăng nhập sau 5 giây nữa. Hoặc "
+            )}
           </h1>
           <p className="mt-6">
             {t("Bấm vào")}

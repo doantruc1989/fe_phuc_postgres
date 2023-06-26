@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Spinner, TextInput } from "flowbite-react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
-import { HiHome } from "react-icons/hi";
+import { HiEye, HiHome } from "react-icons/hi";
 import Link from "next/link";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -183,6 +183,7 @@ function Index() {
                 {t("Mật khẩu:")}
               </p>
               <TextInput
+                // icon={HiEye}
                 className="w-full"
                 placeholder={
                   router.locale == "default"
