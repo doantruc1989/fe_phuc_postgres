@@ -374,6 +374,7 @@ function Index() {
                         itemType.id === undefined
                           ? fruit.product.id
                           : `${fruit.product.id}.${itemType.id}`,
+                      weight: fruit.product.weight,
                     });
 
                     toast("Đã thêm vào giỏ hàng", {

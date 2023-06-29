@@ -1,4 +1,10 @@
-import { Breadcrumb, Button, Spinner, TextInput } from "flowbite-react";
+import {
+  Breadcrumb,
+  Button,
+  Spinner,
+  TextInput,
+  Tooltip,
+} from "flowbite-react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
@@ -161,7 +167,15 @@ function Index() {
 
           <div className="w-9/12">
             <div className="mt-5">
-              <p className="text-sm font-medium uppercase mb-2">email:</p>
+              <Tooltip
+                animation="duration-500"
+                content="
+              user@yahoo.com / test1234
+              "
+              >
+                <p className="text-sm font-medium uppercase mb-2">email:</p>
+              </Tooltip>
+
               <TextInput
                 className="w-full"
                 placeholder={

@@ -179,7 +179,8 @@ function Index() {
           setIsSuccess(!isSuccess);
           const newUser = {
             ...user,
-            address: `${city}, ${district}, ${ward}, ${address}` || users.address,
+            address:
+              `${city}, ${district}, ${ward}, ${address}` || users.address,
             phone: res?.data.phone || users.phone,
           };
           localStorage.setItem("user", JSON.stringify(newUser));
@@ -386,100 +387,108 @@ function Index() {
                     {t("Đổi địa chỉ")}
                   </h1>
                   <div className="flex flex-col md:flex-row items-center md:justify-between gap-2">
-                    <Select
-                      className="w-full"
-                      id="state"
-                      required={true}
-                      value={city}
-                      onChange={async (e: any) => {
-                        setCity(e.target.value);
-                        if (e.target.value !== "") {
-                          try {
-                            await axios
-                              .get(`/homepage/provinces/${e.target.value}`)
-                              .then((res: any) => {
-                                setProDictricts(res.data[0]);
-                              });
-                          } catch (error) {
-                            console.log(error);
+                    <div className="w-full">
+                      <Label>{t("Tỉnh-Thành:")}</Label>
+                      <Select
+                        className="w-full"
+                        id="state"
+                        required={true}
+                        value={city}
+                        onChange={async (e: any) => {
+                          setCity(e.target.value);
+                          if (e.target.value !== "") {
+                            try {
+                              await axios
+                                .get(`/homepage/provinces/${e.target.value}`)
+                                .then((res: any) => {
+                                  setProDictricts(res.data[0]);
+                                });
+                            } catch (error) {
+                              console.log(error);
+                            }
                           }
-                        }
-                      }}
-                    >
-                      <option defaultChecked value={""}>
-                        {t("--- Vui lòng chọn ---")}
-                      </option>
-                      {provinces
-                        ? provinces.map((item: any, index: any) => {
-                            return (
-                              <option value={item.cities} key={index}>
-                                {item.cities}
-                              </option>
-                            );
-                          })
-                        : null}
-                    </Select>
-
-                    <Select
-                      disabled={city === "" ? true : false}
-                      className="w-full"
-                      id="state"
-                      required={true}
-                      value={district}
-                      onChange={async (e: any) => {
-                        setDistrict(e.target.value);
-                        if (e.target.value !== "") {
-                          try {
-                            await axios
-                              .get(`/homepage/provinces/city/${e.target.value}`)
-                              .then((res: any) => {
-                                setProWards(res.data[0].wards);
-                              });
-                          } catch (error) {
-                            console.log(error);
-                          }
-                        }
-                      }}
-                    >
-                      <option defaultChecked value={""}>
-                        {t("--- Vui lòng chọn ---")}
-                      </option>
-                      {proDictricts
-                        ? proDictricts?.district?.map(
-                            (item: any, index: any) => {
+                        }}
+                      >
+                        <option defaultChecked value={""}>
+                          {t("--- Vui lòng chọn ---")}
+                        </option>
+                        {provinces
+                          ? provinces.map((item: any, index: any) => {
                               return (
-                                <option value={item.districts} key={index}>
-                                  {item.districts}
+                                <option value={item.cities} key={index}>
+                                  {item.cities}
                                 </option>
                               );
+                            })
+                          : null}
+                      </Select>
+                    </div>
+                    <div className="w-full">
+                      <Label>{t("Quận-Huyện:")}</Label>
+                      <Select
+                        disabled={city === "" ? true : false}
+                        id="state"
+                        required={true}
+                        value={district}
+                        onChange={async (e: any) => {
+                          setDistrict(e.target.value);
+                          if (e.target.value !== "") {
+                            try {
+                              await axios
+                                .get(
+                                  `/homepage/provinces/city/${e.target.value}`
+                                )
+                                .then((res: any) => {
+                                  setProWards(res.data[0].wards);
+                                });
+                            } catch (error) {
+                              console.log(error);
                             }
-                          )
-                        : null}
-                    </Select>
-
-                    <Select
-                      disabled={district === "" ? true : false}
-                      className="w-full"
-                      id="state"
-                      required={true}
-                      value={ward}
-                      onChange={async (e: any) => {
-                        setWard(e.target.value);
-                      }}
-                    >
-                      <option defaultChecked value={""}>
-                        {t("--- Vui lòng chọn ---")}
-                      </option>
-                      {proWards
-                        ? proWards.map((item: any, index: any) => {
-                            return (
-                              <option value={item.name} key={index}>
-                                {item.name}
-                              </option>
-                            );
-                          })
-                        : null}
-                    </Select>
+                          }
+                        }}
+                      >
+                        <option defaultChecked value={""}>
+                          {t("--- Vui lòng chọn ---")}
+                        </option>
+                        {proDictricts
+                          ? proDictricts?.district?.map(
+                              (item: any, index: any) => {
+                                return (
+                                  <option value={item.districts} key={index}>
+                                    {item.districts}
+                                  </option>
+                                );
+                              }
+                            )
+                          : null}
+                      </Select>
+                    </div>
+                    <div className="w-full">
+                      <Label>{t("Phường-Xã:")}</Label>
+                      <Select
+                        disabled={district === "" ? true : false}
+                        className="w-full"
+                        id="state"
+                        required={true}
+                        value={ward}
+                        onChange={async (e: any) => {
+                          setWard(e.target.value);
+                        }}
+                      >
+                        <option defaultChecked value={""}>
+                          {t("--- Vui lòng chọn ---")}
+                        </option>
+                        {proWards
+                          ? proWards.map((item: any, index: any) => {
+                              return (
+                                <option value={item.name} key={index}>
+                                  {item.name}
+                                </option>
+                              );
+                            })
+                          : null}
+                      </Select>
+                    </div>
                   </div>
                   <TextInput
                     className="mt-2"

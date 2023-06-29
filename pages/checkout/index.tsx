@@ -1,4 +1,12 @@
-import { Button, Label, Select, Spinner, TextInput } from "flowbite-react";
+import {
+  Button,
+  Label,
+  Select,
+  Spinner,
+  Textarea,
+  TextInput,
+  Tooltip,
+} from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
@@ -31,6 +39,7 @@ function Index() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const { totalItems, items, cartTotal } = useCart();
   const [total, setTotal] = useState(cartTotal);
+  const [totalWeight, setTotalWeight] = useState(0);
   const [secutityModal, setSecurityModal] = useState(false);
   const [isTakingFee, setTakingFee] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +58,7 @@ function Index() {
   const [phone, setPhone] = useState("");
   const [validPhone, setValidPhone] = useState(false);
   const [address, setAdress] = useState("");
+  const [note, setNote] = useState("");
   const [validAddress, setValidAddress] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
@@ -75,6 +85,14 @@ function Index() {
     setValidAddress(ADDRESS_REGEX.test(address));
   }, [address]);
 
+  useEffect(() => {
+    let weight = 0;
+    for (let i = 0; i < items.length; i++) {
+      weight += +items[i]?.product?.weight * items[i].quantity!;
+    }
+    return setTotalWeight(weight);
+  }, []);
+
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const user =
@@ -97,27 +115,24 @@ function Index() {
   }, [phone, address]);
 
   useEffect(() => {
-    const userAddress = user?.address?.split(",");
-    try {
-      axios
-        .get(
-          `/homepage/checkfee?filter=${userAddress[1]}&sortField=${userAddress[0]}`
-        )
-        .then((res: any) => {
-          setTakingFee(true);
-          setIsLoading(true);
-          const timer = setTimeout(() => {
-            setFeeFromApi(res?.data?.fee?.ship_fee_only + 10000);
+    const userAddress = user?.address?.split(", ");
+    if (totalWeight !== 0) {
+      setTakingFee(true);
+      try {
+        axios
+          .get(
+            `/homepage/checkfee?search=checkfee&filter=${userAddress[1]}&sortField=${userAddress[0]}&condition2=${userAddress[2]}&condition=${totalWeight}`
+          )
+          .then((res: any) => {
             setTakingFee(false);
-          }, 2000);
-          return () => {
-            clearTimeout(timer);
-          };
-        });
-    } catch (error) {
-      console.log(error);
+            setIsLoading(true);
+            setFeeFromApi(res?.data?.data?.total + 10000);
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }, [isChange, users]);
+  }, [isChange, users, totalWeight]);
 
   useEffect(() => {
     setFee(feeFromApi);
@@ -184,9 +199,9 @@ function Index() {
             setIsChange(false);
             setPhone("");
             setAdress("");
-            setDistrict('')
-            setCity('')
-            setWard('')
+            setDistrict("");
+            setCity("");
+            setWard("");
             if (res.data) {
               toast("Update user address successfully", {
                 position: toast.POSITION.TOP_RIGHT,
@@ -211,8 +226,7 @@ function Index() {
       axios
         .post("/cart/order", {
           address:
-            users?.address ||
-            address + ", " + ward + ", " + district + ", " + city,
+            users?.address || `${city}, ${district}, ${ward}, ${address}`,
           phone: users?.phone || phone,
           trans: transFee,
           transportBy: transportBy,
@@ -220,6 +234,8 @@ function Index() {
           user: users.id || null,
           orderItems: JSON.stringify(items),
           paymentMethod: paymentMethod,
+          weight: totalWeight,
+          note: note,
           guest: users?.id === undefined ? email + " " + name : null,
         })
         .then((res: any) => {
@@ -279,6 +295,9 @@ function Index() {
                         onClick={(e: any) => {
                           e.preventDefault();
                           setIsChange(!isChange);
+                          setCity("");
+                          setDistrict("");
+                          setWard("");
                         }}
                       >
                         {t("thay đổi")}
@@ -338,7 +357,7 @@ function Index() {
                           </div>
                         </div>
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">{t("Tỉnh/Thành:")}</Label>
+                          <Label className="w-1/3">{t("Tỉnh-Thành:")}</Label>
                           <Select
                             className="w-full"
                             id="state"
@@ -352,6 +371,8 @@ function Index() {
                                   .get(`/homepage/provinces/${e.target.value}`)
                                   .then((res: any) => {
                                     setProDictricts(res.data[0]);
+                                    setDistrict("");
+                                    setWard("");
                                   });
                               } catch (error) {
                                 console.log(error);
@@ -374,7 +395,7 @@ function Index() {
                         </div>
 
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">{t("Quận/Huyện:")}</Label>
+                          <Label className="w-1/3">{t("Quận-Huyện:")}</Label>
                           <Select
                             disabled={city === "" ? true : false}
                             className="w-full"
@@ -418,7 +439,7 @@ function Index() {
                         </div>
 
                         <div className="flex items-center pl-2 mt-2 ">
-                          <Label className="w-1/3">{t("Phường/Xã:")}</Label>
+                          <Label className="w-1/3">{t("Phường-Xã:")}</Label>
                           <Select
                             disabled={district === "" ? true : false}
                             className="w-full"
@@ -428,27 +449,23 @@ function Index() {
                             value={ward}
                             onChange={async (e: any) => {
                               setWard(e.target.value);
-
-                              try {
-                                await axios
-                                  .get(
-                                    `/homepage/checkfee?filter=${district}&sortField=${city}`
-                                  )
-                                  .then((res: any) => {
-                                    setIsLoading(true);
-                                    setTakingFee(true);
-                                    const timer = setTimeout(() => {
-                                      setFeeFromApi(
-                                        res?.data?.fee?.ship_fee_only + 10000
-                                      );
+                              if (totalWeight !== 0) {
+                                setTakingFee(true);
+                                try {
+                                  await axios
+                                    .get(
+                                      `/homepage/checkfee?search=checkfee&filter=${district}&sortField=${city}&condition2=${e.target.value}&condition=${totalWeight}`
+                                    )
+                                    .then((res: any) => {
+                                      setIsLoading(true);
                                       setTakingFee(false);
-                                    }, 2000);
-                                    return () => {
-                                      clearTimeout(timer);
-                                    };
-                                  });
-                              } catch (error) {
-                                console.log(error);
+                                      setFeeFromApi(
+                                        res?.data?.data?.total + 10000
+                                      );
+                                    });
+                                } catch (error) {
+                                  console.log(error);
+                                }
                               }
                             }}
                           >
@@ -601,7 +618,7 @@ function Index() {
                       </div>
                     </div>
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">{t("Tỉnh/Thành:")}</Label>
+                      <Label className="w-1/3">{t("Tỉnh-Thành:")}</Label>
                       <Select
                         className="w-full mt-2"
                         id="state"
@@ -615,6 +632,8 @@ function Index() {
                               .get(`/homepage/provinces/${e.target.value}`)
                               .then((res: any) => {
                                 setProDictricts(res.data[0]);
+                                setDistrict("");
+                                setWard("");
                               });
                           } catch (error) {
                             console.log(error);
@@ -637,7 +656,7 @@ function Index() {
                     </div>
 
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">{t("Quận/Huyện:")}</Label>
+                      <Label className="w-1/3">{t("Quận-Huyện:")}</Label>
                       <Select
                         disabled={city === "" ? true : false}
                         className="w-full mt-2"
@@ -676,7 +695,7 @@ function Index() {
                     </div>
 
                     <div className="flex items-center pl-2 mt-2 ">
-                      <Label className="w-1/3">{t("Phường/Xã:")}</Label>
+                      <Label className="w-1/3">{t("Phường-Xã:")}</Label>
                       <Select
                         disabled={district === "" ? true : false}
                         className="w-full mt-2"
@@ -686,26 +705,21 @@ function Index() {
                         value={ward}
                         onChange={async (e: any) => {
                           setWard(e.target.value);
-                          try {
-                            await axios
-                              .get(
-                                `/homepage/checkfee?filter=${district}&sortField=${city}`
-                              )
-                              .then((res: any) => {
-                                setIsLoading(true);
-                                setTakingFee(true);
-                                const timer = setTimeout(() => {
-                                  setFeeFromApi(
-                                    res?.data?.fee?.ship_fee_only + 10000
-                                  );
+                          if (totalWeight !== 0) {
+                            setTakingFee(true);
+                            try {
+                              await axios
+                                .get(
+                                  `/homepage/checkfee?search=checkfee&filter=${district}&sortField=${city}&condition2=${e.target.value}&condition=${totalWeight}`
+                                )
+                                .then((res: any) => {
+                                  setIsLoading(true);
                                   setTakingFee(false);
-                                }, 2000);
-                                return () => {
-                                  clearTimeout(timer);
-                                };
-                              });
-                          } catch (error) {
-                            console.log(error);
+                                  setFeeFromApi(res?.data?.data?.total + 10000);
+                                });
+                            } catch (error) {
+                              console.log(error);
+                            }
                           }
                         }}
                       >
@@ -753,7 +767,7 @@ function Index() {
                           htmlFor="default-radio-1"
                           className="flex items-center gap-2 ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                         >
-                          <p>GH Tiết Kiệm</p>
+                          <p>GH Nhanh:</p>
                           {isTakingFee === true ? (
                             <Spinner color="success" />
                           ) : (
@@ -766,8 +780,8 @@ function Index() {
 
                       <img
                         className="h-10 w-10 rounded-md"
-                        src="/image/ghtk.jpg"
-                        alt="momo"
+                        src="/image/ghn.png"
+                        alt="ghn"
                       />
                     </div>
                     {city === "Thành phố Hồ Chí Minh" ||
@@ -885,6 +899,14 @@ function Index() {
                     />
                   </div>
                 </div>
+
+                <h1 className="font-bold mt-6">{t("Ghi Chú")}</h1>
+                <Textarea
+                  className="mt-3"
+                  color={"success"}
+                  value={note}
+                  onChange={(e: any) => setNote(e.target.value)}
+                />
               </div>
             </div>
           </div>
@@ -974,7 +996,7 @@ function Index() {
           <div className="border-b border-gray-300 py-4 px-6">
             <div className="flex items-center justify-between gap-2 ">
               <TextInput
-                className="w-3/5"
+                className="w-full"
                 placeholder={
                   router.locale == "default"
                     ? "Nhập mã giảm giá"
@@ -987,44 +1009,50 @@ function Index() {
                   setCoupon(e.target.value);
                 }}
               />
-              <Button
-                disabled={coupon === "" ? true : false}
-                className="w-2/5 bg-green-600 hover:bg-green-800"
-                onClick={async () => {
-                  try {
-                    axios.defaults.headers.common[
-                      "Authorization"
-                    ] = `Bearer ${user?.tokens?.accessToken}`;
-                    await axios
-                      .get(`/product/coupon/${coupon}`)
-                      .then((res: any) => {
-                        if (res?.data?.name === coupon) {
-                          setCoupon("");
-                          setCouponValue(res?.data?.value);
-                          setIsCoupon(true);
-                          return toast("Apply coupon successfully", {
+              <Tooltip
+                className="w-fit"
+                animation="duration-500"
+                content="freeship freeship10 freeship20 freeship30"
+              >
+                <Button
+                  disabled={coupon === "" ? true : false}
+                  className="bg-green-600 hover:bg-green-800 truncate"
+                  onClick={async () => {
+                    try {
+                      axios.defaults.headers.common[
+                        "Authorization"
+                      ] = `Bearer ${user?.tokens?.accessToken}`;
+                      await axios
+                        .get(`/product/coupon/${coupon}`)
+                        .then((res: any) => {
+                          if (res?.data?.name === coupon) {
+                            setCoupon("");
+                            setCouponValue(res?.data?.value);
+                            setIsCoupon(true);
+                            return toast("Apply coupon successfully", {
+                              position: toast.POSITION.TOP_RIGHT,
+                              type: toast.TYPE.SUCCESS,
+                              className: "toast-message",
+                            });
+                          }
+                          toast("Invalid Coupon", {
                             position: toast.POSITION.TOP_RIGHT,
-                            type: toast.TYPE.SUCCESS,
+                            type: toast.TYPE.ERROR,
                             className: "toast-message",
                           });
-                        }
-                        toast("Invalid Coupon", {
-                          position: toast.POSITION.TOP_RIGHT,
-                          type: toast.TYPE.ERROR,
-                          className: "toast-message",
                         });
+                    } catch (error) {
+                      toast("Coupon is only applied to registered customers", {
+                        position: toast.POSITION.TOP_RIGHT,
+                        type: toast.TYPE.ERROR,
+                        className: "toast-message",
                       });
-                  } catch (error) {
-                    toast("Coupon is only applied to registered customers", {
-                      position: toast.POSITION.TOP_RIGHT,
-                      type: toast.TYPE.ERROR,
-                      className: "toast-message",
-                    });
-                  }
-                }}
-              >
-                <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
-              </Button>
+                    }
+                  }}
+                >
+                  <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
+                </Button>
+              </Tooltip>
             </div>
 
             {isCoupon === false ? null : couponValue === null ? (
@@ -1066,7 +1094,12 @@ function Index() {
               </Link>
               <Button
                 disabled={
-                  isDisable || users?.email !== undefined ? false : true
+                  isDisable ||
+                  (users?.email !== undefined &&
+                    feeFromApi !== 0 &&
+                    isChange === false)
+                    ? false
+                    : true
                 }
                 className="bg-green-600 w-2/5 hover:bg-green-800"
                 onClick={handlePay}
