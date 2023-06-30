@@ -5,11 +5,10 @@ import {
   Spinner,
   Textarea,
   TextInput,
-  Tooltip,
 } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { HiUserCircle, HiOutlineChevronLeft } from "react-icons/hi";
@@ -19,7 +18,6 @@ import { CartProvider, useCart } from "react-use-cart";
 import axios from "../../other/axios";
 import { socket } from "../../other/socketIo";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
-import JandTapi from "../components/JandTapi";
 import LoginModal from "./LoginModal";
 import SecurityModal from "./SecurityModal";
 import TcModal from "./TcModal";
@@ -1009,50 +1007,45 @@ function Index() {
                   setCoupon(e.target.value);
                 }}
               />
-              <Tooltip
-                className="w-fit"
-                animation="duration-500"
-                content="freeship freeship10 freeship20 freeship30"
-              >
-                <Button
-                  disabled={coupon === "" ? true : false}
-                  className="bg-green-600 hover:bg-green-800 truncate"
-                  onClick={async () => {
-                    try {
-                      axios.defaults.headers.common[
-                        "Authorization"
-                      ] = `Bearer ${user?.tokens?.accessToken}`;
-                      await axios
-                        .get(`/product/coupon/${coupon}`)
-                        .then((res: any) => {
-                          if (res?.data?.name === coupon) {
-                            setCoupon("");
-                            setCouponValue(res?.data?.value);
-                            setIsCoupon(true);
-                            return toast("Apply coupon successfully", {
-                              position: toast.POSITION.TOP_RIGHT,
-                              type: toast.TYPE.SUCCESS,
-                              className: "toast-message",
-                            });
-                          }
-                          toast("Invalid Coupon", {
+
+              <Button
+                disabled={coupon === "" ? true : false}
+                className="bg-green-600 hover:bg-green-800 truncate"
+                onClick={async () => {
+                  try {
+                    axios.defaults.headers.common[
+                      "Authorization"
+                    ] = `Bearer ${user?.tokens?.accessToken}`;
+                    await axios
+                      .get(`/product/coupon/${coupon}`)
+                      .then((res: any) => {
+                        if (res?.data?.name === coupon) {
+                          setCoupon("");
+                          setCouponValue(res?.data?.value);
+                          setIsCoupon(true);
+                          return toast("Apply coupon successfully", {
                             position: toast.POSITION.TOP_RIGHT,
-                            type: toast.TYPE.ERROR,
+                            type: toast.TYPE.SUCCESS,
                             className: "toast-message",
                           });
+                        }
+                        toast("Invalid Coupon", {
+                          position: toast.POSITION.TOP_RIGHT,
+                          type: toast.TYPE.ERROR,
+                          className: "toast-message",
                         });
-                    } catch (error) {
-                      toast("Coupon is only applied to registered customers", {
-                        position: toast.POSITION.TOP_RIGHT,
-                        type: toast.TYPE.ERROR,
-                        className: "toast-message",
                       });
-                    }
-                  }}
-                >
-                  <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
-                </Button>
-              </Tooltip>
+                  } catch (error) {
+                    toast("Coupon is only applied to registered customers", {
+                      position: toast.POSITION.TOP_RIGHT,
+                      type: toast.TYPE.ERROR,
+                      className: "toast-message",
+                    });
+                  }
+                }}
+              >
+                <p className="md:text-xs lg:text-sm">{t("Áp dụng")}</p>
+              </Button>
             </div>
 
             {isCoupon === false ? null : couponValue === null ? (

@@ -1,10 +1,4 @@
-import {
-  Breadcrumb,
-  Button,
-  Spinner,
-  TextInput,
-  Tooltip,
-} from "flowbite-react";
+import { Breadcrumb, Button, Spinner, TextInput } from "flowbite-react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../components/Layout";
@@ -16,7 +10,7 @@ import "primeicons/primeicons.css";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
-import axios from "../../other/axios";
+import axios, { axiosDefault } from "../../other/axios";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 const EMAIL_REGEX =
@@ -36,12 +30,22 @@ function Index() {
   const [validPwd, setValidPwd] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
   const [redirect, setRedirect] = useState(false);
+  const [ip, setIp] = useState([] as any);
   const router = useRouter();
   const { t } = useTranslation("");
 
   useEffect(() => {
     setValidEmail(EMAIL_REGEX.test(email));
   }, [email]);
+  useEffect(() => {
+    try {
+      axiosDefault.get("https://freeipapi.com/api/json").then((res: any) => {
+        setIp(res.data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [validEmail]);
   useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd));
   }, [pwd]);
@@ -56,6 +60,7 @@ function Index() {
         .post("/auth/signin", {
           email,
           password: pwd,
+          ip: JSON.stringify(ip),
         })
         .then((res: any) => {
           if (!res.data.isTwoFactorAuthenticationEnabled) {
@@ -167,14 +172,7 @@ function Index() {
 
           <div className="w-9/12">
             <div className="mt-5">
-              <Tooltip
-                animation="duration-500"
-                content="
-              user@yahoo.com / test1234
-              "
-              >
-                <p className="text-sm font-medium uppercase mb-2">email:</p>
-              </Tooltip>
+              <p className="text-sm font-medium uppercase mb-2">email:</p>
 
               <TextInput
                 className="w-full"
