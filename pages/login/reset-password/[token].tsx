@@ -13,7 +13,7 @@ import Layout from "../../components/Layout";
 import { BASE_URL } from "../../../other/axios";
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,24}$/;
 
-const token = () => {
+const Token = () => {
   const router = useRouter();
   const token = router.query.token;
   const { t } = useTranslation("");
@@ -151,7 +151,7 @@ const token = () => {
     </div>
   );
 };
-token.getLayout = function getLayout(page: ReactElement) {
+Token.getLayout = function getLayout(page: ReactElement) {
   return (
     <CartProvider>
       <Layout>
@@ -168,4 +168,4 @@ export async function getServerSideProps({ locale }: any) {
   };
 }
 
-export default token;
+export default Token;
