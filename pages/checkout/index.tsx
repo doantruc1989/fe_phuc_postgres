@@ -141,7 +141,7 @@ function Index() {
 
   useEffect(() => {
     const axios = async () => {
-      axiosPrivate.get(`/users/${user.id}`).then((res) => {
+      axiosPrivate.get(`users/profile`).then((res) => {
         setUsers(res?.data);
       });
     };
@@ -182,7 +182,7 @@ function Index() {
     const axios = async () => {
       try {
         axiosPrivate
-          .put(`/users/${users.id}`, {
+          .put(`users/profile`, {
             address:
               address !== ""
                 ? `${city}, ${district}, ${ward}, ${address}`

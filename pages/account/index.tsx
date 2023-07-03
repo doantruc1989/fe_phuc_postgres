@@ -171,7 +171,7 @@ function Index() {
   const handleChangeAddress = () => {
     try {
       axiosPrivate
-        .put(`/users/${users.id}`, {
+        .put(`/users/profile`, {
           address: `${city}, ${district}, ${ward}, ${address}` || users.address,
           phone: phone || users.phone,
         })
