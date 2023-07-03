@@ -30,8 +30,9 @@ const ADDRESS_REGEX = /^\s*\S+(?:\s+\S+){2}/;
 
 function Index() {
   const [users, setUsers] = useState([] as any);
-  const [fee, setFee] = useState(35000);
+  const [fee, setFee] = useState(0);
   const [feeFromApi, setFeeFromApi] = useState(0);
+  const [feeFromApiGHTK, setFeeFromApiGHTK] = useState(0);
   const [transFee, setTransFee] = useState(0);
   const [transportBy, setTransportBy] = useState("standard");
   const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -114,6 +115,7 @@ function Index() {
 
   useEffect(() => {
     const userAddress = user?.address?.split(", ");
+    setIsLoading(false);
     if (totalWeight !== 0) {
       setTakingFee(true);
       try {
@@ -124,7 +126,8 @@ function Index() {
           .then((res: any) => {
             setTakingFee(false);
             setIsLoading(true);
-            setFeeFromApi(res?.data?.data?.total + 10000);
+            setFeeFromApi(res?.data?.fee?.data?.total + 5000);
+            setFeeFromApiGHTK(res?.data?.feeGHTK?.fee?.fee + 10000);
           });
       } catch (error) {
         console.log(error);
@@ -134,7 +137,7 @@ function Index() {
 
   useEffect(() => {
     setFee(feeFromApi);
-  }, [feeFromApi]);
+  }, [isLoading]);
 
   useEffect(() => {
     const axios = async () => {
@@ -377,7 +380,8 @@ function Index() {
                               }
                             }}
                           >
-                            <option defaultChecked value={""}>
+                            <option defaultChecked value={""}
+                            className="text-center">
                               {t("--- Vui lòng chọn ---")}
                             </option>
                             {provinces
@@ -416,7 +420,8 @@ function Index() {
                               }
                             }}
                           >
-                            <option defaultChecked value={""}>
+                            <option defaultChecked value={""}
+                            className="text-center">
                               {t("--- Vui lòng chọn ---")}
                             </option>
                             {proDictricts
@@ -446,6 +451,7 @@ function Index() {
                             required={true}
                             value={ward}
                             onChange={async (e: any) => {
+                              setIsLoading(false);
                               setWard(e.target.value);
                               if (totalWeight !== 0) {
                                 setTakingFee(true);
@@ -458,7 +464,10 @@ function Index() {
                                       setIsLoading(true);
                                       setTakingFee(false);
                                       setFeeFromApi(
-                                        res?.data?.data?.total + 10000
+                                        res?.data?.fee?.data?.total + 5000
+                                      );
+                                      setFeeFromApiGHTK(
+                                        res?.data?.feeGHTK?.fee?.fee + 10000
                                       );
                                     });
                                 } catch (error) {
@@ -467,7 +476,8 @@ function Index() {
                               }
                             }}
                           >
-                            <option defaultChecked value={""}>
+                            <option defaultChecked value={""}
+                            className="text-center">
                               {t("--- Vui lòng chọn ---")}
                             </option>
                             {proWards
@@ -638,7 +648,8 @@ function Index() {
                           }
                         }}
                       >
-                        <option defaultChecked value={""}>
+                        <option defaultChecked value={""}
+                        className="text-center">
                           {t("--- Vui lòng chọn ---")}
                         </option>
                         {provinces
@@ -675,7 +686,8 @@ function Index() {
                           }
                         }}
                       >
-                        <option defaultChecked value={""}>
+                        <option defaultChecked value={""}
+                        className="text-center">
                           {t("--- Vui lòng chọn ---")}
                         </option>
                         {proDictricts
@@ -703,6 +715,7 @@ function Index() {
                         value={ward}
                         onChange={async (e: any) => {
                           setWard(e.target.value);
+                          setIsLoading(false);
                           if (totalWeight !== 0) {
                             setTakingFee(true);
                             try {
@@ -713,7 +726,12 @@ function Index() {
                                 .then((res: any) => {
                                   setIsLoading(true);
                                   setTakingFee(false);
-                                  setFeeFromApi(res?.data?.data?.total + 10000);
+                                  setFeeFromApi(
+                                    res?.data?.fee?.data?.total + 5000
+                                  );
+                                  setFeeFromApiGHTK(
+                                    res?.data?.feeGHTK?.fee?.fee + 10000
+                                  );
                                 });
                             } catch (error) {
                               console.log(error);
@@ -721,7 +739,9 @@ function Index() {
                           }
                         }}
                       >
-                        <option defaultChecked value={""}>
+                        <option defaultChecked value={""}
+                        className="text-center"
+                        >
                           {t("--- Vui lòng chọn ---")}
                         </option>
                         {proWards
@@ -741,79 +761,107 @@ function Index() {
 
               <div>
                 <h1 className="font-bold">{t("Vận chuyển")}</h1>
-                {isLoading === false ? (
-                  <div className="px-1 text-end italic mt-2">
-                    Bạn vui lòng nhập địa chỉ để chúng tôi tính toán phí vận
-                    chuyển.
-                  </div>
-                ) : (
-                  <div className="border border-gray-200 rounded-md mt-3">
-                    <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
-                      <div className="flex items-center">
-                        <input
-                          defaultChecked
-                          id="default-radio-1"
-                          type="radio"
-                          name="trans-radio"
-                          className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          onChange={(e: any) => {
-                            setFee(feeFromApi);
-                            setTransportBy("standard");
-                          }}
-                        />
-                        <label
-                          htmlFor="default-radio-1"
-                          className="flex items-center gap-2 ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          <p>GH Nhanh:</p>
-                          {isTakingFee === true ? (
-                            <Spinner color="success" />
-                          ) : (
-                            <p>
-                              {Intl.NumberFormat().format(feeFromApi) + "₫"}
-                            </p>
-                          )}
-                        </label>
-                      </div>
 
-                      <img
-                        className="h-10 w-10 rounded-md"
-                        src="/image/ghn.png"
-                        alt="ghn"
-                      />
+                <div className="border border-gray-200 rounded-md mt-3">
+                  {isLoading === false ? (
+                    <div className="pl-2 text-center py-2 italic flex items-center gap-2">
+                      <p>{t("Đang tính toán phí vận chuyển...")}</p>
+                      <Spinner color="success" />
                     </div>
-                    {city === "Thành phố Hồ Chí Minh" ||
-                    users?.address?.split(",")[0] ===
-                      "Thành phố Hồ Chí Minh" ? (
+                  ) : feeFromApi !== 0 || feeFromApiGHTK !== 0 ? (
+                    <>
                       <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
                         <div className="flex items-center">
                           <input
-                            id="default-radio-2"
+                            defaultChecked
                             type="radio"
                             name="trans-radio"
                             className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             onChange={(e: any) => {
-                              setFee(50000);
-                              setTransportBy("express");
+                              setFee(feeFromApi);
+                              setTransportBy("standard");
                             }}
                           />
                           <label
-                            htmlFor="default-radio-2"
-                            className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
+                            htmlFor="default-radio-1"
+                            className="flex items-center gap-2 ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                           >
-                            {t("Vận chuyển hoả tốc ")}50.000đ
+                            <p>GH Nhanh:</p>
+                            <p>
+                              {Intl.NumberFormat().format(feeFromApi) + "₫"}
+                            </p>
                           </label>
                         </div>
 
                         <img
                           className="h-10 w-10 rounded-md"
-                          src="/image/expressdelivery.png"
-                          alt="momo"
+                          src="/image/ghn.png"
+                          alt="ghn"
                         />
                       </div>
-                    ) : null}
-                  </div>
-                )}
+
+                      <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            name="trans-radio"
+                            className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            onChange={(e: any) => {
+                              setFee(feeFromApiGHTK);
+                              setTransportBy("standard");
+                            }}
+                          />
+                          <label
+                            htmlFor="default-radio-1"
+                            className="flex items-center gap-2 ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            <p>GH Tiết Kiệm:</p>
+                            <p>
+                              {Intl.NumberFormat().format(feeFromApiGHTK) + "₫"}
+                            </p>
+                          </label>
+                        </div>
+
+                        <img
+                          className="h-10 w-10 rounded-md"
+                          src="/image/ghtk.jpg"
+                          alt="ghtk"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <Spinner color="success" />
+                  )}
+                  {city === "Thành phố Hồ Chí Minh" ||
+                  users?.address?.split(",")[0] === "Thành phố Hồ Chí Minh" ? (
+                    <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
+                      <div className="flex items-center">
+                        <input
+                          id="default-radio-2"
+                          type="radio"
+                          name="trans-radio"
+                          className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          onChange={(e: any) => {
+                            setFee(50000);
+                            setTransportBy("express");
+                          }}
+                        />
+                        <label
+                          htmlFor="default-radio-2"
+                          className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          {t("Vận chuyển hoả tốc ")}50.000đ
+                        </label>
+                      </div>
+
+                      <img
+                        className="h-10 w-10 rounded-md"
+                        src="/image/expressdelivery.png"
+                        alt="momo"
+                      />
+                    </div>
+                  ) : null}
+                </div>
 
                 <h1 className="font-bold mt-6">{t("Thanh Toán")}</h1>
 

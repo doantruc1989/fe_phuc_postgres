@@ -116,7 +116,7 @@ function Index() {
 
   useEffect(() => {
     const getUsers = async () => {
-      axiosPrivate.get(`/users/${user.id}`).then((res) => {
+      axiosPrivate.get(`/users/profile`).then((res) => {
         setUsers(res?.data);
         setUserPhone(res?.data?.phone);
         setIs2faEnabled(res?.data.isTwoFactorAuthenticationEnabled);
@@ -146,11 +146,11 @@ function Index() {
     const getUsers = async () => {
       try {
         axiosPrivate
-          .put(`/users/${users.id}`, {
+          .put(`/users/profile`, {
             image: avatar || users.image,
           })
           .then((res: any) => {
-            const newUser = { ...user, image: res.data.image };
+            const newUser = { ...user, image: avatar };
             localStorage.setItem("user", JSON.stringify(newUser));
             setIsSuccess(!isSuccess);
             if (res.data) {
@@ -200,7 +200,7 @@ function Index() {
   const handleChangePw = () => {
     try {
       axiosPrivate
-        .put(`/users/profile/${users.id}`, {
+        .put(`/users/profile`, {
           password: userPw,
         })
         .then((res: any) => {

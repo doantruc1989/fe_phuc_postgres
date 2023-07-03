@@ -7,6 +7,7 @@ import Link from "next/link";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import "react-toastify/dist/ReactToastify.css";
 // import "~slick-carousel/slick/slick.css";
 // import "~slick-carousel/slick/slick-theme.css";
 import SidebarComp from "./SidebarComp";

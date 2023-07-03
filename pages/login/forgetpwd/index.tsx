@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, TextInput } from "flowbite-react";
+import { Breadcrumb, Button, Spinner, TextInput } from "flowbite-react";
 import React, { ReactElement, useState } from "react";
 import { CartProvider } from "react-use-cart";
 import Layout from "../../components/Layout";
@@ -17,6 +17,8 @@ function Index() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("");
+  const [redirect, setRedirect] = useState(false);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -26,12 +28,12 @@ function Index() {
         })
         .then((res: any) => {
           setSuccess(true);
-          // const timer = setTimeout(() => {
-          //   router.push("/");
-          // }, 5000);
-          // return () => {
-          //   clearTimeout(timer);
-          // };
+          const timer = setTimeout(() => {
+            setRedirect(true);
+          }, 5000);
+          return () => {
+            clearTimeout(timer);
+          };
         });
     } catch (err: any) {
       if (err) {
@@ -44,6 +46,12 @@ function Index() {
     }
   };
 
+  redirect === true &&
+    router.push("/", undefined, {
+      locale: router.locale,
+      shallow: true,
+    });
+
   return (
     <div className="h-auto mb-10">
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
@@ -54,7 +62,7 @@ function Index() {
         <Breadcrumb.Item
   
         >
-          {t("Đặt lại mật khẩu")}
+          {t("Quên mật khẩu")}
         </Breadcrumb.Item>
       </Breadcrumb>
       {success === false ? (
@@ -113,6 +121,7 @@ function Index() {
             </Link>
             {t("để tới trang chủ ngay lập tức")}
           </p>
+          <Spinner className="mt-6" color="success" />
         </section>
       )}
     </div>

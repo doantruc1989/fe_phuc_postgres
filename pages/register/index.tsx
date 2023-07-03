@@ -378,6 +378,7 @@ function Index() {
               </Tooltip>
               <TextInput
                 className="w-full"
+                autoComplete="new-password"
                 placeholder={
                   router.locale == "default"
                     ? "Mật khẩu"
@@ -411,6 +412,7 @@ function Index() {
                     ? "Retype password"
                     : "パスワードを再入力してください"
                 }
+                autoComplete="new-password"
                 type="password"
                 value={retypePwd}
                 onChange={(e: any) => {

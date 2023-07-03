@@ -197,6 +197,7 @@ function Index() {
               <TextInput
                 // icon={HiEye}
                 className="w-full"
+                autoComplete="new-password"
                 placeholder={
                   router.locale == "default"
                     ? "Mật khẩu"

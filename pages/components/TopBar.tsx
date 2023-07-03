@@ -10,12 +10,14 @@ import {
   HiLogout,
 } from "react-icons/hi";
 import Link from "next/link";
+import "react-toastify/dist/ReactToastify.css";
 import { Dropdown, TextInput } from "flowbite-react";
 import { useCart } from "react-use-cart";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import axios from "../../other/axios";
+import axios, { axiosDefault } from "../../other/axios";
+import { toast } from "react-toastify";
 
 export default function TopBar({ visible, setVisible }: any) {
   const { totalItems, isEmpty } = useCart();
@@ -26,6 +28,7 @@ export default function TopBar({ visible, setVisible }: any) {
   const [result, setResult] = useState([] as any);
   const [page, setPage] = useState(1);
   const [user, setUser] = useState([] as any);
+  const [verifyModal, setVerifyModal] = useState(false);
   const timeout: any = useRef();
   const inputRef: any = useRef();
   const { t } = useTranslation("");
@@ -96,7 +99,7 @@ export default function TopBar({ visible, setVisible }: any) {
   };
 
   return (
-    <div className="bg-[#194a0f] text-white text-sm font-medium">
+    <div className="bg-[#194a0f] text-white text-sm font-medium w-full">
       {search ? (
         <div className="text-black relative font-normal bg-white h-12 w-full">
           <div className="w-full">
@@ -118,7 +121,7 @@ export default function TopBar({ visible, setVisible }: any) {
               />
             </div>
           </div>
-          
+
           <button
             className="text-xl absolute right-1 top-1 text-black"
             onClick={() => setSearch(false)}
@@ -410,6 +413,31 @@ export default function TopBar({ visible, setVisible }: any) {
             })
           : null}
       </div>
+      {user?.isEmailConfirmed === false ? (
+        <div
+          className="bg-red-600 cursor-pointer"
+          onClick={async (e: any) => {
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${user?.tokens?.refreshToken}`;
+            try {
+              await axios.get(`/auth/verifyagain`).then((res: any) => {
+                toast("Email sent! Vui lòng kiểm tra email của bạn", {
+                  position: toast.POSITION.TOP_RIGHT,
+                  type: toast.TYPE.SUCCESS,
+                  className: "toast-message",
+                });
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+        >
+          <div className="py-1 w-11/12 mx-auto text-center">
+            Vui lòng xác nhận email của bạn. ấn vào đây.
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
