@@ -11,7 +11,7 @@ function Index() {
 console.log(user);
   useEffect(() => {
     try {
-      axios.get(`/${router.asPath}`).then((res: any) => {
+      axios.get(`${router.asPath}`).then((res: any) => {
         setUser(res.data);
         
       });
