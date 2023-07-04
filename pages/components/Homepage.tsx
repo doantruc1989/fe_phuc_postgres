@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Hero from "./hero/Hero";
 import { ScrollTop } from "primereact/scrolltop";
+import "react-toastify/dist/ReactToastify.css";
 import Hero2 from "./hero/Hero2";
 import Hero3 from "./hero/Hero3";
 import Hero4 from "./hero/Hero4";
