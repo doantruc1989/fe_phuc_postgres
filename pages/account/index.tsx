@@ -4,13 +4,11 @@ import {
   Button,
   Label,
   Select,
-  Textarea,
   TextInput,
   ToggleSwitch,
-  Tooltip,
 } from "flowbite-react";
 import Link from "next/link";
-import React, { Fragment, ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { HiHome, HiEye, HiEyeOff } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
 import { CartProvider } from "react-use-cart";
@@ -131,7 +129,7 @@ function Index() {
 
   useEffect(() => {
     const getUsers = async () => {
-      axiosPrivate.get(`/cart/order/${user.id}`).then((res) => {
+      axiosPrivate.get(`/cart/order`).then((res) => {
         setOrders(res.data);
       });
     };
@@ -226,25 +224,22 @@ function Index() {
     }
   };
 
-  const handleChange2Fa = () => {
-    const getUsers = async () => {
-      try {
-        axiosPrivate.get(`/2fa/generate/${user.email}`).then((res: any) => {
-          setQrCode(res?.data);
-          setIsSuccess(!isSuccess);
-          if (res.data) {
-            toast("Enable 2FA successfully", {
-              position: toast.POSITION.TOP_RIGHT,
-              type: toast.TYPE.SUCCESS,
-              className: "toast-message",
-            });
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getUsers();
+  const handleChange2Fa = async () => {
+    try {
+      await axiosPrivate.get(`/2fa/generate`).then((res: any) => {
+        setQrCode(res?.data);
+        setIsSuccess(!isSuccess);
+        if (res.data) {
+          toast("Enable 2FA successfully", {
+            position: toast.POSITION.TOP_RIGHT,
+            type: toast.TYPE.SUCCESS,
+            className: "toast-message",
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -326,7 +321,12 @@ function Index() {
           <div className="col-start-2 col-end-4 w-full bg-white text-xs rounded-xl pt-2  mb-6">
             <TabView>
               <TabPanel header={t("Đơn hàng")}>
-                <OrdersTab orders={orders} paid={paid} setPaid={setPaid} />
+                <OrdersTab
+                  orders={orders}
+                  paid={paid}
+                  setPaid={setPaid}
+                  user={user}
+                />
               </TabPanel>
               <TabPanel header={t("Đổi mật khẩu")}>
                 <div className="flex flex-col justify-center w-9/12 mx-auto">

@@ -1,36 +1,16 @@
-import { Dialog, Transition } from "@headlessui/react";
-import axios from "axios";
-import { Button, Label, TextInput } from "flowbite-react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import useAxiosPrivate from "../../other/useAxiosPrivate";
+import { HiCurrencyDollar } from "react-icons/hi";
+import Payment from "./Payment";
 
-function OrdersTab({ orders, paid, setPaid }: any) {
+function OrdersTab({ orders, paid, setPaid, user }: any) {
   const [payment, setPayment] = useState(false);
-  const [orderId, setOrderId] = useState<number>();
-  const axiosPrivate = useAxiosPrivate();
+  const [orderDetail, setOrderDetail] = useState([] as any);
   const router = useRouter();
   const { t } = useTranslation("");
-
-  const handlePay = (e: any) => {
-    e.preventDefault();
-    const user =
-      typeof Storage === "undefined"
-        ? {}
-        : JSON.parse(localStorage.getItem("user") || "{}");
-    const id = user.id;
-
-    axiosPrivate
-      .put(`/cart/order/${orderId}`, {
-        isPaid: true,
-      })
-      .then(() => {
-        setPaid(true);
-      });
-  };
 
   return (
     <div className="p-3">
@@ -42,17 +22,17 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               className="relative my-5 p-2 border border-green-600 rounded-xl"
             >
               {order.isPaid === false ? (
-                order.paymentMethod === "bank" ||
-                order.paymentMethod === "momo" ? (
+                order.paymentMethod === "online" ? (
                   <a
-                    className="text-blue-600 text-xs cursor-pointer absolute right-2 top-3"
+                    className="capitalize border border-green-600 bg-green-200 text-green-600 rounded-md font-medium hover:bg-green-300 py-1 px-2 text-xs cursor-pointer absolute right-2 top-2 flex items-center gap-1"
                     onClick={(e: any) => {
                       setPayment(!payment);
                       setPaid(false);
-                      setOrderId(order.id);
+                      setOrderDetail(order);
                     }}
                   >
                     <div>{t("thanh toán")}</div>
+                    <HiCurrencyDollar className="text-base" />
                   </a>
                 ) : null
               ) : (
@@ -68,21 +48,15 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                 <p className="font-medium text-green-500">{order.id}</p>
               </div>
 
-              <div className="flex justify-between items-center border-b border-t border-gray-400 my-3 text-sm pl-2 py-3">
+              <div className="flex justify-between items-center border-t border-gray-400 my-3 text-sm pl-2 pt-3">
                 <div className="w-9/12">
                   <p className="font-medium">{t("Địa chỉ giao hàng:")}</p>
                   <div className="pl-2">
-                    <div className="flex gap-1 imtes-center">
-                      <p>{order.username}</p>
+                    <div className="flex gap-1 imtes-center mt-1">
+                      <p className="capitalize">{user.username}</p>
                       <p>{order.phone}</p>
                     </div>
                     <p className="w-full">{order.address}</p>
-                  </div>
-                  <div className="mt-2">
-                    <p className="font-medium">
-                      {t("Phương thức vận chuyển:")}
-                    </p>
-                    <div className="pl-2">{order.transportBy}</div>
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 items-end justify-center w-3/12">
@@ -90,6 +64,22 @@ function OrdersTab({ orders, paid, setPaid }: any) {
                   <p>{order.createdAt.substring(11, 16)}</p>
                 </div>
               </div>
+
+              <div className="flex justify-between items-center border-b border-gray-400 my-3 text-sm pl-2 pb-3">
+                <div>
+                  <p className="font-medium">{t("Phương thức vận chuyển:")}</p>
+                  <div className="pl-2 capitalize mt-1">
+                    {order.transportBy}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium">{t("Phương thức thanh toán:")}</p>
+                  <div className="pl-2 capitalize text-end mt-1">
+                    {order.paymentMethod}
+                  </div>
+                </div>
+              </div>
+
               <div className="text-xs p-2">
                 {order?.orderItems?.map((item: any) => {
                   return (
@@ -147,142 +137,10 @@ function OrdersTab({ orders, paid, setPaid }: any) {
               </div>
               <div className="flex justify-center gap-1 text-xs">
                 <p>{t("Trạng thái:")}</p>
-                <div className="font-medium text-blue-600">{order.status}</div>
+                <div className="font-medium text-blue-600 capitalize">
+                  {order.status}
+                </div>
               </div>
-
-              {/* thanh toán */}
-              <Transition appear show={payment} as={Fragment}>
-                <Dialog
-                  as="div"
-                  className="relative z-10"
-                  onClose={() => setPayment(!payment)}
-                >
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div className="fixed inset-0 bg-black bg-opacity-25" />
-                  </Transition.Child>
-
-                  <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
-                      <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0 scale-95"
-                        enterTo="opacity-100 scale-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100 scale-100"
-                        leaveTo="opacity-0 scale-95"
-                      >
-                        <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-500 text-center">
-                              {t("Thanh Toán đơn hàng")}
-                            </p>
-                          </div>
-
-                          <>
-                            <div className="border border-blue-600 rounded-xl p-4 w-full mt-3  mx-auto">
-                              <div className="flex justify-center gap-2">
-                                <img
-                                  className="w-auto h-8"
-                                  src="/image/ttvisa.jpg"
-                                  alt="visa"
-                                />
-                                <img
-                                  className="w-auto h-8"
-                                  src="/image/ttjcb.png"
-                                  alt="visa"
-                                />
-                                <img
-                                  className="w-auto h-8"
-                                  src="/image/ttmastercard.png"
-                                  alt="visa"
-                                />
-                              </div>
-
-                              <div className="mt-3">
-                                <div className="mb-2 block">
-                                  <Label htmlFor="email1" value="Name:" />
-                                </div>
-                                <TextInput
-                                  id="email1"
-                                  placeholder="Tên chủ thẻ"
-                                  required={true}
-                                />
-                              </div>
-
-                              <div className="mt-3">
-                                <div className="mb-2 block">
-                                  <Label
-                                    htmlFor="email2"
-                                    value="Card number:"
-                                  />
-                                </div>
-                                <TextInput
-                                  id="email2"
-                                  placeholder="Số thẻ"
-                                  required={true}
-                                />
-                              </div>
-
-                              <div className="flex w-full mt-3 gap-5">
-                                <div className="w-full">
-                                  <div className="mb-2 block">
-                                    <Label
-                                      htmlFor="email3"
-                                      value="Expiration (mm/yy):"
-                                    />
-                                  </div>
-                                  <TextInput
-                                    id="email3"
-                                    placeholder="Ngày hết hạn"
-                                    required={true}
-                                    className="w-full"
-                                  />
-                                </div>
-                                <div className="w-full">
-                                  <div className="mb-2 block">
-                                    <Label
-                                      htmlFor="email4"
-                                      value="Security Code:"
-                                    />
-                                  </div>
-                                  <TextInput
-                                    id="email4"
-                                    placeholder="Mã số bí mật"
-                                    required={true}
-                                    className="w-full"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            {paid ? (
-                              <div className="flex justify-center mt-3">
-                                <p className="mx-auto mb-3 text-green-500 font-medium text-lg">
-                                  {t("thanh toán thành công!!!")}
-                                </p>
-                              </div>
-                            ) : null}
-                            <Button
-                              className="my-3 mx-auto"
-                              onClick={handlePay}
-                            >
-                              {t("thanh toán")}
-                            </Button>
-                          </>
-                        </Dialog.Panel>
-                      </Transition.Child>
-                    </div>
-                  </div>
-                </Dialog>
-              </Transition>
             </div>
           );
         })
@@ -294,6 +152,14 @@ function OrdersTab({ orders, paid, setPaid }: any) {
           </Link>
         </div>
       )}
+      {/* thanh toán */}
+      <Payment
+        payment={payment}
+        setPayment={setPayment}
+        paid={paid}
+        setPaid={setPaid}
+        orderDetail={orderDetail}
+      />
     </div>
   );
 }

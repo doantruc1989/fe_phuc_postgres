@@ -237,7 +237,7 @@ function Index() {
           paymentMethod: paymentMethod,
           weight: totalWeight,
           note: note,
-          guest: users?.id === undefined ? email + " " + name : null,
+          guest: users?.id === undefined ? `${email}, ${name}` : null,
         })
         .then((res: any) => {
           const data = {
@@ -380,8 +380,11 @@ function Index() {
                               }
                             }}
                           >
-                            <option defaultChecked value={""}
-                            className="text-center">
+                            <option
+                              defaultChecked
+                              value={""}
+                              className="text-center"
+                            >
                               {t("--- Vui lòng chọn ---")}
                             </option>
                             {provinces
@@ -420,8 +423,11 @@ function Index() {
                               }
                             }}
                           >
-                            <option defaultChecked value={""}
-                            className="text-center">
+                            <option
+                              defaultChecked
+                              value={""}
+                              className="text-center"
+                            >
                               {t("--- Vui lòng chọn ---")}
                             </option>
                             {proDictricts
@@ -476,8 +482,11 @@ function Index() {
                               }
                             }}
                           >
-                            <option defaultChecked value={""}
-                            className="text-center">
+                            <option
+                              defaultChecked
+                              value={""}
+                              className="text-center"
+                            >
                               {t("--- Vui lòng chọn ---")}
                             </option>
                             {proWards
@@ -648,8 +657,11 @@ function Index() {
                           }
                         }}
                       >
-                        <option defaultChecked value={""}
-                        className="text-center">
+                        <option
+                          defaultChecked
+                          value={""}
+                          className="text-center"
+                        >
                           {t("--- Vui lòng chọn ---")}
                         </option>
                         {provinces
@@ -686,8 +698,11 @@ function Index() {
                           }
                         }}
                       >
-                        <option defaultChecked value={""}
-                        className="text-center">
+                        <option
+                          defaultChecked
+                          value={""}
+                          className="text-center"
+                        >
                           {t("--- Vui lòng chọn ---")}
                         </option>
                         {proDictricts
@@ -739,8 +754,10 @@ function Index() {
                           }
                         }}
                       >
-                        <option defaultChecked value={""}
-                        className="text-center"
+                        <option
+                          defaultChecked
+                          value={""}
+                          className="text-center"
                         >
                           {t("--- Vui lòng chọn ---")}
                         </option>
@@ -774,6 +791,7 @@ function Index() {
                         <div className="flex items-center">
                           <input
                             defaultChecked
+                            id="default-radio-0"
                             type="radio"
                             name="trans-radio"
                             className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -783,7 +801,7 @@ function Index() {
                             }}
                           />
                           <label
-                            htmlFor="default-radio-1"
+                            htmlFor="default-radio-0"
                             className="flex items-center gap-2 ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                           >
                             <p>GH Nhanh:</p>
@@ -803,6 +821,7 @@ function Index() {
                       <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
                         <div className="flex items-center">
                           <input
+                            id="default-radio-1"
                             type="radio"
                             name="trans-radio"
                             className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -857,7 +876,7 @@ function Index() {
                       <img
                         className="h-10 w-10 rounded-md"
                         src="/image/expressdelivery.png"
-                        alt="momo"
+                        alt="expressdelivery"
                       />
                     </div>
                   ) : null}
@@ -901,7 +920,7 @@ function Index() {
                         name="default-radio"
                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-600 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         onChange={(e: any) => {
-                          setPaymentMethod("bank");
+                          setPaymentMethod("online");
                         }}
                       />
                       <label
@@ -909,17 +928,18 @@ function Index() {
                         className="ml-2 text-md font-medium text-gray-900 dark:text-gray-300"
                       >
                         {t("Thanh Toán Trực Tuyến")}
+                        {` (Momo, Bank, Visa...)`}
                       </label>
                     </div>
 
                     <img
                       className="h-10 w-10 rounded-md"
-                      src="/image/payvisa.png"
-                      alt="momo"
+                      src="/image/onlpayment.jpg"
+                      alt="online"
                     />
                   </div>
 
-                  <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
+                  {/* <div className="flex hover:bg-green-50 items-center justify-between px-3 pt-3 border-b border-gray-200 pb-3">
                     <div className="flex items-center">
                       <input
                         id="default-radio-5"
@@ -943,7 +963,7 @@ function Index() {
                       src="/image/momo.png"
                       alt="momo"
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 <h1 className="font-bold mt-6">{t("Ghi Chú")}</h1>

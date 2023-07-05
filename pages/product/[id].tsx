@@ -369,13 +369,13 @@ function Index() {
                       price:
                         discount?.value === undefined
                           ? price
-                          : price * (1 - discount?.value),
+                          : Math.ceil(price * (1 - discount?.value)),
                       id:
                         itemType.id === undefined
                           ? fruit.product.id
                           : `${fruit.product.id}.${itemType.id}`,
                       weight: fruit.product.weight,
-                      productImage: image[0]?.url
+                      productImage: image[0]?.url,
                     });
 
                     toast("Đã thêm vào giỏ hàng", {
