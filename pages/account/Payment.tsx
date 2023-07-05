@@ -58,11 +58,11 @@ const Payment = ({ payment, setPayment, paid, setPaid, orderDetail }: any) => {
                   <div className="mt-2">
                     <p className="text-lg uppercase text-black font-medium text-center">
                       {t("Thanh Toán đơn hàng")}
-                      {` #${orderDetail.id}`}
+                      {` #${orderDetail?.id}`}
                     </p>
                     <div className="flex items-center gap-2 justify-center mt-2">
                       <p>Số tiền:</p>
-                      <p className="font-medium text-green-600">{Intl.NumberFormat().format(orderDetail.cartTotal) + " đ"}</p>
+                      <p className="font-medium text-green-600">{Intl.NumberFormat().format(orderDetail?.cartTotal) + " đ"}</p>
                     </div>
                   </div>
 
@@ -79,7 +79,7 @@ const Payment = ({ payment, setPayment, paid, setPaid, orderDetail }: any) => {
                           </div>
 
                           <Canvas
-                            text={`2|99|0902932574|Doan Truc||0|0|${orderDetail.cartTotal}|Thanh toán đơn hàng #${orderDetail.id}.|transfer_myqr`}
+                            text={`2|99|0902932574|Doan Truc||0|0|${orderDetail?.cartTotal}|Thanh toán đơn hàng #${orderDetail?.id}.|transfer_myqr`}
                             options={{
                               level: "H",
                               margin: 2,
