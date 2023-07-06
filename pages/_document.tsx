@@ -26,18 +26,18 @@ export default function Document() {
           id="messenger-tag"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
-            __html: `<script>
+            __html: `{<script>
             var chatbox = document.getElementById('fb-customer-chat');
             chatbox.setAttribute("page_id", "109721398444205");
             chatbox.setAttribute("attribution", "biz_inbox");
-          </script>`,
+          </script>}`,
           }}
         ></Script>
         <Script
           id="messenger-sdk"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
-            __html: `<script>
+            __html: `{<script>
             window.fbAsyncInit = function() {
               FB.init({
                 xfbml            : true,
@@ -52,7 +52,7 @@ export default function Document() {
               js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
               fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
-          </script>`,
+          </script>}`,
           }}
         ></Script>
 
