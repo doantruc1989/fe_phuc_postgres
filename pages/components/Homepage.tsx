@@ -19,6 +19,7 @@ import Hero15 from "./hero/Hero15";
 import Hero16 from "./hero/Hero16";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import axios from "../../other/axios";
+import MessengerFbChat from "./MessengerFbChat";
 
 const Homepage = () => {
   const [slides, setSlides] = useState([] as any);
@@ -63,6 +64,7 @@ const Homepage = () => {
         <Hero14 />
         <Hero16 />
         <Hero15 />
+        <MessengerFbChat />
       </div>
     </>
   );

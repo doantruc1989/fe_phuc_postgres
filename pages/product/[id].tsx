@@ -23,7 +23,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 import axios from "../../other/axios";
 import { GetServerSideProps } from "next";
-import ImageViewer from "../components/ImageViewer";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
@@ -502,12 +501,12 @@ function Index() {
         </div>
       </div>
 
-      <ImageViewer
+      {/* <ImageViewer
         imageModal={imageModal}
         setImageModal={setImageModal}
         url={url}
         ref={modalRef}
-      />
+      /> */}
 
       <div className="w-full md:w-11/12  my-6 mx-auto">
         <h2 className="text-2xl uppercase font-medium mb-6">
