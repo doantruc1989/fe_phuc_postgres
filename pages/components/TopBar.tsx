@@ -27,18 +27,23 @@ export default function TopBar({ visible, setVisible }: any) {
   const searchref: any = useRef();
   const [result, setResult] = useState([] as any);
   const [page, setPage] = useState(1);
-  const [user, setUser] = useState([] as any);
+  // const [user, setUser] = useState([] as any);
   const [verifyModal, setVerifyModal] = useState(false);
   const timeout: any = useRef();
   const inputRef: any = useRef();
   const { t } = useTranslation("");
   const router = useRouter();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    const user = stored ? JSON.parse(stored) : "";
-    setUser(user);
-  }, []);
+  const user =
+    typeof Storage === "undefined"
+      ? {}
+      : JSON.parse(localStorage.getItem("user") || "{}");
+
+  // useEffect(() => {
+  //   const stored = localStorage.getItem("user");
+  //   const user = stored ? JSON.parse(stored) : "";
+  //   setUser(user);
+  // }, []);
 
   useEffect(() => {
     let language = router.locale;
@@ -131,7 +136,7 @@ export default function TopBar({ visible, setVisible }: any) {
         </div>
       ) : null}
 
-      {user ? (
+      {user?.id !== undefined ? (
         <div className="flex justify-center md:justify-between py-2 w-11/12 mx-auto">
           <h1 className="hidden md:block">{t("ALL FOR YOUR HEALTH")}</h1>
           <div className="flex items-center gap-2 truncate">

@@ -18,6 +18,7 @@ import { CartProvider, useCart } from "react-use-cart";
 import axios from "../../other/axios";
 import { socket } from "../../other/socketIo";
 import useAxiosPrivate from "../../other/useAxiosPrivate";
+import MessengerFbChat from "../components/MessengerFbChat";
 import LoginModal from "./LoginModal";
 import SecurityModal from "./SecurityModal";
 import TcModal from "./TcModal";
@@ -246,6 +247,9 @@ function Index() {
           };
           socket.emit("msgTobe", data);
           router.push("/checkout/finish");
+          return () => {
+            socket.disconnect();
+          };
         });
     } catch (error) {
       console.log(error);
@@ -1202,6 +1206,7 @@ function Index() {
           <TcModal tcModal={tcModal} setTcModal={setTcModal} />
         </div>
       </div>
+      <MessengerFbChat />
     </>
   );
 }

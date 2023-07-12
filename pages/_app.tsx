@@ -15,7 +15,11 @@ type AppPropsWithLayout = AppProps & {
 
 function App({ Component, pageProps }: AppPropsWithLayout): any {
   const getLayout = Component.getLayout ?? ((page) => page);
-  return getLayout(<Component {...pageProps} />);
+  return getLayout(
+    
+      <Component {...pageProps} />
+
+  );
 }
 export async function getStaticProps({ locale }: any) {
   return {

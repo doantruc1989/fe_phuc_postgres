@@ -9,6 +9,14 @@
   height: 56px;
 }
 
+.chat-conversation {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  /* max-height: calc(100vh - 9rem); */
+  max-height: 380px;
+  overflow-y: auto;
+}
+
 @media only screen and (max-width: 600px) {
   .slick-dots li {
     width: 45px;
@@ -27,5 +35,30 @@
   .slick-dots li {
     width: 36px;
     height: 50px;
+  }
+}
+
+.display-chat {
+  animation-name: example;
+  animation-duration: 2s;
+  animation-delay: -1s;
+  animation-timing-function: linear
+}
+
+@keyframes example {
+  0% {
+    width: 10%;
+  }
+  25% {
+    width: 25%;
+  }
+  50% {
+    width: 50%;
+  }
+  75% {
+    width: 75%;
+  }
+  100% {
+    width: 85%;
   }
 }

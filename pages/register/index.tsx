@@ -113,6 +113,7 @@ function Index() {
           }, 5000);
           return () => {
             clearTimeout(timer);
+            socket.disconnect();
           };
         });
     } catch (error: any) {

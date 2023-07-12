@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useId, useRef, useState } from "react";
-import { HiHome, HiOutlineShoppingBag, HiPhone } from "react-icons/hi";
+import { HiHome, HiOutlineShoppingBag, HiPhone, HiX } from "react-icons/hi";
 import { CartProvider, useCart } from "react-use-cart";
 import Layout from "../components/Layout";
 import Relativeproducts from "./Relativeproducts";
@@ -23,6 +23,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 import axios from "../../other/axios";
 import { GetServerSideProps } from "next";
+import MessengerFbChat from "../components/MessengerFbChat";
+import ImageViewer from "../components/ImageViewer";
 
 function Index() {
   const [fruit, setFruit] = useState([] as any);
@@ -147,7 +149,7 @@ function Index() {
   }, [router]);
 
   return (
-    <div className="relative">
+    <div>
       <Breadcrumb className="w-full lg:w-11/12 mx-auto pt-5 border-b border-gray-100 pb-4">
         <Breadcrumb.Item
           href={
@@ -186,7 +188,7 @@ function Index() {
         </Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 mt-6 mb-14 w-full md:w-11/12 lg:w-9/12 mx-auto gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-8 mt-6 mb-14 w-full md:w-11/12 lg:w-9/12 mx-auto gap-6">
         <div className="md:col-start-1 md:col-end-2 lg:col-end-4 mb-6">
           <Slider {...settings} className="w-full mx-auto h-fit">
             {image.map((item: any) => {
@@ -319,7 +321,6 @@ function Index() {
                       >
                         {item?.variantAttribute
                           ? item?.variantAttribute?.map((res: any) => {
-                              console.log(res);
                               return <p key={res.id}>{res.attribute.value}</p>;
                             })
                           : null}
@@ -414,7 +415,7 @@ function Index() {
           </div>
         </div>
 
-        <div className="col-start-7 col-end-9 hidden lg:block">
+        <div className="lg:col-start-7 lg:col-end-9">
           <div className="flex flex-col items-center px-2 border border-gray-200">
             <h1 className="text-sm font-medium text-center my-3">
               {t("CHÚNG TÔI LUÔN SẴN SÀNG ĐỂ GIÚP ĐỠ BẠN")}
@@ -501,12 +502,13 @@ function Index() {
         </div>
       </div>
 
-      {/* <ImageViewer
+      <ImageViewer
         imageModal={imageModal}
         setImageModal={setImageModal}
         url={url}
-        ref={modalRef}
-      /> */}
+      />
+
+      <MessengerFbChat />
 
       <div className="w-full md:w-11/12  my-6 mx-auto">
         <h2 className="text-2xl uppercase font-medium mb-6">

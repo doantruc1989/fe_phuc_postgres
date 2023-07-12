@@ -8,6 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
+import MessengerFbChat from "../components/MessengerFbChat";
 
 function Index() {
   const { totalUniqueItems, items, updateItemQuantity, cartTotal, removeItem } =
@@ -257,6 +258,7 @@ function Index() {
           </div>
         )}
       </div>
+      <MessengerFbChat />
     </div>
   );
 }

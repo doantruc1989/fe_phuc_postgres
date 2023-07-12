@@ -22,6 +22,7 @@ import { useQRCode } from "next-qrcode";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import MessengerFbChat from "../components/MessengerFbChat";
 const PHONE_REGEX = /^[0-9\-\+]{10,15}$/;
 const AVT_REGEX = /\.(jpg|jpeg|png|webp|avif|gif|svg)$/;
 const ADDRESS_REGEX = /^\s*\S+(?:\s+\S+){2}/;
@@ -651,6 +652,7 @@ function Index() {
           </div>
         </div>
       )}
+      <MessengerFbChat />
     </div>
   );
 }
