@@ -11,11 +11,14 @@ function Hero7({hero7}:any) {
               className="w-full"
               key={item.id}
               href={item.path}>
+                <div className="overflow-hidden">
+
                 <img
                   className="w-full object-cover hover:scale-110 transition-all duration-500"
                   src={item.url}
                   alt={item.name}
                 />
+                </div>
               </Link>
             );
           })

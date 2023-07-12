@@ -95,7 +95,7 @@ const Hero16 = () => {
                   </div>
 
                   <div className="cursor-pointer text-center text-xs mb-3 h-16">
-                    <p className="font-medium text-base text-pink-500 dark:text-white mx-1 mt-2 text-ellipsis">
+                    <p className="font-medium text-sm md:text-base text-pink-500 dark:text-white mx-1 mt-2 text-ellipsis">
                       {router.locale === "default"
                         ? item?.blog?.title.substring(0, 40)
                         : item?.transTitle.substring(0, 25)}

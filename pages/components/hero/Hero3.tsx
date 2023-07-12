@@ -7,15 +7,14 @@ function Hero3({ hero3 }: any) {
       {hero3
         ? hero3.map((item: any) => {
             return (
-              <Link 
-              className="w-full"
-              key={item.id}
-              href={item.path}>
-                <img
-                  className="w-full object-cover hover:scale-110 transition-all duration-500"
-                  src={item.url}
-                  alt={item.name}
-                />
+              <Link className="w-full" key={item.id} href={item.path}>
+                <div className="overflow-hidden">
+                  <img
+                    className="w-full object-cover hover:scale-110 transition-all duration-500"
+                    src={item.url}
+                    alt={item.name}
+                  />
+                </div>
               </Link>
             );
           })

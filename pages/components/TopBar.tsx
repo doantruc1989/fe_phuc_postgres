@@ -108,10 +108,9 @@ export default function TopBar({ visible, setVisible }: any) {
       {search ? (
         <div className="text-black relative font-normal bg-white h-12 w-full">
           <div className="w-full">
-            <div className="flex items-center justify-start w-full px-2">
-              <HiOutlineSearch className="w-fit text-lg" />
+            <div className="w-full px-2">
               <input
-                className="border-white flex-1 focus:border-white focus:ring-white w-full"
+                className="border-white focus:border-white focus:ring-white w-full"
                 value={inputSearch}
                 type="search"
                 placeholder={
@@ -121,7 +120,6 @@ export default function TopBar({ visible, setVisible }: any) {
                     ? "What are you looking for?"
                     : "何を探していますか"
                 }
-                required
                 onChange={handleSearch}
               />
             </div>

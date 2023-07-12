@@ -97,7 +97,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main>{children}</main>
       <div
         ref={chatRef}
-        className="fixed z-50 bottom-4 left-8 md:left-12 lg:left-14 w-full md:w-2/3 lg:w-1/3"
+        className="fixed z-50 bottom-4 left-8 md:left-12 lg:left-14 w-full md:w-2/3 lg:w-1/3 chatsetting"
       >
         {showChat ? (
           <div
