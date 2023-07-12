@@ -48,15 +48,19 @@
 @keyframes example {
   0% {
     width: 10%;
+    height: 50px;
   }
   25% {
     width: 25%;
+    height: 50px;
   }
   50% {
     width: 50%;
+    height: 100px;
   }
   75% {
     width: 75%;
+    height: 150px;
   }
   100% {
     width: 85%;

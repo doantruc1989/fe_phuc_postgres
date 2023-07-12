@@ -97,12 +97,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main>{children}</main>
       <div
         ref={chatRef}
-        className="fixed z-50 bottom-20 md:bottom-20 left-0 md:left-2 w-full md:w-1/2 lg:w-1/3"
+        className="fixed z-50 bottom-4 left-8 md:left-12 lg:left-14 w-full md:w-2/3 lg:w-1/3"
       >
         {showChat ? (
           <div
             // className={showChat=== true ? 'displayed-chat w-11/12 bg-gray-100 rounded-lg mx-auto h-fit border-green-600 border' : 'w-11/12 bg-gray-100 rounded-lg mx-auto h-fit border-green-600 border display-chat'}>
-            className="w-11/12 bg-gray-100 rounded-lg mx-auto h-fit border-green-600 border display-chat"
+            className="w-10/12 md:w-11/12 bg-gray-100 rounded-lg mx-auto h-fit border-green-600 border display-chat"
           >
             <div className="font-medium py-2 border-b">
               <p className="text-center">Customer Service</p>
@@ -116,7 +116,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             setShowChat(!showChat);
           }}
           href={"#"}
-          className="flex items-center justify-center fixed z-50 bottom-[24px] left-[24px] text-center bg-green-600 rounded-full p-3 w-[44px] h-[44px]"
+          className="flex items-center justify-center fixed z-50 bottom-[14px] left-[24px] text-center bg-green-600 rounded-full p-3 w-[44px] h-[44px]"
         >
           <HiOutlineChat className="w-[24px] h-[24px] text-white text-center" />
         </Link>
